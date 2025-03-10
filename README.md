@@ -37,8 +37,12 @@ import asyncio
 async def main():
     client = lighter.ApiClient()
     account_api = lighter.AccountApi(client)
-    account = await account_api.get_account(by="index", value="1")
-    print(account)
+    try:
+        account = await account_api.account(by="index", value="1")
+        print(account)
+    finally:
+        await client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
