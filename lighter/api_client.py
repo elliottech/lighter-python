@@ -277,6 +277,11 @@ class ApiClient:
                 body=body, post_params=post_params,
                 _request_timeout=_request_timeout
             )
+            # Manually parse JSON if response is successful
+            if response_data.status == 200 and 'application/json' in response_data.getheader('Content-Type', '').lower():
+                raw_data = await response_data.read()
+                if raw_data:
+                    response_data.data = json.loads(raw_data.decode('utf-8'))
 
         except ApiException as e:
             raise e
