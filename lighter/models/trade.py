@@ -42,10 +42,10 @@ class Trade(BaseModel):
     timestamp: StrictInt
     taker_position_size_before: StrictStr
     taker_entry_quote_before: StrictStr
-    taker_initial_margin_fraction_before: StrictInt
+    taker_initial_margin_fraction_before: Optional[StrictInt]
     maker_position_size_before: StrictStr
     maker_entry_quote_before: StrictStr
-    maker_initial_margin_fraction_before: StrictInt
+    maker_initial_margin_fraction_before: Optional[StrictInt]
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed"]
 
