@@ -49,7 +49,6 @@ from lighter.models.funding import Funding
 from lighter.models.funding_rate import FundingRate
 from lighter.models.funding_rates import FundingRates
 from lighter.models.fundings import Fundings
-from lighter.models.has_referee_code import HasRefereeCode
 from lighter.models.l1_metadata import L1Metadata
 from lighter.models.l1_provider_info import L1ProviderInfo
 from lighter.models.liq_trade import LiqTrade
@@ -116,7 +115,6 @@ from lighter.models.req_get_transfer_fee_info import ReqGetTransferFeeInfo
 from lighter.models.req_get_transfer_history import ReqGetTransferHistory
 from lighter.models.req_get_tx import ReqGetTx
 from lighter.models.req_get_withdraw_history import ReqGetWithdrawHistory
-from lighter.models.req_has_referee_by_l1_address import ReqHasRefereeByL1Address
 from lighter.models.resp_change_account_tier import RespChangeAccountTier
 from lighter.models.resp_get_fast_bridge_info import RespGetFastBridgeInfo
 from lighter.models.resp_public_pools_metadata import RespPublicPoolsMetadata

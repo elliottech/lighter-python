@@ -1811,41 +1811,6 @@
         "description": "Get recent trades"
       }
     },
-    "/api/v1/referral/hasRefereeByAddress": {
-      "get": {
-        "summary": "referral_hasRefereeByAddress",
-        "operationId": "referral_hasRefereeByAddress",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/HasRefereeCode"
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "schema": {
-              "$ref": "#/definitions/ResultCode"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "l1_address",
-            "in": "query",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "referral"
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "description": "Does L1 address have referee code?"
-      }
-    },
     "/api/v1/referral/points": {
       "get": {
         "summary": "referral_points",
@@ -3897,28 +3862,6 @@
         "code",
         "resolution",
         "fundings"
-      ]
-    },
-    "HasRefereeCode": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32",
-          "example": "200"
-        },
-        "message": {
-          "type": "string"
-        },
-        "has_referee": {
-          "type": "boolean",
-          "format": "boolean"
-        }
-      },
-      "title": "HasRefereeCode",
-      "required": [
-        "code",
-        "has_referee"
       ]
     },
     "L1Metadata": {
@@ -6384,18 +6327,6 @@
       "title": "ReqGetWithdrawHistory",
       "required": [
         "account_index"
-      ]
-    },
-    "ReqHasRefereeByL1Address": {
-      "type": "object",
-      "properties": {
-        "l1_address": {
-          "type": "string"
-        }
-      },
-      "title": "ReqHasRefereeByL1Address",
-      "required": [
-        "l1_address"
       ]
     },
     "ReqSendTx": {

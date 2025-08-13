@@ -39,7 +39,6 @@ docs/FundingApi.md
 docs/FundingRate.md
 docs/FundingRates.md
 docs/Fundings.md
-docs/HasRefereeCode.md
 docs/InfoApi.md
 docs/L1Metadata.md
 docs/L1ProviderInfo.md
@@ -110,7 +109,6 @@ docs/ReqGetTransferFeeInfo.md
 docs/ReqGetTransferHistory.md
 docs/ReqGetTx.md
 docs/ReqGetWithdrawHistory.md
-docs/ReqHasRefereeByL1Address.md
 docs/RespChangeAccountTier.md
 docs/RespGetFastBridgeInfo.md
 docs/RespPublicPoolsMetadata.md
@@ -195,7 +193,6 @@ lighter/models/funding.py
 lighter/models/funding_rate.py
 lighter/models/funding_rates.py
 lighter/models/fundings.py
-lighter/models/has_referee_code.py
 lighter/models/l1_metadata.py
 lighter/models/l1_provider_info.py
 lighter/models/liq_trade.py
@@ -262,7 +259,6 @@ lighter/models/req_get_transfer_fee_info.py
 lighter/models/req_get_transfer_history.py
 lighter/models/req_get_tx.py
 lighter/models/req_get_withdraw_history.py
-lighter/models/req_has_referee_by_l1_address.py
 lighter/models/resp_change_account_tier.py
 lighter/models/resp_get_fast_bridge_info.py
 lighter/models/resp_public_pools_metadata.py
@@ -295,11 +291,4 @@ lighter/rest.py
 setup.cfg
 test-requirements.txt
 test/__init__.py
-test/test_has_referee_code.py
-test/test_public_pool_metadata.py
-test/test_req_get_account_active_orders.py
-test/test_req_get_public_pools_metadata.py
-test/test_req_has_referee_by_l1_address.py
-test/test_resp_public_pools_metadata.py
-test/test_share_price.py
 tox.ini
