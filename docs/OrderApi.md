@@ -4,6 +4,7 @@ All URIs are relative to *https://mainnet.zklighter.elliot.ai*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**account_active_orders**](OrderApi.md#account_active_orders) | **GET** /api/v1/accountActiveOrders | accountActiveOrders
 [**account_inactive_orders**](OrderApi.md#account_inactive_orders) | **GET** /api/v1/accountInactiveOrders | accountInactiveOrders
 [**exchange_stats**](OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
 [**export**](OrderApi.md#export) | **GET** /api/v1/export | export
@@ -13,6 +14,81 @@ Method | HTTP request | Description
 [**recent_trades**](OrderApi.md#recent_trades) | **GET** /api/v1/recentTrades | recentTrades
 [**trades**](OrderApi.md#trades) | **GET** /api/v1/trades | trades
 
+
+# **account_active_orders**
+> Orders account_active_orders(account_index, market_id, authorization=authorization, auth=auth)
+
+accountActiveOrders
+
+Get account active orders. `auth` can be generated using the SDK.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.orders import Orders
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    account_index = 56 # int | 
+    market_id = 56 # int | 
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # accountActiveOrders
+        api_response = await api_instance.account_active_orders(account_index, market_id, authorization=authorization, auth=auth)
+        print("The response of OrderApi->account_active_orders:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->account_active_orders: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **market_id** | **int**|  | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**Orders**](Orders.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **account_inactive_orders**
 > Orders account_inactive_orders(account_index, limit, authorization=authorization, auth=auth, market_id=market_id, ask_filter=ask_filter, between_timestamps=between_timestamps, cursor=cursor)

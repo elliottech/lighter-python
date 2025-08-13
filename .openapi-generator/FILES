@@ -39,6 +39,7 @@ docs/FundingApi.md
 docs/FundingRate.md
 docs/FundingRates.md
 docs/Fundings.md
+docs/HasRefereeCode.md
 docs/InfoApi.md
 docs/L1Metadata.md
 docs/L1ProviderInfo.md
@@ -65,6 +66,7 @@ docs/PositionFundings.md
 docs/PriceLevel.md
 docs/PublicPool.md
 docs/PublicPoolInfo.md
+docs/PublicPoolMetadata.md
 docs/PublicPoolShare.md
 docs/PublicPools.md
 docs/ReferralApi.md
@@ -72,6 +74,7 @@ docs/ReferralPointEntry.md
 docs/ReferralPoints.md
 docs/ReqExportData.md
 docs/ReqGetAccount.md
+docs/ReqGetAccountActiveOrders.md
 docs/ReqGetAccountApiKeys.md
 docs/ReqGetAccountByL1Address.md
 docs/ReqGetAccountInactiveOrders.md
@@ -96,6 +99,7 @@ docs/ReqGetOrderBookOrders.md
 docs/ReqGetOrderBooks.md
 docs/ReqGetPositionFunding.md
 docs/ReqGetPublicPools.md
+docs/ReqGetPublicPoolsMetadata.md
 docs/ReqGetRangeWithCursor.md
 docs/ReqGetRangeWithIndex.md
 docs/ReqGetRangeWithIndexSortable.md
@@ -106,8 +110,10 @@ docs/ReqGetTransferFeeInfo.md
 docs/ReqGetTransferHistory.md
 docs/ReqGetTx.md
 docs/ReqGetWithdrawHistory.md
+docs/ReqHasRefereeByL1Address.md
 docs/RespChangeAccountTier.md
 docs/RespGetFastBridgeInfo.md
+docs/RespPublicPoolsMetadata.md
 docs/RespSendTx.md
 docs/RespSendTxBatch.md
 docs/RespWithdrawalDelay.md
@@ -115,6 +121,7 @@ docs/ResultCode.md
 docs/RiskInfo.md
 docs/RiskParameters.md
 docs/RootApi.md
+docs/SharePrice.md
 docs/SimpleOrder.md
 docs/Status.md
 docs/SubAccounts.md
@@ -188,6 +195,7 @@ lighter/models/funding.py
 lighter/models/funding_rate.py
 lighter/models/funding_rates.py
 lighter/models/fundings.py
+lighter/models/has_referee_code.py
 lighter/models/l1_metadata.py
 lighter/models/l1_provider_info.py
 lighter/models/liq_trade.py
@@ -211,12 +219,14 @@ lighter/models/position_fundings.py
 lighter/models/price_level.py
 lighter/models/public_pool.py
 lighter/models/public_pool_info.py
+lighter/models/public_pool_metadata.py
 lighter/models/public_pool_share.py
 lighter/models/public_pools.py
 lighter/models/referral_point_entry.py
 lighter/models/referral_points.py
 lighter/models/req_export_data.py
 lighter/models/req_get_account.py
+lighter/models/req_get_account_active_orders.py
 lighter/models/req_get_account_api_keys.py
 lighter/models/req_get_account_by_l1_address.py
 lighter/models/req_get_account_inactive_orders.py
@@ -241,6 +251,7 @@ lighter/models/req_get_order_book_orders.py
 lighter/models/req_get_order_books.py
 lighter/models/req_get_position_funding.py
 lighter/models/req_get_public_pools.py
+lighter/models/req_get_public_pools_metadata.py
 lighter/models/req_get_range_with_cursor.py
 lighter/models/req_get_range_with_index.py
 lighter/models/req_get_range_with_index_sortable.py
@@ -251,14 +262,17 @@ lighter/models/req_get_transfer_fee_info.py
 lighter/models/req_get_transfer_history.py
 lighter/models/req_get_tx.py
 lighter/models/req_get_withdraw_history.py
+lighter/models/req_has_referee_by_l1_address.py
 lighter/models/resp_change_account_tier.py
 lighter/models/resp_get_fast_bridge_info.py
+lighter/models/resp_public_pools_metadata.py
 lighter/models/resp_send_tx.py
 lighter/models/resp_send_tx_batch.py
 lighter/models/resp_withdrawal_delay.py
 lighter/models/result_code.py
 lighter/models/risk_info.py
 lighter/models/risk_parameters.py
+lighter/models/share_price.py
 lighter/models/simple_order.py
 lighter/models/status.py
 lighter/models/sub_accounts.py
@@ -281,4 +295,11 @@ lighter/rest.py
 setup.cfg
 test-requirements.txt
 test/__init__.py
+test/test_has_referee_code.py
+test/test_public_pool_metadata.py
+test/test_req_get_account_active_orders.py
+test/test_req_get_public_pools_metadata.py
+test/test_req_has_referee_by_l1_address.py
+test/test_resp_public_pools_metadata.py
+test/test_share_price.py
 tox.ini

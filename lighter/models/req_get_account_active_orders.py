@@ -17,27 +17,20 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Union
-from lighter.models.daily_return import DailyReturn
-from lighter.models.share_price import SharePrice
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class PublicPoolInfo(BaseModel):
+class ReqGetAccountActiveOrders(BaseModel):
     """
-    PublicPoolInfo
+    ReqGetAccountActiveOrders
     """ # noqa: E501
-    status: StrictInt
-    operator_fee: StrictStr
-    min_operator_share_rate: StrictStr
-    total_shares: StrictInt
-    operator_shares: StrictInt
-    annual_percentage_yield: Union[StrictFloat, StrictInt]
-    daily_returns: List[DailyReturn]
-    share_prices: List[SharePrice]
+    account_index: StrictInt
+    market_id: StrictInt
+    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "daily_returns", "share_prices"]
+    __properties: ClassVar[List[str]] = ["account_index", "market_id", "auth"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -57,7 +50,7 @@ class PublicPoolInfo(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of PublicPoolInfo from a JSON string"""
+        """Create an instance of ReqGetAccountActiveOrders from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -80,20 +73,6 @@ class PublicPoolInfo(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in daily_returns (list)
-        _items = []
-        if self.daily_returns:
-            for _item in self.daily_returns:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['daily_returns'] = _items
-        # override the default output from pydantic by calling `to_dict()` of each item in share_prices (list)
-        _items = []
-        if self.share_prices:
-            for _item in self.share_prices:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['share_prices'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -103,7 +82,7 @@ class PublicPoolInfo(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of PublicPoolInfo from a dict"""
+        """Create an instance of ReqGetAccountActiveOrders from a dict"""
         if obj is None:
             return None
 
@@ -111,14 +90,9 @@ class PublicPoolInfo(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "status": obj.get("status"),
-            "operator_fee": obj.get("operator_fee"),
-            "min_operator_share_rate": obj.get("min_operator_share_rate"),
-            "total_shares": obj.get("total_shares"),
-            "operator_shares": obj.get("operator_shares"),
-            "annual_percentage_yield": obj.get("annual_percentage_yield"),
-            "daily_returns": [DailyReturn.from_dict(_item) for _item in obj["daily_returns"]] if obj.get("daily_returns") is not None else None,
-            "share_prices": [SharePrice.from_dict(_item) for _item in obj["share_prices"]] if obj.get("share_prices") is not None else None
+            "account_index": obj.get("account_index"),
+            "market_id": obj.get("market_id"),
+            "auth": obj.get("auth")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

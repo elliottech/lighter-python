@@ -17,6 +17,7 @@ Name | Type | Description | Notes
 **position_value** | **str** |  | 
 **unrealized_pnl** | **str** |  | 
 **realized_pnl** | **str** |  | 
+**liquidation_price** | **str** |  | 
 **total_funding_paid_out** | **str** |  | [optional] 
 **margin_mode** | **int** |  | 
 **allocated_margin** | **str** |  | 

@@ -84,6 +84,63 @@
         "description": "Get account by account's index. <br>More details about account index: [Account Index](https://apidocs.lighter.xyz/docs/account-index)<hr>**Response Description:**<br><br>1) **Status:** 1 is active 0 is inactive.<br>2) **Collateral:** The amount of collateral in the account.<hr>**Position Details Description:**<br>1) **OOC:** Open order count in that market.<br>2) **Sign:** 1 for Long, -1 for Short.<br>3) **Position:** The amount of position in that market.<br>4) **Avg Entry Price:** The average entry price of the position.<br>5) **Position Value:** The value of the position.<br>6) **Unrealized PnL:** The unrealized profit and loss of the position.<br>7) **Realized PnL:** The realized profit and loss of the position."
       }
     },
+    "/api/v1/accountActiveOrders": {
+      "get": {
+        "summary": "accountActiveOrders",
+        "operationId": "accountActiveOrders",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/Orders"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authorization",
+            "description": " make required after integ is done",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "account_index",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "market_id",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "uint8"
+          },
+          {
+            "name": "auth",
+            "description": " made optional to support header auth clients",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "order"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Get account active orders. `auth` can be generated using the SDK."
+      }
+    },
     "/api/v1/accountInactiveOrders": {
       "get": {
         "summary": "accountInactiveOrders",
@@ -1633,6 +1690,82 @@
         "description": "Get public pools"
       }
     },
+    "/api/v1/publicPoolsMetadata": {
+      "get": {
+        "summary": "publicPoolsMetadata",
+        "operationId": "publicPoolsMetadata",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RespPublicPoolsMetadata"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "auth",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "all",
+              "user",
+              "protocol",
+              "account_index"
+            ]
+          },
+          {
+            "name": "index",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 100
+          },
+          {
+            "name": "account_index",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "account"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Get public pools metadata"
+      }
+    },
     "/api/v1/recentTrades": {
       "get": {
         "summary": "recentTrades",
@@ -1676,6 +1809,41 @@
           "multipart/form-data"
         ],
         "description": "Get recent trades"
+      }
+    },
+    "/api/v1/referral/hasRefereeByAddress": {
+      "get": {
+        "summary": "referral_hasRefereeByAddress",
+        "operationId": "referral_hasRefereeByAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/HasRefereeCode"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "l1_address",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "referral"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Does L1 address have referee code?"
       }
     },
     "/api/v1/referral/points": {
@@ -2663,6 +2831,10 @@
           "type": "string",
           "example": "2.000000"
         },
+        "liquidation_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
         "total_funding_paid_out": {
           "type": "string",
           "example": "34.2"
@@ -2691,6 +2863,7 @@
         "position_value",
         "unrealized_pnl",
         "realized_pnl",
+        "liquidation_price",
         "margin_mode",
         "allocated_margin"
       ]
@@ -3724,6 +3897,28 @@
         "code",
         "resolution",
         "fundings"
+      ]
+    },
+    "HasRefereeCode": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "has_referee": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "HasRefereeCode",
+      "required": [
+        "code",
+        "has_referee"
       ]
     },
     "L1Metadata": {
@@ -4949,21 +5144,6 @@
           "format": "int64",
           "example": "20000"
         },
-        "share_price_1d": {
-          "type": "number",
-          "format": "double",
-          "example": "0.0001"
-        },
-        "share_price_7d": {
-          "type": "number",
-          "format": "double",
-          "example": "0.0001"
-        },
-        "share_price_30d": {
-          "type": "number",
-          "format": "double",
-          "example": "0.0001"
-        },
         "annual_percentage_yield": {
           "type": "number",
           "format": "double",
@@ -4974,6 +5154,12 @@
           "items": {
             "$ref": "#/definitions/DailyReturn"
           }
+        },
+        "share_prices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SharePrice"
+          }
         }
       },
       "title": "PublicPoolInfo",
@@ -4983,11 +5169,78 @@
         "min_operator_share_rate",
         "total_shares",
         "operator_shares",
-        "share_price_1d",
-        "share_price_7d",
-        "share_price_30d",
         "annual_percentage_yield",
-        "daily_returns"
+        "daily_returns",
+        "share_prices"
+      ]
+    },
+    "PublicPoolMetadata": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "account_index": {
+          "type": "integer",
+          "format": "int64",
+          "example": "3"
+        },
+        "account_type": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "1"
+        },
+        "name": {
+          "type": "string"
+        },
+        "l1_address": {
+          "type": "string",
+          "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+        },
+        "annual_percentage_yield": {
+          "type": "number",
+          "format": "double",
+          "example": "20.5000"
+        },
+        "status": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "0"
+        },
+        "operator_fee": {
+          "type": "string",
+          "example": "100"
+        },
+        "total_asset_value": {
+          "type": "string",
+          "example": "19995"
+        },
+        "total_shares": {
+          "type": "integer",
+          "format": "int64",
+          "example": "100000"
+        },
+        "account_share": {
+          "$ref": "#/definitions/PublicPoolShare"
+        }
+      },
+      "title": "PublicPoolMetadata",
+      "required": [
+        "code",
+        "account_index",
+        "account_type",
+        "name",
+        "l1_address",
+        "annual_percentage_yield",
+        "status",
+        "operator_fee",
+        "total_asset_value",
+        "total_shares"
       ]
     },
     "PublicPoolShare": {
@@ -5219,6 +5472,28 @@
       "required": [
         "by",
         "value"
+      ]
+    },
+    "ReqGetAccountActiveOrders": {
+      "type": "object",
+      "properties": {
+        "account_index": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "market_id": {
+          "type": "integer",
+          "format": "uint8"
+        },
+        "auth": {
+          "type": "string",
+          "description": " made optional to support header auth clients"
+        }
+      },
+      "title": "ReqGetAccountActiveOrders",
+      "required": [
+        "account_index",
+        "market_id"
       ]
     },
     "ReqGetAccountApiKeys": {
@@ -5827,6 +6102,42 @@
         "limit"
       ]
     },
+    "ReqGetPublicPoolsMetadata": {
+      "type": "object",
+      "properties": {
+        "auth": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "string",
+          "enum": [
+            "all",
+            "user",
+            "protocol",
+            "account_index"
+          ]
+        },
+        "index": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "maximum": 100,
+          "minimum": 1
+        },
+        "account_index": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ReqGetPublicPoolsMetadata",
+      "required": [
+        "index",
+        "limit"
+      ]
+    },
     "ReqGetRangeWithCursor": {
       "type": "object",
       "properties": {
@@ -6075,6 +6386,18 @@
         "account_index"
       ]
     },
+    "ReqHasRefereeByL1Address": {
+      "type": "object",
+      "properties": {
+        "l1_address": {
+          "type": "string"
+        }
+      },
+      "title": "ReqHasRefereeByL1Address",
+      "required": [
+        "l1_address"
+      ]
+    },
     "ReqSendTx": {
       "type": "object",
       "properties": {
@@ -6149,6 +6472,30 @@
       "required": [
         "code",
         "fast_bridge_limit"
+      ]
+    },
+    "RespPublicPoolsMetadata": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "public_pools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PublicPoolMetadata"
+          }
+        }
+      },
+      "title": "RespPublicPoolsMetadata",
+      "required": [
+        "code",
+        "public_pools"
       ]
     },
     "RespSendTx": {
@@ -6290,6 +6637,26 @@
         "initial_margin_req",
         "maintenance_margin_req",
         "close_out_margin_req"
+      ]
+    },
+    "SharePrice": {
+      "type": "object",
+      "properties": {
+        "timestamp": {
+          "type": "integer",
+          "format": "int64",
+          "example": "1640995200"
+        },
+        "share_price": {
+          "type": "number",
+          "format": "double",
+          "example": "0.0001"
+        }
+      },
+      "title": "SharePrice",
+      "required": [
+        "timestamp",
+        "share_price"
       ]
     },
     "SimpleOrder": {

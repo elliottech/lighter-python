@@ -15,6 +15,7 @@ Method | HTTP request | Description
 [**pnl**](AccountApi.md#pnl) | **GET** /api/v1/pnl | pnl
 [**position_funding**](AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 [**public_pools**](AccountApi.md#public_pools) | **GET** /api/v1/publicPools | publicPools
+[**public_pools_metadata**](AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
 
 
 # **account**
@@ -829,6 +830,85 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PublicPools**](PublicPools.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **public_pools_metadata**
+> RespPublicPoolsMetadata public_pools_metadata(index, limit, authorization=authorization, auth=auth, filter=filter, account_index=account_index)
+
+publicPoolsMetadata
+
+Get public pools metadata
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_public_pools_metadata import RespPublicPoolsMetadata
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    index = 56 # int | 
+    limit = 56 # int | 
+    authorization = 'authorization_example' # str |  (optional)
+    auth = 'auth_example' # str |  (optional)
+    filter = 'filter_example' # str |  (optional)
+    account_index = 56 # int |  (optional)
+
+    try:
+        # publicPoolsMetadata
+        api_response = await api_instance.public_pools_metadata(index, limit, authorization=authorization, auth=auth, filter=filter, account_index=account_index)
+        print("The response of AccountApi->public_pools_metadata:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->public_pools_metadata: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **index** | **int**|  | 
+ **limit** | **int**|  | 
+ **authorization** | **str**|  | [optional] 
+ **auth** | **str**|  | [optional] 
+ **filter** | **str**|  | [optional] 
+ **account_index** | **int**|  | [optional] 
+
+### Return type
+
+[**RespPublicPoolsMetadata**](RespPublicPoolsMetadata.md)
 
 ### Authorization
 
