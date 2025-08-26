@@ -87,17 +87,14 @@ def process_api_key_and_nonce(func):
         if api_key_index == -1 and nonce == -1:
             api_key_index, nonce = self.nonce_manager.next_nonce()
         err = self.switch_api_key(api_key_index)
-        if "nonce" in kwargs:
-            del kwargs["nonce"]
-        if "api_key_index" in kwargs:
-            del kwargs["api_key_index"]
         if err != None:
             raise Exception(f"error switching api key: {err}")
 
         # Call the original function with modified kwargs
         ret: TxHash
         try:
-            created_tx, ret, err = await func(self, *args, **kwargs, nonce=nonce, api_key_index=api_key_index)
+            partial_arguments = {k: v for k, v in bound_args.arguments.items() if k not in ("self", "nonce", "api_key_index")}
+            created_tx, ret, err = await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
             if ret.code != CODE_OK:
                 self.nonce_manager.acknowledge_failure(api_key_index)
         except lighter.exceptions.BadRequestException as e:
@@ -628,6 +625,70 @@ class SignerClient:
         api_response = await self.send_tx(tx_type=self.TX_TYPE_CANCEL_ORDER, tx_info=tx_info)
         logging.debug(f"Cancel Order Send Tx Response: {api_response}")
         return CancelOrder.from_json(tx_info), api_response, None
+
+    async def create_tp_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False, nonce=-1, api_key_index=-1) -> (CreateOrder, TxHash, str):
+        return await self.create_order(
+            market_index,
+            client_order_index,
+            base_amount,
+            price,
+            is_ask,
+            self.ORDER_TYPE_TAKE_PROFIT,
+            self.DEFAULT_IOC_EXPIRY,
+            reduce_only,
+            trigger_price,
+            self.DEFAULT_28_DAY_ORDER_EXPIRY,
+            nonce,
+            api_key_index=api_key_index,
+        )
+
+    async def create_tp_limit_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False, nonce=-1, api_key_index=-1) -> (CreateOrder, TxHash, str):
+        return await self.create_order(
+            market_index,
+            client_order_index,
+            base_amount,
+            price,
+            is_ask,
+            self.ORDER_TYPE_TAKE_PROFIT_LIMIT,
+            self.ORDER_TIME_IN_FORCE_GOOD_TILL_TIME,
+            reduce_only,
+            trigger_price,
+            self.DEFAULT_28_DAY_ORDER_EXPIRY,
+            nonce,
+            api_key_index,
+        )
+
+    async def create_sl_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False, nonce=-1, api_key_index=-1) -> (CreateOrder, TxHash, str):
+        return await self.create_order(
+            market_index,
+            client_order_index,
+            base_amount,
+            price,
+            is_ask,
+            self.ORDER_TYPE_STOP_LOSS,
+            self.DEFAULT_IOC_EXPIRY,
+            reduce_only,
+            trigger_price,
+            self.DEFAULT_28_DAY_ORDER_EXPIRY,
+            nonce,
+            api_key_index=api_key_index,
+        )
+
+    async def create_sl_limit_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False, nonce=-1, api_key_index=-1) -> (CreateOrder, TxHash, str):
+        return await self.create_order(
+            market_index,
+            client_order_index,
+            base_amount,
+            price,
+            is_ask,
+            self.ORDER_TYPE_STOP_LOSS_LIMIT,
+            self.ORDER_TIME_IN_FORCE_GOOD_TILL_TIME,
+            reduce_only,
+            trigger_price,
+            self.DEFAULT_28_DAY_ORDER_EXPIRY,
+            nonce,
+            api_key_index,
+        )
 
     @process_api_key_and_nonce
     async def withdraw(self, usdc_amount, nonce=-1, api_key_index=-1) -> (Withdraw, TxHash):
