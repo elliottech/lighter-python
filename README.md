@@ -46,6 +46,26 @@ if __name__ == "__main__":
 ```
 
 # Examples
+## [PnL Fee Comparison](pnl_fee_comparison.py)
+Generate a dual-plot visualization comparing time-series PnL with 0% fees vs 0.05% taker fees for a given L1 address.
+
+```sh
+# Basic usage - analyze last 30 days
+python pnl_fee_comparison.py 0x1234567890abcdef1234567890abcdef12345678
+
+# Analyze last 7 days and save to file
+python pnl_fee_comparison.py 0x1234567890abcdef1234567890abcdef12345678 --days 7 --output pnl_comparison.png
+
+# Analyze last 90 days
+python pnl_fee_comparison.py 0x1234567890abcdef1234567890abcdef12345678 --days 90
+```
+
+The script will:
+- Fetch all trades for the specified L1 address
+- Calculate cumulative PnL over time with and without 0.05% taker fees
+- Generate a dual-plot visualization showing both scenarios
+- Display summary statistics including total fee impact
+
 ## [Read API Functions](examples/get_info.py)
 ```sh
 python examples/get_info.py
