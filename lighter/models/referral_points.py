@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictFloat, StrictStr
 from typing import Any, ClassVar, Dict, List
 from lighter.models.referral_point_entry import ReferralPointEntry
 from typing import Optional, Set
@@ -28,10 +28,10 @@ class ReferralPoints(BaseModel):
     ReferralPoints
     """ # noqa: E501
     referrals: List[ReferralPointEntry]
-    user_total_points: StrictInt
-    user_last_week_points: StrictInt
-    user_total_referral_reward_points: StrictInt
-    user_last_week_referral_reward_points: StrictInt
+    user_total_points: StrictFloat
+    user_last_week_points: StrictFloat
+    user_total_referral_reward_points: StrictFloat
+    user_last_week_referral_reward_points: StrictFloat
     reward_point_multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["referrals", "user_total_points", "user_last_week_points", "user_total_referral_reward_points", "user_last_week_referral_reward_points", "reward_point_multiplier"]
