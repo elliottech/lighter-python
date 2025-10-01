@@ -1,12 +1,29 @@
-# Byte-compiled / optimized / DLL files
+# Sensitive Configuration Files
+config.py
+.env
+.env.local
+.env.production
+
+# API Keys and Credentials
+**/api_keys/
+**/credentials/
+**/*_key*
+**/*_secret*
+**/*_token*
+
+# Bot Runtime Files
+.trading_bot.lock
+.bot.pid
+*.log
+logs/
+trading_bot*.log
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-
-# Distribution / packaging
+*.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -18,54 +35,63 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-dev/
+MANIFEST
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*,cover
-.hypothesis/
+# Virtual Environments
+.env
+.venv
+env/
 venv/
-.venv/
+ENV/
+env.bak/
+venv.bak/
 .python-version
-.pytest_cache
 
-# Translations
-*.mo
-*.pot
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Django stuff:
-*.log
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-#Ipython Notebook
+# Jupyter Notebook
 .ipynb_checkpoints
-openapi-generator-cli.jar
 
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
 
-.idea
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
 
-examples/secrets.py
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database files (if any)
+*.db
+*.sqlite
+*.sqlite3

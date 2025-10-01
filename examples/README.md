@@ -1,24 +1,70 @@
-## Setup steps for testnet
-- Go to https://testnet.app.lighter.xyz/ and connect a wallet to receive $500
-- run `system_setup.py` with the correct ETH Private key configured
-  - set an API key index which is not 0, so you won't override the one used by [app.lighter.xyz](https://app.lighter.xyz/)
-  - this will require you to enter your Ethereum private key
-  - the eth private key will only be used in the Py SDK to sign a message
-  - the eth private key is not required in order to trade on the platform
-  - the eth private key is not passed to the binary
-  - copy the output of the script and post it into `create_cancel_order.py`
-  - the output should look like
-```
-BASE_URL = 'https://testnet.zklighter.elliot.ai'
-API_KEY_PRIVATE_KEY = '0xea5d2eca5be67eca056752eaf27b173518b8a5550117c09d2b58c7ea7d306cc4426f913ccf27ab19'
-ACCOUNT_INDEX = 595
-API_KEY_INDEX = 1
-```
-- start trading using
-  - `create_cancel_order.py` has an example which created an order on testnet & cancels it
-  - you'll need to set up both your account index, api key index & API Key private key
+# Configuration Examples
 
-## Setup steps for mainnet
-- deposit money on Lighter to create an account first
-- change the URL to `mainnet.zklighter.elliot.ai`
-- repeat setup step
+This directory contains example configurations for different trading strategies.
+
+## 📁 Available Examples
+
+### `conservative.env` - Low Risk Trading
+- **Risk per trade**: 10-20% of account balance
+- **Leverage**: 2-3x maximum
+- **Position hold**: 15 minutes
+- **Daily trades**: Limited to 20
+- **Recommended for**: Beginners, small accounts ($100-$1000)
+
+### `aggressive.env` - High Risk Trading
+- **Risk per trade**: 50-80% of account balance  
+- **Leverage**: 8-15x
+- **Position hold**: 3 minutes (scalping)
+- **Daily trades**: Up to 100
+- **Recommended for**: Experienced traders, larger accounts ($2000+)
+
+## 🚀 How to Use
+
+1. **Copy your preferred example**:
+   ```bash
+   cp examples/conservative.env .env
+   ```
+
+2. **Edit with your credentials**:
+   ```bash
+   nano .env
+   ```
+
+3. **Replace placeholder values**:
+   - `LIGHTER_API_KEY_PRIVATE_KEY`
+   - `LIGHTER_ACCOUNT_INDEX`  
+   - `LIGHTER_API_KEY_INDEX`
+
+4. **Adjust settings** to match your risk tolerance and account size
+
+## ⚠️ Important Notes
+
+- **Start Conservative**: Even experienced traders should start with conservative settings
+- **Test First**: Always test with small amounts initially
+- **Monitor Closely**: Watch the bot's performance, especially in the first few hours
+- **Adjust Gradually**: Make small adjustments based on performance
+
+## 🎯 Customization Tips
+
+### Position Sizing
+- **Small Account (<$500)**: Use 5-15% position sizes
+- **Medium Account ($500-$2000)**: Use 10-30% position sizes  
+- **Large Account (>$2000)**: Can use 20-50% position sizes
+
+### Leverage Guidelines
+- **BTC/ETH**: Generally safer, can use higher leverage
+- **Altcoins**: More volatile, use lower leverage
+- **New Tokens**: Highest risk, minimal leverage
+
+### Hold Times
+- **Scalping**: 1-5 minutes (requires constant monitoring)
+- **Short-term**: 5-30 minutes (balanced approach)
+- **Medium-term**: 30+ minutes (less frequent trading)
+
+## 🛡️ Risk Management
+
+Remember:
+- Never risk more than you can afford to lose
+- Start with the smallest position sizes
+- Monitor your account balance regularly
+- Stop trading if you hit daily loss limits
