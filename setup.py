@@ -73,11 +73,25 @@ def validate_config():
     try:
         # Try to import config to check for errors
         import config
+        
+        # Check if proxy is properly configured
+        if not config.USE_PROXY or not config.PROXY_URL:
+            print("❌ Proxy configuration missing!")
+            print("💡 PROXY_URL is MANDATORY for this bot to function")
+            return False
+        
+        if config.PROXY_URL == "http://username:password@proxy.example.com:8080":
+            print("❌ Proxy URL is still using example values!")
+            print("💡 Please update PROXY_URL in .env with your actual proxy credentials")
+            return False
+            
         print("✅ Configuration validation passed")
+        print(f"✅ Proxy configured: {config.PROXY_URL.split('@')[0]}@***")
         return True
     except Exception as e:
         print(f"❌ Configuration validation failed: {e}")
         print("💡 Make sure to edit your .env file with correct values")
+        print("⚠️  Remember: PROXY_URL is MANDATORY!")
         return False
 
 def main():
@@ -112,7 +126,8 @@ def main():
     else:
         print("\n⚠️  Next steps:")
         print("   1. Edit .env file with your Lighter API credentials")
-        print("   2. Run: python3 start_bot.py start")
+        print("   2. ⚠️  MANDATORY: Configure PROXY_URL in .env file")
+        print("   3. Run: python3 start_bot.py start")
     
     print("\n📚 Documentation:")
     print("   - README.md for usage instructions")

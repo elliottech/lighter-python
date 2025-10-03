@@ -9,10 +9,10 @@ A sophisticated automated trading bot for the [Lighter Protocol](https://lighter
 ## ✨ Key Features
 
 - **Percentage-based position sizing** - Risk management based on account balance
-- **Single position mode** - Hold one position at a time
-- **Automatic position closing** - Configurable hold duration
+- **Dynamic hold times** - Random, market-specific, or volatility-based durations
+- **Single position mode** - Hold one position at a time with intelligent timing
 - **Multi-pair trading** - BTC, ETH, HYPE, SOL, BNB support
-- **Proxy support** - Route traffic through proxy servers
+- **Mandatory proxy support** - All traffic routed through secure proxy
 - **Comprehensive logging** - Detailed trade tracking
 
 ## 🛠️ Quick Start
@@ -29,9 +29,11 @@ pip install -r trading_bot_requirements.txt
 # Copy environment template
 cp env.example .env
 
-# Edit with your Lighter API credentials
+# Edit with your Lighter API credentials AND proxy settings
 nano .env
 ```
+
+**⚠️ IMPORTANT: Proxy configuration is MANDATORY for this bot to function properly.**
 
 ### 3. Run the Bot
 ```bash
@@ -51,7 +53,8 @@ Key settings in `.env`:
 - `ACCOUNT_BALANCE=500` - Your account balance
 - `MIN_POSITION_PERCENT=50` - Minimum risk per trade
 - `MAX_POSITION_PERCENT=80` - Maximum risk per trade
-- `POSITION_HOLD_MINUTES=5` - How long to hold positions
+- `MIN_POSITION_HOLD_MINUTES=3` - Minimum hold time
+- `MAX_POSITION_HOLD_MINUTES=10` - Maximum hold time
 
 ## 📊 How It Works
 

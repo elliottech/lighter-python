@@ -28,8 +28,10 @@ from config import (
     MAX_DAILY_TRADES, ENABLE_RISK_LIMITS, LOG_LEVEL, LOG_TO_FILE, LOG_FILE,
     EXCLUDED_MARKETS, PREFERRED_MARKETS, DEFAULT_SLIPPAGE, ORDER_TIMEOUT,
     PROXY_URL, USE_PROXY, ALLOWED_TRADING_PAIRS, MANUAL_LEVERAGE, MARGIN_MODE,
-    POSITION_HOLD_MINUTES, SINGLE_POSITION_MODE, ACCOUNT_BALANCE, 
-    MIN_POSITION_PERCENT, MAX_POSITION_PERCENT
+    MIN_POSITION_HOLD_MINUTES, MAX_POSITION_HOLD_MINUTES, POSITION_HOLD_MINUTES, 
+    SINGLE_POSITION_MODE, ACCOUNT_BALANCE, MIN_POSITION_PERCENT, MAX_POSITION_PERCENT,
+    POSITION_LOG_INTERVAL_SECONDS, MIN_WAIT_BETWEEN_POSITIONS, MAX_WAIT_BETWEEN_POSITIONS,
+    CLOSE_EXISTING_POSITIONS_ON_START
 )
 
 
@@ -70,43 +72,66 @@ class TradingStats:
 
 
 class PositionManager:
-    """Manage single position lifecycle"""
+    """Manage single position lifecycle with dynamic hold times"""
     
     def __init__(self):
         self.current_position = None
         self.position_opened_at = None
+        self.position_hold_minutes = None  # Dynamic hold time for current position
         
     def has_position(self) -> bool:
         """Check if we currently have an open position"""
         return self.current_position is not None
         
-    def open_position(self, market_symbol: str, market_index: int, is_ask: bool, size: int, tx_hash: str):
-        """Record a new position"""
+    def _calculate_hold_time(self, market_symbol: str, current_price: float = None) -> int:
+        """Calculate dynamic hold time for a position"""
+        # Check for legacy fixed hold time
+        if POSITION_HOLD_MINUTES > 0:
+            return POSITION_HOLD_MINUTES
+        
+        # Pure random hold time between min and max
+        return random.randint(MIN_POSITION_HOLD_MINUTES, MAX_POSITION_HOLD_MINUTES)
+        
+    def open_position(self, market_symbol: str, market_index: int, is_ask: bool, size: int, tx_hash: str, current_price: float = None):
+        """Record a new position with dynamic hold time"""
+        # Calculate dynamic hold time for this position
+        self.position_hold_minutes = self._calculate_hold_time(market_symbol, current_price)
+        
         self.current_position = {
             'symbol': market_symbol,
             'market_index': market_index,
             'is_ask': is_ask,
             'size': size,
-            'tx_hash': tx_hash
+            'tx_hash': tx_hash,
+            'hold_minutes': self.position_hold_minutes  # Store the calculated hold time
         }
         self.position_opened_at = datetime.now()
         
     def should_close_position(self) -> bool:
-        """Check if position should be closed based on hold time"""
+        """Check if position should be closed based on dynamic hold time"""
         if not self.has_position():
             return False
-            
+        
+        # Safety check for position_opened_at to prevent race conditions
+        if self.position_opened_at is None or self.position_hold_minutes is None:
+            return False
+        
         hold_duration = datetime.now() - self.position_opened_at
-        return hold_duration >= timedelta(minutes=POSITION_HOLD_MINUTES)
+        return hold_duration >= timedelta(minutes=self.position_hold_minutes)
         
     def close_position(self):
         """Clear current position"""
         self.current_position = None
         self.position_opened_at = None
+        self.position_hold_minutes = None
         
     def get_position_info(self) -> Dict:
         """Get current position information"""
         if not self.has_position():
+            return None
+            
+        # Safety check for position_opened_at to prevent race conditions
+        if self.position_opened_at is None:
             return None
             
         hold_duration = datetime.now() - self.position_opened_at
@@ -114,6 +139,7 @@ class PositionManager:
             **self.current_position,
             'opened_at': self.position_opened_at,
             'hold_duration_minutes': hold_duration.total_seconds() / 60,
+            'target_hold_minutes': self.position_hold_minutes,
             'should_close': self.should_close_position()
         }
 
@@ -585,13 +611,19 @@ class LighterRandomTradingBot:
         # Record position if in single position mode
         if SINGLE_POSITION_MODE:
             self.position_manager.open_position(
-                market['symbol'], 
-                market['index'], 
-                is_ask, 
-                base_amount, 
-                tx_hash.tx_hash if tx_hash else None
+                market_symbol=market['symbol'],
+                market_index=market['index'],
+                is_ask=is_ask,
+                size=base_amount,
+                tx_hash=tx_hash.tx_hash if tx_hash else "N/A",
+                current_price=price_usd
             )
-            self.logger.info(f"Position opened: {market['symbol']} {'SHORT' if is_ask else 'LONG'} - will hold for {POSITION_HOLD_MINUTES} minutes")
+            
+            # Get the calculated hold time for logging
+            hold_time = self.position_manager.position_hold_minutes
+            hold_type = "fixed" if POSITION_HOLD_MINUTES > 0 else "random"
+            
+            self.logger.info(f"Position opened: {market['symbol']} {'SHORT' if is_ask else 'LONG'} - will hold for {hold_time} minutes ({hold_type})")
             
     def _acquire_process_lock(self):
         """Acquire a file lock to prevent multiple instances"""
@@ -680,11 +712,176 @@ class LighterRandomTradingBot:
             f"Success Rate: {success_rate:.1f}%"
         )
         
+    async def _check_and_close_existing_positions(self):
+        """Check for existing open positions and close them before starting trading"""
+        try:
+            self.logger.info("🔍 Checking for existing open positions...")
+            
+            # Get account details including positions from the API
+            account_api = lighter.AccountApi(self.api_client)
+            account_response = await account_api.account(by="index", value=str(ACCOUNT_INDEX))
+            
+            if hasattr(account_response, 'accounts') and account_response.accounts:
+                account = account_response.accounts[0]  # Get first account
+                if hasattr(account, 'positions') and account.positions:
+                    # Log all positions for debugging
+                    self.logger.debug(f"📊 All positions found: {len(account.positions)} total")
+                    for i, pos in enumerate(account.positions):
+                        self.logger.debug(f"   Position {i}: {pos.symbol} (Market {pos.market_id}) Size: {pos.position}")
+                    
+                    # Filter for positions with non-zero size (position field contains the size as string)
+                    # Use a small threshold to handle floating point precision issues
+                    open_positions = [pos for pos in account.positions if abs(float(pos.position)) > 1e-10]
+                    
+                    if open_positions:
+                        self.logger.warning(f"⚠️  Found {len(open_positions)} open position(s). Closing all positions before starting...")
+                        self.logger.info(f"📋 Open positions to close:")
+                        for i, pos in enumerate(open_positions):
+                            self.logger.info(f"   {i+1}. {pos.symbol} (Market {pos.market_id}) Size: {pos.position}")
+                        
+                        for position in open_positions:
+                            try:
+                                # Get market details for this position
+                                market_details = await self._get_market_details(position.market_id)
+                                if not market_details:
+                                    self.logger.error(f"❌ Could not get market details for position in market {position.market_id}")
+                                    continue
+                                
+                                # Determine if we need to buy or sell to close
+                                position_size_float = float(position.position)
+                                is_ask = position_size_float > 0  # If we have positive size, we need to sell (ask) to close
+                                
+                                # Get current market price for closing
+                                price_result = await self._get_market_price(position.market_id, is_ask, market_details)
+                                if price_result is None:
+                                    self.logger.error(f"❌ Could not get price for closing position in market {position.market_id}")
+                                    continue
+                                
+                                price_scaled, price_usd = price_result
+                                
+                                # Convert position size to the correct format for the API
+                                size_decimals = market_details.get('size_decimals', 0)
+                                position_size_scaled = int(abs(position_size_float) * (10 ** size_decimals))
+                                
+                                self.logger.info(f"🔄 Closing existing position: {position.symbol} Market {position.market_id}, Size {abs(position_size_float)}, Price ${price_usd:.2f}")
+                                
+                                # Generate unique client order index
+                                client_order_index = int(time.time() * 1000) % 1000000
+                                
+                                # Place market order to close position
+                                created_order, tx_hash, error = await self.client.create_market_order(
+                                    market_index=position.market_id,
+                                    client_order_index=client_order_index,
+                                    base_amount=position_size_scaled,
+                                    avg_execution_price=price_scaled,
+                                    is_ask=is_ask,
+                                    reduce_only=True  # This ensures we're closing, not opening new positions
+                                )
+                                
+                                if error:
+                                    self.logger.error(f"❌ Failed to close position in {position.symbol}: {error}")
+                                else:
+                                    self.logger.info(f"✅ Successfully closed position in {position.symbol}. TX: {tx_hash.tx_hash if tx_hash else 'N/A'}")
+                                    
+                            except Exception as e:
+                                self.logger.error(f"❌ Error closing position in {position.symbol}: {e}")
+                        
+                        # Wait a moment for all positions to be closed
+                        self.logger.info("⏳ Waiting 5 seconds for positions to be fully closed...")
+                        await asyncio.sleep(5)
+                        
+                        # Verify all positions are closed
+                        self.logger.info("🔍 Verifying all positions are closed...")
+                        verification_response = await account_api.account(by="index", value=str(ACCOUNT_INDEX))
+                        if hasattr(verification_response, 'accounts') and verification_response.accounts:
+                            verification_account = verification_response.accounts[0]
+                            if hasattr(verification_account, 'positions') and verification_account.positions:
+                                # Log all positions for debugging
+                                self.logger.debug(f"📊 Verification - All positions found: {len(verification_account.positions)} total")
+                                for i, pos in enumerate(verification_account.positions):
+                                    self.logger.debug(f"   Position {i}: {pos.symbol} (Market {pos.market_id}) Size: {pos.position}")
+                                
+                                remaining_positions = [pos for pos in verification_account.positions if abs(float(pos.position)) > 1e-10]
+                                if remaining_positions:
+                                    self.logger.warning(f"⚠️  {len(remaining_positions)} position(s) still open after closing attempts")
+                                    self.logger.warning(f"📋 Remaining open positions:")
+                                    for i, pos in enumerate(remaining_positions):
+                                        self.logger.warning(f"   {i+1}. {pos.symbol} (Market {pos.market_id}) Size: {pos.position}")
+                                    
+                                    # Attempt to close remaining positions
+                                    self.logger.info("🔄 Attempting to close remaining positions...")
+                                    for position in remaining_positions:
+                                        try:
+                                            # Get market details for this position
+                                            market_details = await self._get_market_details(position.market_id)
+                                            if not market_details:
+                                                self.logger.error(f"❌ Could not get market details for remaining position in market {position.market_id}")
+                                                continue
+                                            
+                                            # Determine if we need to buy or sell to close
+                                            position_size_float = float(position.position)
+                                            is_ask = position_size_float > 0  # If we have positive size, we need to sell (ask) to close
+                                            
+                                            # Get current market price for closing
+                                            price_result = await self._get_market_price(position.market_id, is_ask, market_details)
+                                            if price_result is None:
+                                                self.logger.error(f"❌ Could not get price for closing remaining position in market {position.market_id}")
+                                                continue
+                                            
+                                            price_scaled, price_usd = price_result
+                                            
+                                            # Convert position size to the correct format for the API
+                                            size_decimals = market_details.get('size_decimals', 0)
+                                            position_size_scaled = int(abs(position_size_float) * (10 ** size_decimals))
+                                            
+                                            self.logger.info(f"🔄 Closing remaining position: {position.symbol} Market {position.market_id}, Size {abs(position_size_float)}, Price ${price_usd:.2f}")
+                                            
+                                            # Generate unique client order index
+                                            client_order_index = int(time.time() * 1000) % 1000000
+                                            
+                                            # Place market order to close position
+                                            created_order, tx_hash, error = await self.client.create_market_order(
+                                                market_index=position.market_id,
+                                                client_order_index=client_order_index,
+                                                base_amount=position_size_scaled,
+                                                avg_execution_price=price_scaled,
+                                                is_ask=is_ask,
+                                                reduce_only=True  # This ensures we're closing, not opening new positions
+                                            )
+                                            
+                                            if error:
+                                                self.logger.error(f"❌ Failed to close remaining position in {position.symbol}: {error}")
+                                            else:
+                                                self.logger.info(f"✅ Successfully closed remaining position in {position.symbol}. TX: {tx_hash.tx_hash if tx_hash else 'N/A'}")
+                                                
+                                        except Exception as e:
+                                            self.logger.error(f"❌ Error closing remaining position in {position.symbol}: {e}")
+                                else:
+                                    self.logger.info("✅ All positions successfully closed")
+                        
+                    else:
+                        self.logger.info("✅ No open positions found - ready to start trading")
+                else:
+                    self.logger.info("✅ No positions in account - ready to start trading")
+            else:
+                self.logger.info("✅ No account data found - ready to start trading")
+                
+        except Exception as e:
+            self.logger.error(f"❌ Error checking existing positions: {e}")
+            self.logger.info("⚠️  Continuing with bot startup despite position check error...")
+
     async def run(self):
         """Main trading loop"""
         self.logger.info("Starting random trading bot...")
         if SINGLE_POSITION_MODE:
-            self.logger.info(f"Single position mode enabled - holding positions for {POSITION_HOLD_MINUTES} minutes")
+            self.logger.info(f"Single position mode enabled - holding positions for {MIN_POSITION_HOLD_MINUTES}-{MAX_POSITION_HOLD_MINUTES} minutes")
+        
+        # Check and close any existing positions before starting (if enabled)
+        if CLOSE_EXISTING_POSITIONS_ON_START:
+            await self._check_and_close_existing_positions()
+        else:
+            self.logger.info("⚠️  Skipping existing position check (CLOSE_EXISTING_POSITIONS_ON_START=false)")
+        
         self.running = True
         
         try:
@@ -696,16 +893,34 @@ class LighterRandomTradingBot:
                     # Single position management logic
                     if self.position_manager.has_position():
                         position_info = self.position_manager.get_position_info()
-                        self.logger.info(f"Current position: {position_info['symbol']} {'SHORT' if position_info['is_ask'] else 'LONG'} "
-                                       f"(held for {position_info['hold_duration_minutes']:.1f} minutes)")
+                        
+                        # Safety check for position_info to prevent race conditions
+                        if position_info is None:
+                            self.logger.warning("⚠️  Position info is None, skipping this cycle")
+                            await asyncio.sleep(1)
+                            continue
+                        
+                        # Log position status every 2 minutes (120 seconds) instead of every 30 seconds
+                        if not hasattr(self, '_last_position_log_time') or self._last_position_log_time is None:
+                            self._last_position_log_time = datetime.now()
+                        
+                        time_since_last_log = (datetime.now() - self._last_position_log_time).total_seconds()
+                        if time_since_last_log >= POSITION_LOG_INTERVAL_SECONDS:
+                            self.logger.info(f"Current position: {position_info['symbol']} {'SHORT' if position_info['is_ask'] else 'LONG'} "
+                                           f"(held for {position_info['hold_duration_minutes']:.1f}/{position_info['target_hold_minutes']} minutes)")
+                            self._last_position_log_time = datetime.now()
                         
                         if self.position_manager.should_close_position():
                             await self._close_position()
-                            # Wait a bit before opening next position
-                            self.logger.info("Waiting 30 seconds before opening next position...")
-                            await asyncio.sleep(30)
+                            # Reset log timer for next position
+                            self._last_position_log_time = None
+                            
+                            # Dynamic wait time between positions
+                            wait_time = random.randint(MIN_WAIT_BETWEEN_POSITIONS, MAX_WAIT_BETWEEN_POSITIONS)
+                            self.logger.info(f"Waiting {wait_time} seconds before opening next position...")
+                            await asyncio.sleep(wait_time)
                         else:
-                            # Check every 30 seconds if position should be closed
+                            # Check every 30 seconds if position should be closed (but don't log every time)
                             await asyncio.sleep(30)
                             continue
                     else:
