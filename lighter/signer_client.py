@@ -575,12 +575,15 @@ class SignerClient:
         error = result.err.decode("utf-8") if result.err else None
         return tx_info, error
 
-    def create_auth_token_with_expiry(self, deadline: int = DEFAULT_10_MIN_AUTH_EXPIRY):
+    def create_auth_token_with_expiry(self, deadline: int = DEFAULT_10_MIN_AUTH_EXPIRY, *, timestamp: int = None):
         if deadline == SignerClient.DEFAULT_10_MIN_AUTH_EXPIRY:
-            deadline = int(time.time() + 10 * SignerClient.MINUTE)
+            deadline = 10 * SignerClient.MINUTE
+        if timestamp is None:
+            timestamp = int(time.time())
+
         self.signer.CreateAuthToken.argtypes = [ctypes.c_longlong]
         self.signer.CreateAuthToken.restype = StrOrErr
-        result = self.signer.CreateAuthToken(deadline)
+        result = self.signer.CreateAuthToken(timestamp + deadline)
 
         auth = result.str.decode("utf-8") if result.str else None
         error = result.err.decode("utf-8") if result.err else None
