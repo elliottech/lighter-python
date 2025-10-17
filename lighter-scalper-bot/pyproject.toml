@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "lighter-scalper-bot"
+version = "0.1.0"
+description = "A scalping assistant bot for the Lighter exchange."
+authors = ["Jules"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+lighter-sdk = {git = "https://github.com/elliottech/lighter-python.git"}
+PyYAML = "^6.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

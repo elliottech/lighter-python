@@ -1,0 +1,17 @@
+# Lighter API Credentials
+# IMPORTANT: Do not share your private key with anyone.
+# The bot will load this into memory for the session.
+credentials:
+    eth_private_key: "YOUR_ETH_PRIVATE_KEY"
+    api_key_private_key: "YOUR_LIGHTER_API_PRIVATE_KEY"
+    account_index: 0
+    api_key_index: 2
+
+# Trading parameters for PAXG
+trading:
+    symbol: "PAXG-USD-PERP"
+    tp_tiers: [0.25, 0.50, 0.25]        # Proportional size for each TP
+    tp_offsets: [10, 25, 50]            # Price offset for each TP from entry
+    initial_sl_buffer: 5.0              # Initial stop loss distance from entry price
+    trail_activation_profit: 5.0        # Profit amount to activate the trailing stop
+    trail_distance: 3.0                 # Distance the trailing stop will keep from the best price
