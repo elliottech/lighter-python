@@ -74,3 +74,4 @@ examples/secrets.py
 .env
 .env.*
 api_key_config.json
+.secret
