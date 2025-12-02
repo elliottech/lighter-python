@@ -107,7 +107,7 @@ def __populate_shared_library_functions(signer):
     signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelOrder.restype = SignedTxResponse
 
-    signer.SignWithdraw.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignWithdraw.restype = SignedTxResponse
 
     signer.SignCreateSubAccount.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -119,13 +119,13 @@ def __populate_shared_library_functions(signer):
     signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
-    signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignTransfer.restype = SignedTxResponse
 
-    signer.SignCreatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCreatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreatePublicPool.restype = SignedTxResponse
 
-    signer.SignUpdatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdatePublicPool.restype = SignedTxResponse
 
     signer.SignMintShares.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -213,6 +213,7 @@ class SignerClient:
     DEFAULT_API_KEY_INDEX = 255
 
     USDC_TICKER_SCALE = 1e6
+    ETH_TICKER_SCALE = 1e6
 
     ORDER_TYPE_LIMIT = 0
     ORDER_TYPE_MARKET = 1
@@ -245,6 +246,12 @@ class SignerClient:
     GROUPING_TYPE_ONE_TRIGGERS_THE_OTHER = 1
     GROUPING_TYPE_ONE_CANCELS_THE_OTHER = 2
     GROUPING_TYPE_ONE_TRIGGERS_A_ONE_CANCELS_THE_OTHER = 3
+
+    ROUTE_PERP = 0
+    ROUTE_SPOT = 1
+
+    ASSET_ID_USDC = 3
+    ASSET_ID_ETH = 1
 
     def __init__(
             self,
@@ -456,8 +463,8 @@ class SignerClient:
     def sign_modify_order(self, market_index: int, order_index: int, base_amount: int, price: int, trigger_price: int = NIL_TRIGGER_PRICE, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, nonce, api_key_index, self.account_index))
 
-    def sign_transfer(self, eth_private_key: str, to_account_index: int, usdc_amount: int, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignTransfer(to_account_index,usdc_amount,fee,ctypes.c_char_p(memo.encode("utf-8")),nonce,api_key_index,self.account_index))
+    def sign_transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), nonce, api_key_index, self.account_index))
 
     def sign_create_public_pool(self, operator_fee: int, initial_total_shares: int, min_operator_share_rate: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCreatePublicPool(operator_fee, initial_total_shares, min_operator_share_rate, nonce, api_key_index, self.account_index))
@@ -747,6 +754,7 @@ class SignerClient:
         logging.debug(f"Withdraw Send. TxResponse: {api_response}")
         return Withdraw.from_json(tx_info), api_response, None
 
+    @process_api_key_and_nonce
     async def create_sub_account(self, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         tx_type, tx_info, tx_hash, error = self.sign_create_sub_account(nonce, api_key_index)
         if error is not None:
@@ -782,10 +790,15 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def transfer(self, eth_private_key: str, to_account_index, usdc_amount, fee, memo, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        usdc_amount = int(usdc_amount * self.USDC_TICKER_SCALE)
+    async def transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        if asset_id == self.ASSET_ID_USDC:
+            amount = int(amount * self.USDC_TICKER_SCALE)
+        elif asset_id == self.ASSET_ID_ETH:
+            amount = int(amount * self.ETH_TICKER_SCALE)
+        else:
+            raise ValueError(f"Unsupported asset id: {asset_id}")
 
-        tx_type, tx_info, tx_hash, error = self.sign_transfer(eth_private_key, to_account_index, usdc_amount, fee, memo, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_transfer(eth_private_key, to_account_index, asset_id, route_from, route_to, amount, fee, memo, nonce, api_key_index)
         if error is not None:
             return None, None, error
 

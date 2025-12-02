@@ -118,13 +118,13 @@ extern SignedTxResponse SignChangePubKey(char* cPubKey, long long int cNonce, in
 extern SignedTxResponse SignCreateOrder(int cMarketIndex, long long int cClientOrderIndex, long long int cBaseAmount, int cPrice, int cIsAsk, int cOrderType, int cTimeInForce, int cReduceOnly, int cTriggerPrice, long long int cOrderExpiry, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCreateGroupedOrders(uint8_t cGroupingType, CreateOrderTxReq* cOrders, int cLen, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCancelOrder(int cMarketIndex, long long int cOrderIndex, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignWithdraw(long long int cUSDCAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignWithdraw(int cAssetIndex, int cRouteType, long long unsigned int cAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCreateSubAccount(long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCancelAllOrders(int cTimeInForce, long long int cTime, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignModifyOrder(int cMarketIndex, long long int cIndex, long long int cBaseAmount, long long int cPrice, long long int cTriggerPrice, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignTransfer(long long int cToAccountIndex, long long int cUSDCAmount, long long int cFee, char* cMemo, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignCreatePublicPool(long long int cOperatorFee, long long int cInitialTotalShares, long long int cMinOperatorShareRate, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
-extern SignedTxResponse SignUpdatePublicPool(long long int cPublicPoolIndex, int cStatus, long long int cOperatorFee, long long int cMinOperatorShareRate, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignTransfer(long long int cToAccountIndex, int16_t cAssetIndex, uint8_t cFromRouteType, uint8_t cToRouteType, long long int cAmount, long long int cUsdcFee, char* cMemo, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignCreatePublicPool(long long int cOperatorFee, int cInitialTotalShares, long long int cMinOperatorShareRate, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignUpdatePublicPool(long long int cPublicPoolIndex, int cStatus, long long int cOperatorFee, int cMinOperatorShareRate, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignMintShares(long long int cPublicPoolIndex, long long int cShareAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignBurnShares(long long int cPublicPoolIndex, long long int cShareAmount, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignUpdateLeverage(int cMarketIndex, int cInitialMarginFraction, int cMarginMode, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
