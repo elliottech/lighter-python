@@ -152,3 +152,5 @@ from lighter.models.validator_info import ValidatorInfo
 from lighter.models.withdraw_history import WithdrawHistory
 from lighter.models.withdraw_history_item import WithdrawHistoryItem
 from lighter.models.zk_lighter_info import ZkLighterInfo
+
+from lighter.models.ws_account_assets import WSAccountAssets

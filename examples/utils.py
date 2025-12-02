@@ -49,6 +49,15 @@ def default_example_setup(config_file="./api_key_config.json") -> Optional[Tuple
     return client, api_client, websockets.connect(f"{base_url.replace('https', 'wss')}/stream")
 
 
+async def ws_ping(ws_client: websockets.ClientConnection):
+    await ws_client.send(json.dumps({"type": "pong"}))
+
+async def ws_subscribe(ws_client: websockets.ClientConnection, channel: str, auth: Optional[str] = None):
+    if auth is None:
+        await ws_client.send(json.dumps({"type": "subscribe", "channel": channel}))
+    else:
+        await ws_client.send(json.dumps({"type": "subscribe", "channel": channel, "auth": auth}))
+
 async def ws_send_tx(ws_client: websockets.ClientConnection, tx_type, tx_info, tx_hash):
     # Note: you have the TX Hash from signing the TX
     # You can use this TX Hash to check the status of the TX later on
