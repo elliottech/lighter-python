@@ -33,13 +33,12 @@ class Account(BaseModel):
     l1_address: StrictStr
     cancel_all_time: StrictInt
     total_order_count: StrictInt
-    total_isolated_order_count: StrictInt
     pending_order_count: StrictInt
     available_balance: Optional[StrictStr]
     status: StrictInt
     collateral: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "pending_order_count", "available_balance", "status", "collateral"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -106,7 +105,6 @@ class Account(BaseModel):
             "l1_address": obj.get("l1_address"),
             "cancel_all_time": obj.get("cancel_all_time"),
             "total_order_count": obj.get("total_order_count"),
-            "total_isolated_order_count": obj.get("total_isolated_order_count"),
             "pending_order_count": obj.get("pending_order_count"),
             "available_balance": obj.get("available_balance"),
             "status": obj.get("status"),

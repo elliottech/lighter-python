@@ -122,7 +122,7 @@
             "in": "query",
             "required": true,
             "type": "integer",
-            "format": "uint8"
+            "format": "int16"
           },
           {
             "name": "auth",
@@ -186,7 +186,7 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
           },
           {
@@ -520,6 +520,43 @@
         "description": "Get account api key. Set `api_key_index` to 255 to retrieve all api keys associated with the account."
       }
     },
+    "/api/v1/assetDetails": {
+      "get": {
+        "summary": "assetDetails",
+        "operationId": "assetDetails",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/AssetDetails"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int16",
+            "default": "0"
+          }
+        ],
+        "tags": [
+          "order"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Get asset details"
+      }
+    },
     "/api/v1/block": {
       "get": {
         "summary": "block",
@@ -666,6 +703,76 @@
         "description": "Get blocks"
       }
     },
+    "/api/v1/bridges": {
+      "get": {
+        "summary": "bridges",
+        "operationId": "bridges",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RespGetBridgesByL1Addr"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "l1_address",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "bridge"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Get bridges for given l1 address"
+      }
+    },
+    "/api/v1/bridges/isNextBridgeFast": {
+      "get": {
+        "summary": "bridges_isNextBridgeFast",
+        "operationId": "bridges_isNextBridgeFast",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RespGetIsNextBridgeFast"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "l1_address",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "bridge"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Get if next bridge is fast"
+      }
+    },
     "/api/v1/candlesticks": {
       "get": {
         "summary": "candlesticks",
@@ -690,7 +797,7 @@
             "in": "query",
             "required": true,
             "type": "integer",
-            "format": "uint8"
+            "format": "int16"
           },
           {
             "name": "resolution",
@@ -701,9 +808,12 @@
               "1m",
               "5m",
               "15m",
+              "30m",
               "1h",
               "4h",
-              "1d"
+              "12h",
+              "1d",
+              "1w"
             ]
           },
           {
@@ -958,7 +1068,7 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
           },
           {
@@ -1053,7 +1163,7 @@
             "in": "query",
             "required": true,
             "type": "integer",
-            "format": "uint8"
+            "format": "int16"
           },
           {
             "name": "resolution",
@@ -1194,7 +1304,7 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
           },
           {
@@ -1333,8 +1443,20 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "all",
+              "spot",
+              "perp"
+            ],
+            "default": "all"
           }
         ],
         "tags": [
@@ -1370,7 +1492,7 @@
             "in": "query",
             "required": true,
             "type": "integer",
-            "format": "uint8"
+            "format": "int16"
           },
           {
             "name": "limit",
@@ -1379,7 +1501,7 @@
             "type": "integer",
             "format": "int64",
             "minimum": 1,
-            "maximum": 100
+            "maximum": 250
           }
         ],
         "tags": [
@@ -1415,8 +1537,20 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "all",
+              "spot",
+              "perp"
+            ],
+            "default": "all"
           }
         ],
         "tags": [
@@ -1574,7 +1708,7 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
           },
           {
@@ -1612,82 +1746,6 @@
           "multipart/form-data"
         ],
         "description": "Get accounts position fundings"
-      }
-    },
-    "/api/v1/publicPools": {
-      "get": {
-        "summary": "publicPools",
-        "operationId": "publicPools",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/PublicPools"
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "schema": {
-              "$ref": "#/definitions/ResultCode"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "auth",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "filter",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "all",
-              "user",
-              "protocol",
-              "account_index"
-            ]
-          },
-          {
-            "name": "index",
-            "in": "query",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": true,
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1,
-            "maximum": 100
-          },
-          {
-            "name": "account_index",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "account"
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "description": "Get public pools"
       }
     },
     "/api/v1/publicPoolsMetadata": {
@@ -1790,7 +1848,7 @@
             "in": "query",
             "required": true,
             "type": "integer",
-            "format": "uint8"
+            "format": "int16"
           },
           {
             "name": "limit",
@@ -1809,6 +1867,50 @@
           "multipart/form-data"
         ],
         "description": "Get recent trades"
+      }
+    },
+    "/api/v1/referral/kickback/update": {
+      "post": {
+        "summary": "referral_kickback_update",
+        "operationId": "referral_kickback_update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RespUpdateKickback"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authorization",
+            "description": " make required after integ is done",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReqUpdateKickback"
+            }
+          }
+        ],
+        "tags": [
+          "referral"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Update kickback percentage for referral rewards"
       }
     },
     "/api/v1/referral/points": {
@@ -1859,6 +1961,50 @@
           "multipart/form-data"
         ],
         "description": "Get referral points"
+      }
+    },
+    "/api/v1/referral/update": {
+      "post": {
+        "summary": "referral_update",
+        "operationId": "referral_update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RespUpdateReferralCode"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ResultCode"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "authorization",
+            "description": " make required after integ is done",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ReqUpdateReferralCode"
+            }
+          }
+        ],
+        "tags": [
+          "referral"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "description": "Update referral code (allowed once per account)"
       }
     },
     "/api/v1/sendTx": {
@@ -1971,7 +2117,7 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "uint8",
+            "format": "int16",
             "default": "255"
           },
           {
@@ -2033,6 +2179,32 @@
             "default": "-1"
           },
           {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "all",
+              "maker",
+              "taker"
+            ],
+            "default": "all"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "all",
+              "trade",
+              "liquidation",
+              "deleverage",
+              "market-settlement"
+            ],
+            "default": "all"
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": true,
@@ -2040,6 +2212,14 @@
             "format": "int64",
             "minimum": 1,
             "maximum": 100
+          },
+          {
+            "name": "aggregate",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean",
+            "default": "false"
           }
         ],
         "tags": [
@@ -2440,11 +2620,6 @@
           "format": "int64",
           "example": "100"
         },
-        "total_isolated_order_count": {
-          "type": "integer",
-          "format": "int64",
-          "example": "100"
-        },
         "pending_order_count": {
           "type": "integer",
           "format": "int64",
@@ -2472,7 +2647,6 @@
         "l1_address",
         "cancel_all_time",
         "total_order_count",
-        "total_isolated_order_count",
         "pending_order_count",
         "available_balance",
         "status",
@@ -2503,6 +2677,35 @@
         "api_keys"
       ]
     },
+    "AccountAsset": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "example": "USDC"
+        },
+        "asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "balance": {
+          "type": "string",
+          "example": "1000"
+        },
+        "locked_balance": {
+          "type": "string",
+          "example": "1000"
+        }
+      },
+      "title": "AccountAsset",
+      "required": [
+        "symbol",
+        "asset_id",
+        "balance",
+        "locked_balance"
+      ]
+    },
     "AccountLimits": {
       "type": "object",
       "properties": {
@@ -2519,16 +2722,27 @@
           "format": "int32",
           "example": "25"
         },
+        "max_llp_amount": {
+          "type": "string",
+          "example": "1000000"
+        },
         "user_tier": {
           "type": "string",
           "example": "std"
+        },
+        "can_create_public_pool": {
+          "type": "boolean",
+          "format": "boolean",
+          "example": "true"
         }
       },
       "title": "AccountLimits",
       "required": [
         "code",
         "max_llp_percentage",
-        "user_tier"
+        "max_llp_amount",
+        "user_tier",
+        "can_create_public_pool"
       ]
     },
     "AccountMarginStats": {
@@ -2574,7 +2788,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "example": "1"
         },
         "daily_trades_count": {
@@ -2745,7 +2959,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "example": "1"
         },
         "symbol": {
@@ -2947,13 +3161,18 @@
         "created_at": {
           "type": "integer",
           "format": "int64"
+        },
+        "expired_at": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "title": "Announcement",
       "required": [
         "title",
         "content",
-        "created_at"
+        "created_at",
+        "expired_at"
       ]
     },
     "Announcements": {
@@ -3008,6 +3227,90 @@
         "api_key_index",
         "nonce",
         "public_key"
+      ]
+    },
+    "Asset": {
+      "type": "object",
+      "properties": {
+        "asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "symbol": {
+          "type": "string",
+          "example": "ETH"
+        },
+        "l1_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "18"
+        },
+        "decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "2"
+        },
+        "min_transfer_amount": {
+          "type": "string",
+          "example": "0.01"
+        },
+        "min_withdrawal_amount": {
+          "type": "string",
+          "example": "0.01"
+        },
+        "margin_mode": {
+          "type": "string",
+          "example": "enabled",
+          "enum": [
+            "enabled",
+            "disabled"
+          ]
+        },
+        "index_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "l1_address": {
+          "type": "string",
+          "example": "0x0000000000000000000000000000000000000000"
+        }
+      },
+      "title": "Asset",
+      "required": [
+        "asset_id",
+        "symbol",
+        "l1_decimals",
+        "decimals",
+        "min_transfer_amount",
+        "min_withdrawal_amount",
+        "margin_mode",
+        "index_price",
+        "l1_address"
+      ]
+    },
+    "AssetDetails": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "asset_details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Asset"
+          }
+        }
+      },
+      "title": "AssetDetails",
+      "required": [
+        "code",
+        "asset_details"
       ]
     },
     "Block": {
@@ -3109,6 +3412,93 @@
         "blocks"
       ]
     },
+    "Bridge": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32",
+          "enum": [
+            "1",
+            "2"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "example": "Arbitrum"
+        },
+        "source_chain_id": {
+          "type": "string",
+          "example": "42161"
+        },
+        "fast_bridge_tx_hash": {
+          "type": "string",
+          "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+        },
+        "batch_claim_tx_hash": {
+          "type": "string",
+          "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+        },
+        "cctp_burn_tx_hash": {
+          "type": "string",
+          "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "intent_address": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "bridging",
+            "completed"
+          ]
+        },
+        "step": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "updated_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "is_external_deposit": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "Bridge",
+      "required": [
+        "id",
+        "version",
+        "source",
+        "source_chain_id",
+        "fast_bridge_tx_hash",
+        "batch_claim_tx_hash",
+        "cctp_burn_tx_hash",
+        "amount",
+        "intent_address",
+        "status",
+        "step",
+        "description",
+        "created_at",
+        "updated_at",
+        "is_external_deposit"
+      ]
+    },
     "BridgeSupportedNetwork": {
       "type": "object",
       "properties": {
@@ -3160,6 +3550,26 @@
           "format": "double",
           "example": "3024.66"
         },
+        "open_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "high_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3034.66"
+        },
+        "low_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3014.66"
+        },
+        "close_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
         "volume0": {
           "type": "number",
           "format": "double",
@@ -3183,6 +3593,10 @@
         "high",
         "low",
         "close",
+        "open_raw",
+        "high_raw",
+        "low_raw",
+        "close_raw",
         "volume0",
         "volume1",
         "last_trade_id"
@@ -3320,6 +3734,11 @@
         "id": {
           "type": "string"
         },
+        "asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
         "amount": {
           "type": "string",
           "example": "0.1"
@@ -3346,6 +3765,7 @@
       "title": "DepositHistoryItem",
       "required": [
         "id",
+        "asset_id",
         "amount",
         "timestamp",
         "status",
@@ -3383,11 +3803,6 @@
           "example": "1640995200"
         },
         "total_order_count": {
-          "type": "integer",
-          "format": "int64",
-          "example": "100"
-        },
-        "total_isolated_order_count": {
           "type": "integer",
           "format": "int64",
           "example": "100"
@@ -3435,6 +3850,12 @@
             "$ref": "#/definitions/AccountPosition"
           }
         },
+        "assets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AccountAsset"
+          }
+        },
         "total_asset_value": {
           "type": "string",
           "example": "19995"
@@ -3461,7 +3882,6 @@
         "l1_address",
         "cancel_all_time",
         "total_order_count",
-        "total_isolated_order_count",
         "pending_order_count",
         "available_balance",
         "status",
@@ -3472,6 +3892,7 @@
         "can_invite",
         "referral_points_percentage",
         "positions",
+        "assets",
         "total_asset_value",
         "cross_asset_value",
         "pool_info",
@@ -3536,6 +3957,26 @@
           "format": "double",
           "example": "3024.66"
         },
+        "open_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "high_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3034.66"
+        },
+        "low_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3014.66"
+        },
+        "close_raw": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
         "volume0": {
           "type": "number",
           "format": "double",
@@ -3564,6 +4005,10 @@
         "high",
         "low",
         "close",
+        "open_raw",
+        "high_raw",
+        "low_raw",
+        "close_raw",
         "volume0",
         "volume1",
         "last_trade_id",
@@ -3653,6 +4098,11 @@
           "type": "string",
           "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
         },
+        "api_key_index": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "0"
+        },
         "committed_at": {
           "type": "integer",
           "format": "int64",
@@ -3682,6 +4132,7 @@
         "executed_at",
         "sequence_index",
         "parent_hash",
+        "api_key_index",
         "committed_at",
         "verified_at"
       ]
@@ -3784,7 +4235,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "exchange": {
           "type": "string",
@@ -3944,7 +4395,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "type": {
           "type": "string",
@@ -4032,84 +4483,36 @@
         "liquidations"
       ]
     },
-    "MarketInfo": {
+    "MarketConfig": {
       "type": "object",
       "properties": {
-        "market_id": {
+        "market_margin_mode": {
           "type": "integer",
-          "format": "uint8",
-          "example": "1"
+          "format": "int32"
         },
-        "index_price": {
-          "type": "string",
-          "example": "3024.66"
-        },
-        "mark_price": {
-          "type": "string",
-          "example": "3024.66"
-        },
-        "open_interest": {
-          "type": "string",
-          "example": "235.25"
-        },
-        "last_trade_price": {
-          "type": "string",
-          "example": "3024.66"
-        },
-        "current_funding_rate": {
-          "type": "string",
-          "example": "0.0001"
-        },
-        "funding_rate": {
-          "type": "string",
-          "example": "0.0001"
-        },
-        "funding_timestamp": {
+        "insurance_fund_account_index": {
           "type": "integer",
-          "format": "int64",
-          "example": "1640995200"
+          "format": "int64"
         },
-        "daily_base_token_volume": {
-          "type": "number",
-          "format": "double",
-          "example": "235.25"
+        "liquidation_mode": {
+          "type": "integer",
+          "format": "int32"
         },
-        "daily_quote_token_volume": {
-          "type": "number",
-          "format": "double",
-          "example": "93566.25"
+        "force_reduce_only": {
+          "type": "boolean",
+          "format": "boolean"
         },
-        "daily_price_low": {
-          "type": "number",
-          "format": "double",
-          "example": "3014.66"
-        },
-        "daily_price_high": {
-          "type": "number",
-          "format": "double",
-          "example": "3024.66"
-        },
-        "daily_price_change": {
-          "type": "number",
-          "format": "double",
-          "example": "3.66"
+        "trading_hours": {
+          "type": "string"
         }
       },
-      "title": "MarketInfo",
+      "title": "MarketConfig",
       "required": [
-        "market_id",
-        "index_price",
-        "mark_price",
-        "open_interest",
-        "last_trade_price",
-        "current_funding_rate",
-        "funding_rate",
-        "funding_timestamp",
-        "daily_base_token_volume",
-        "daily_quote_token_volume",
-        "daily_price_low",
-        "daily_price_high",
-        "daily_price_change"
+        "market_margin_mode",
+        "insurance_fund_account_index",
+        "liquidation_mode",
+        "force_reduce_only",
+        "trading_hours"
       ]
     },
     "NextNonce": {
@@ -4158,7 +4561,7 @@
         },
         "market_index": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "example": "1"
         },
         "owner_account_index": {
@@ -4270,7 +4673,8 @@
             "canceled-expired",
             "canceled-oco",
             "canceled-child",
-            "canceled-liquidation"
+            "canceled-liquidation",
+            "canceled-invalid-balance"
           ]
         },
         "trigger_status": {
@@ -4319,6 +4723,16 @@
           "type": "integer",
           "format": "int64",
           "example": "1640995200"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64",
+          "example": "1640995200"
+        },
+        "updated_at": {
+          "type": "integer",
+          "format": "int64",
+          "example": "1640995200"
         }
       },
       "title": "Order",
@@ -4353,7 +4767,9 @@
         "to_trigger_order_id_1",
         "to_cancel_order_id_0",
         "block_height",
-        "timestamp"
+        "timestamp",
+        "created_at",
+        "updated_at"
       ]
     },
     "OrderBook": {
@@ -4365,15 +4781,32 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "example": "1"
+        },
+        "market_type": {
+          "type": "string",
+          "example": "perp",
+          "enum": [
+            "perp",
+            "spot"
+          ]
+        },
+        "base_asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "quote_asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "2"
         },
         "status": {
           "type": "string",
           "example": "active",
           "enum": [
             "inactive",
-            "frozen",
             "active"
           ]
         },
@@ -4397,6 +4830,10 @@
           "type": "string",
           "example": "0.1"
         },
+        "order_quote_limit": {
+          "type": "string",
+          "example": "235.25"
+        },
         "supported_size_decimals": {
           "type": "integer",
           "format": "uint8",
@@ -4417,12 +4854,16 @@
       "required": [
         "symbol",
         "market_id",
+        "market_type",
+        "base_asset_id",
+        "quote_asset_id",
         "status",
         "taker_fee",
         "maker_fee",
         "liquidation_fee",
         "min_base_amount",
         "min_quote_amount",
+        "order_quote_limit",
         "supported_size_decimals",
         "supported_price_decimals",
         "supported_quote_decimals"
@@ -4455,6 +4896,11 @@
           "type": "integer",
           "format": "int64",
           "example": "0"
+        },
+        "nonce": {
+          "type": "integer",
+          "format": "int64",
+          "example": "0"
         }
       },
       "title": "OrderBookDepth",
@@ -4462,178 +4908,8 @@
         "code",
         "asks",
         "bids",
-        "offset"
-      ]
-    },
-    "OrderBookDetail": {
-      "type": "object",
-      "properties": {
-        "symbol": {
-          "type": "string",
-          "example": "ETH"
-        },
-        "market_id": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "1"
-        },
-        "status": {
-          "type": "string",
-          "example": "active",
-          "enum": [
-            "inactive",
-            "frozen",
-            "active"
-          ]
-        },
-        "taker_fee": {
-          "type": "string",
-          "example": "0.0001"
-        },
-        "maker_fee": {
-          "type": "string",
-          "example": "0.0000"
-        },
-        "liquidation_fee": {
-          "type": "string",
-          "example": "0.01"
-        },
-        "min_base_amount": {
-          "type": "string",
-          "example": "0.01"
-        },
-        "min_quote_amount": {
-          "type": "string",
-          "example": "0.1"
-        },
-        "supported_size_decimals": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "4"
-        },
-        "supported_price_decimals": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "4"
-        },
-        "supported_quote_decimals": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "4"
-        },
-        "size_decimals": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "4"
-        },
-        "price_decimals": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "4"
-        },
-        "quote_multiplier": {
-          "type": "integer",
-          "format": "int64",
-          "example": "10000"
-        },
-        "default_initial_margin_fraction": {
-          "type": "integer",
-          "format": "uin16",
-          "example": "100"
-        },
-        "min_initial_margin_fraction": {
-          "type": "integer",
-          "format": "uin16",
-          "example": "100"
-        },
-        "maintenance_margin_fraction": {
-          "type": "integer",
-          "format": "uin16",
-          "example": "50"
-        },
-        "closeout_margin_fraction": {
-          "type": "integer",
-          "format": "uin16",
-          "example": "100"
-        },
-        "last_trade_price": {
-          "type": "number",
-          "format": "double",
-          "example": "3024.66"
-        },
-        "daily_trades_count": {
-          "type": "integer",
-          "format": "int64",
-          "example": "68"
-        },
-        "daily_base_token_volume": {
-          "type": "number",
-          "format": "double",
-          "example": "235.25"
-        },
-        "daily_quote_token_volume": {
-          "type": "number",
-          "format": "double",
-          "example": "93566.25"
-        },
-        "daily_price_low": {
-          "type": "number",
-          "format": "double",
-          "example": "3014.66"
-        },
-        "daily_price_high": {
-          "type": "number",
-          "format": "double",
-          "example": "3024.66"
-        },
-        "daily_price_change": {
-          "type": "number",
-          "format": "double",
-          "example": "3.66"
-        },
-        "open_interest": {
-          "type": "number",
-          "format": "double",
-          "example": "93.0"
-        },
-        "daily_chart": {
-          "type": "object",
-          "example": "{1640995200:3024.66}",
-          "additionalProperties": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "title": "OrderBookDetail",
-      "required": [
-        "symbol",
-        "market_id",
-        "status",
-        "taker_fee",
-        "maker_fee",
-        "liquidation_fee",
-        "min_base_amount",
-        "min_quote_amount",
-        "supported_size_decimals",
-        "supported_price_decimals",
-        "supported_quote_decimals",
-        "size_decimals",
-        "price_decimals",
-        "quote_multiplier",
-        "default_initial_margin_fraction",
-        "min_initial_margin_fraction",
-        "maintenance_margin_fraction",
-        "closeout_margin_fraction",
-        "last_trade_price",
-        "daily_trades_count",
-        "daily_base_token_volume",
-        "daily_quote_token_volume",
-        "daily_price_low",
-        "daily_price_high",
-        "daily_price_change",
-        "open_interest",
-        "daily_chart"
+        "offset",
+        "nonce"
       ]
     },
     "OrderBookDetails": {
@@ -4650,14 +4926,21 @@
         "order_book_details": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/OrderBookDetail"
+            "$ref": "#/definitions/PerpsOrderBookDetail"
+          }
+        },
+        "spot_order_book_details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SpotOrderBookDetail"
           }
         }
       },
       "title": "OrderBookDetails",
       "required": [
         "code",
-        "order_book_details"
+        "order_book_details",
+        "spot_order_book_details"
       ]
     },
     "OrderBookOrders": {
@@ -4797,6 +5080,306 @@
         "orders"
       ]
     },
+    "PerpsMarketStats": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "example": "ETH"
+        },
+        "market_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "index_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "mark_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "open_interest": {
+          "type": "string",
+          "example": "235.25"
+        },
+        "open_interest_limit": {
+          "type": "string",
+          "example": "235.25"
+        },
+        "funding_clamp_small": {
+          "type": "string",
+          "example": "0.005"
+        },
+        "funding_clamp_big": {
+          "type": "string",
+          "example": "0.4"
+        },
+        "last_trade_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "current_funding_rate": {
+          "type": "string",
+          "example": "0.0001"
+        },
+        "funding_rate": {
+          "type": "string",
+          "example": "0.0001"
+        },
+        "funding_timestamp": {
+          "type": "integer",
+          "format": "int64",
+          "example": "1640995200"
+        },
+        "daily_base_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "235.25"
+        },
+        "daily_quote_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "93566.25"
+        },
+        "daily_price_low": {
+          "type": "number",
+          "format": "double",
+          "example": "3014.66"
+        },
+        "daily_price_high": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "daily_price_change": {
+          "type": "number",
+          "format": "double",
+          "example": "3.66"
+        }
+      },
+      "title": "PerpsMarketStats",
+      "required": [
+        "symbol",
+        "market_id",
+        "index_price",
+        "mark_price",
+        "open_interest",
+        "open_interest_limit",
+        "funding_clamp_small",
+        "funding_clamp_big",
+        "last_trade_price",
+        "current_funding_rate",
+        "funding_rate",
+        "funding_timestamp",
+        "daily_base_token_volume",
+        "daily_quote_token_volume",
+        "daily_price_low",
+        "daily_price_high",
+        "daily_price_change"
+      ]
+    },
+    "PerpsOrderBookDetail": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "example": "ETH"
+        },
+        "market_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "market_type": {
+          "type": "string",
+          "example": "perp",
+          "enum": [
+            "perp",
+            "spot"
+          ]
+        },
+        "base_asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "quote_asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "2"
+        },
+        "status": {
+          "type": "string",
+          "example": "active",
+          "enum": [
+            "inactive",
+            "active"
+          ]
+        },
+        "taker_fee": {
+          "type": "string",
+          "example": "0.0001"
+        },
+        "maker_fee": {
+          "type": "string",
+          "example": "0.0000"
+        },
+        "liquidation_fee": {
+          "type": "string",
+          "example": "0.01"
+        },
+        "min_base_amount": {
+          "type": "string",
+          "example": "0.01"
+        },
+        "min_quote_amount": {
+          "type": "string",
+          "example": "0.1"
+        },
+        "order_quote_limit": {
+          "type": "string",
+          "example": "235.25"
+        },
+        "supported_size_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "supported_price_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "supported_quote_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "size_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "price_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "quote_multiplier": {
+          "type": "integer",
+          "format": "int64",
+          "example": "10000"
+        },
+        "default_initial_margin_fraction": {
+          "type": "integer",
+          "format": "uin16",
+          "example": "100"
+        },
+        "min_initial_margin_fraction": {
+          "type": "integer",
+          "format": "uin16",
+          "example": "100"
+        },
+        "maintenance_margin_fraction": {
+          "type": "integer",
+          "format": "uin16",
+          "example": "50"
+        },
+        "closeout_margin_fraction": {
+          "type": "integer",
+          "format": "uin16",
+          "example": "100"
+        },
+        "last_trade_price": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "daily_trades_count": {
+          "type": "integer",
+          "format": "int64",
+          "example": "68"
+        },
+        "daily_base_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "235.25"
+        },
+        "daily_quote_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "93566.25"
+        },
+        "daily_price_low": {
+          "type": "number",
+          "format": "double",
+          "example": "3014.66"
+        },
+        "daily_price_high": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "daily_price_change": {
+          "type": "number",
+          "format": "double",
+          "example": "3.66"
+        },
+        "open_interest": {
+          "type": "number",
+          "format": "double",
+          "example": "93.0"
+        },
+        "daily_chart": {
+          "type": "object",
+          "example": "{1640995200:3024.66}",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "market_config": {
+          "$ref": "#/definitions/MarketConfig"
+        }
+      },
+      "title": "PerpsOrderBookDetail",
+      "required": [
+        "symbol",
+        "market_id",
+        "market_type",
+        "base_asset_id",
+        "quote_asset_id",
+        "status",
+        "taker_fee",
+        "maker_fee",
+        "liquidation_fee",
+        "min_base_amount",
+        "min_quote_amount",
+        "order_quote_limit",
+        "supported_size_decimals",
+        "supported_price_decimals",
+        "supported_quote_decimals",
+        "size_decimals",
+        "price_decimals",
+        "quote_multiplier",
+        "default_initial_margin_fraction",
+        "min_initial_margin_fraction",
+        "maintenance_margin_fraction",
+        "closeout_margin_fraction",
+        "last_trade_price",
+        "daily_trades_count",
+        "daily_base_token_volume",
+        "daily_quote_token_volume",
+        "daily_price_low",
+        "daily_price_high",
+        "daily_price_change",
+        "open_interest",
+        "daily_chart",
+        "market_config"
+      ]
+    },
     "PnLEntry": {
       "type": "object",
       "properties": {
@@ -4810,12 +5393,27 @@
           "format": "double",
           "example": "12.0"
         },
+        "trade_spot_pnl": {
+          "type": "number",
+          "format": "double",
+          "example": "12.0"
+        },
         "inflow": {
           "type": "number",
           "format": "double",
           "example": "12.0"
         },
         "outflow": {
+          "type": "number",
+          "format": "double",
+          "example": "12.0"
+        },
+        "spot_outflow": {
+          "type": "number",
+          "format": "double",
+          "example": "12.0"
+        },
+        "spot_inflow": {
           "type": "number",
           "format": "double",
           "example": "12.0"
@@ -4845,8 +5443,11 @@
       "required": [
         "timestamp",
         "trade_pnl",
+        "trade_spot_pnl",
         "inflow",
         "outflow",
+        "spot_outflow",
+        "spot_inflow",
         "pool_pnl",
         "pool_inflow",
         "pool_outflow",
@@ -4863,7 +5464,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "example": "1"
         },
         "funding_id": {
@@ -4948,121 +5549,6 @@
         "size"
       ]
     },
-    "PublicPool": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32",
-          "example": "200"
-        },
-        "message": {
-          "type": "string"
-        },
-        "account_type": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "1"
-        },
-        "index": {
-          "type": "integer",
-          "format": "int64",
-          "example": "1"
-        },
-        "l1_address": {
-          "type": "string",
-          "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
-        },
-        "cancel_all_time": {
-          "type": "integer",
-          "format": "int64",
-          "example": "1640995200"
-        },
-        "total_order_count": {
-          "type": "integer",
-          "format": "int64",
-          "example": "100"
-        },
-        "total_isolated_order_count": {
-          "type": "integer",
-          "format": "int64",
-          "example": "100"
-        },
-        "pending_order_count": {
-          "type": "integer",
-          "format": "int64",
-          "example": "100"
-        },
-        "available_balance": {
-          "type": "string",
-          "example": "19995"
-        },
-        "status": {
-          "type": "integer",
-          "format": "uint8",
-          "example": "1"
-        },
-        "collateral": {
-          "type": "string",
-          "example": "46342"
-        },
-        "account_index": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "can_invite": {
-          "type": "boolean",
-          "format": "boolean",
-          "description": " Remove After FE uses L1 meta endpoint"
-        },
-        "referral_points_percentage": {
-          "type": "string",
-          "description": " Remove After FE uses L1 meta endpoint"
-        },
-        "total_asset_value": {
-          "type": "string",
-          "example": "19995"
-        },
-        "cross_asset_value": {
-          "type": "string",
-          "example": "19995"
-        },
-        "pool_info": {
-          "$ref": "#/definitions/PublicPoolInfo"
-        },
-        "account_share": {
-          "$ref": "#/definitions/PublicPoolShare"
-        }
-      },
-      "title": "PublicPool",
-      "required": [
-        "code",
-        "account_type",
-        "index",
-        "l1_address",
-        "cancel_all_time",
-        "total_order_count",
-        "total_isolated_order_count",
-        "pending_order_count",
-        "available_balance",
-        "status",
-        "collateral",
-        "account_index",
-        "name",
-        "description",
-        "can_invite",
-        "referral_points_percentage",
-        "total_asset_value",
-        "cross_asset_value",
-        "pool_info"
-      ]
-    },
     "PublicPoolInfo": {
       "type": "object",
       "properties": {
@@ -5094,6 +5580,11 @@
           "format": "double",
           "example": "20.5000"
         },
+        "sharpe_ratio": {
+          "type": "number",
+          "format": "double",
+          "example": "1.5"
+        },
         "daily_returns": {
           "type": "array",
           "items": {
@@ -5115,6 +5606,7 @@
         "total_shares",
         "operator_shares",
         "annual_percentage_yield",
+        "sharpe_ratio",
         "daily_returns",
         "share_prices"
       ]
@@ -5135,6 +5627,15 @@
           "format": "int64",
           "example": "3"
         },
+        "created_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "master_account_index": {
+          "type": "integer",
+          "format": "int64",
+          "example": "61"
+        },
         "account_type": {
           "type": "integer",
           "format": "uint8",
@@ -5151,6 +5652,11 @@
           "type": "number",
           "format": "double",
           "example": "20.5000"
+        },
+        "sharpe_ratio": {
+          "type": "number",
+          "format": "double",
+          "example": "1.5"
         },
         "status": {
           "type": "integer",
@@ -5178,10 +5684,13 @@
       "required": [
         "code",
         "account_index",
+        "created_at",
+        "master_account_index",
         "account_type",
         "name",
         "l1_address",
         "annual_percentage_yield",
+        "sharpe_ratio",
         "status",
         "operator_fee",
         "total_asset_value",
@@ -5213,35 +5722,6 @@
         "entry_usdc"
       ]
     },
-    "PublicPools": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32",
-          "example": "200"
-        },
-        "message": {
-          "type": "string"
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "public_pools": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PublicPool"
-          }
-        }
-      },
-      "title": "PublicPools",
-      "required": [
-        "code",
-        "total",
-        "public_pools"
-      ]
-    },
     "ReferralPointEntry": {
       "type": "object",
       "properties": {
@@ -5249,23 +5729,23 @@
           "type": "string"
         },
         "total_points": {
-          "type": "integer",
-          "format": "int64",
-          "example": "1000"
+          "type": "number",
+          "format": "float",
+          "example": "1000.01"
         },
         "week_points": {
-          "type": "integer",
-          "format": "int64",
-          "example": "1000"
+          "type": "number",
+          "format": "float",
+          "example": "1000.01"
         },
         "total_reward_points": {
-          "type": "integer",
-          "format": "int64",
+          "type": "number",
+          "format": "float",
           "example": "200"
         },
         "week_reward_points": {
-          "type": "integer",
-          "format": "int64",
+          "type": "number",
+          "format": "float",
           "example": "200"
         },
         "reward_point_multiplier": {
@@ -5293,23 +5773,23 @@
           }
         },
         "user_total_points": {
-          "type": "integer",
-          "format": "int64",
+          "type": "number",
+          "format": "float",
           "example": "1000"
         },
         "user_last_week_points": {
-          "type": "integer",
-          "format": "int64",
+          "type": "number",
+          "format": "float",
           "example": "1000"
         },
         "user_total_referral_reward_points": {
-          "type": "integer",
-          "format": "int64",
+          "type": "number",
+          "format": "float",
           "example": "1000"
         },
         "user_last_week_referral_reward_points": {
-          "type": "integer",
-          "format": "int64",
+          "type": "number",
+          "format": "float",
           "example": "1000"
         },
         "reward_point_multiplier": {
@@ -5383,7 +5863,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
         },
         "type": {
@@ -5428,7 +5908,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "auth": {
           "type": "string",
@@ -5484,7 +5964,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
         },
         "ask_filter": {
@@ -5642,6 +6122,17 @@
       },
       "title": "ReqGetAccountTxs"
     },
+    "ReqGetAssetDetails": {
+      "type": "object",
+      "properties": {
+        "asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "default": "0"
+        }
+      },
+      "title": "ReqGetAssetDetails"
+    },
     "ReqGetBlock": {
       "type": "object",
       "properties": {
@@ -5682,6 +6173,18 @@
         "value"
       ]
     },
+    "ReqGetBridgesByL1Addr": {
+      "type": "object",
+      "properties": {
+        "l1_address": {
+          "type": "string"
+        }
+      },
+      "title": "ReqGetBridgesByL1Addr",
+      "required": [
+        "l1_address"
+      ]
+    },
     "ReqGetByAccount": {
       "type": "object",
       "properties": {
@@ -5706,7 +6209,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "resolution": {
           "type": "string",
@@ -5714,9 +6217,12 @@
             "1m",
             "5m",
             "15m",
+            "30m",
             "1h",
             "4h",
-            "1d"
+            "12h",
+            "1d",
+            "1w"
           ]
         },
         "start_timestamp": {
@@ -5806,7 +6312,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "resolution": {
           "type": "string",
@@ -5892,7 +6398,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
         },
         "cursor": {
@@ -5934,8 +6440,17 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
+        },
+        "filter": {
+          "type": "string",
+          "enum": [
+            "all",
+            "spot",
+            "perp"
+          ],
+          "default": "all"
         }
       },
       "title": "ReqGetOrderBookDetails"
@@ -5945,12 +6460,12 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "limit": {
           "type": "integer",
           "format": "int64",
-          "maximum": 100,
+          "maximum": 250,
           "minimum": 1
         }
       },
@@ -5965,8 +6480,17 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
+        },
+        "filter": {
+          "type": "string",
+          "enum": [
+            "all",
+            "spot",
+            "perp"
+          ],
+          "default": "all"
         }
       },
       "title": "ReqGetOrderBooks"
@@ -5983,7 +6507,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
         },
         "cursor": {
@@ -6008,42 +6532,6 @@
       "title": "ReqGetPositionFunding",
       "required": [
         "account_index",
-        "limit"
-      ]
-    },
-    "ReqGetPublicPools": {
-      "type": "object",
-      "properties": {
-        "auth": {
-          "type": "string"
-        },
-        "filter": {
-          "type": "string",
-          "enum": [
-            "all",
-            "user",
-            "protocol",
-            "account_index"
-          ]
-        },
-        "index": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int64",
-          "maximum": 100,
-          "minimum": 1
-        },
-        "account_index": {
-          "type": "integer",
-          "format": "int64"
-        }
-      },
-      "title": "ReqGetPublicPools",
-      "required": [
-        "index",
         "limit"
       ]
     },
@@ -6149,7 +6637,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "limit": {
           "type": "integer",
@@ -6189,7 +6677,7 @@
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "default": "255"
         },
         "account_index": {
@@ -6229,11 +6717,36 @@
           "format": "int8",
           "default": "-1"
         },
+        "role": {
+          "type": "string",
+          "enum": [
+            "all",
+            "maker",
+            "taker"
+          ],
+          "default": "all"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "all",
+            "trade",
+            "liquidation",
+            "deleverage",
+            "market-settlement"
+          ],
+          "default": "all"
+        },
         "limit": {
           "type": "integer",
           "format": "int64",
           "maximum": 100,
           "minimum": 1
+        },
+        "aggregate": {
+          "type": "boolean",
+          "format": "boolean",
+          "default": "false"
         }
       },
       "title": "ReqGetTrades",
@@ -6369,6 +6882,50 @@
         "tx_infos"
       ]
     },
+    "ReqUpdateKickback": {
+      "type": "object",
+      "properties": {
+        "auth": {
+          "type": "string",
+          "description": " made optional to support header auth clients"
+        },
+        "account_index": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "kickback_percentage": {
+          "type": "number",
+          "format": "double",
+          "maximum": 100
+        }
+      },
+      "title": "ReqUpdateKickback",
+      "required": [
+        "account_index",
+        "kickback_percentage"
+      ]
+    },
+    "ReqUpdateReferralCode": {
+      "type": "object",
+      "properties": {
+        "auth": {
+          "type": "string",
+          "description": " made optional to support header auth clients"
+        },
+        "account_index": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "new_referral_code": {
+          "type": "string"
+        }
+      },
+      "title": "ReqUpdateReferralCode",
+      "required": [
+        "account_index",
+        "new_referral_code"
+      ]
+    },
     "RespChangeAccountTier": {
       "type": "object",
       "properties": {
@@ -6384,6 +6941,30 @@
       "title": "RespChangeAccountTier",
       "required": [
         "code"
+      ]
+    },
+    "RespGetBridgesByL1Addr": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "bridges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Bridge"
+          }
+        }
+      },
+      "title": "RespGetBridgesByL1Addr",
+      "required": [
+        "code",
+        "bridges"
       ]
     },
     "RespGetFastBridgeInfo": {
@@ -6405,6 +6986,28 @@
       "required": [
         "code",
         "fast_bridge_limit"
+      ]
+    },
+    "RespGetIsNextBridgeFast": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "is_next_bridge_fast": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "RespGetIsNextBridgeFast",
+      "required": [
+        "code",
+        "is_next_bridge_fast"
       ]
     },
     "RespPublicPoolsMetadata": {
@@ -6450,13 +7053,18 @@
           "type": "integer",
           "format": "int64",
           "example": "1751465474"
+        },
+        "volume_quota_remaining": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "title": "RespSendTx",
       "required": [
         "code",
         "tx_hash",
-        "predicted_execution_time_ms"
+        "predicted_execution_time_ms",
+        "volume_quota_remaining"
       ]
     },
     "RespSendTxBatch": {
@@ -6480,13 +7088,64 @@
           "type": "integer",
           "format": "int64",
           "example": "1751465474"
+        },
+        "volume_quota_remaining": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "title": "RespSendTxBatch",
       "required": [
         "code",
         "tx_hash",
-        "predicted_execution_time_ms"
+        "predicted_execution_time_ms",
+        "volume_quota_remaining"
+      ]
+    },
+    "RespUpdateKickback": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "example": "true"
+        }
+      },
+      "title": "RespUpdateKickback",
+      "required": [
+        "code",
+        "success"
+      ]
+    },
+    "RespUpdateReferralCode": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean",
+          "format": "boolean",
+          "example": "true"
+        }
+      },
+      "title": "RespUpdateReferralCode",
+      "required": [
+        "code",
+        "success"
       ]
     },
     "RespWithdrawalDelay": {
@@ -6544,7 +7203,7 @@
       "properties": {
         "market_id": {
           "type": "integer",
-          "format": "uint8"
+          "format": "int16"
         },
         "collateral": {
           "type": "string"
@@ -6636,6 +7295,230 @@
         "remaining_base_amount",
         "price",
         "order_expiry"
+      ]
+    },
+    "SpotMarketStats": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "example": "ETH/USDC"
+        },
+        "market_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "index_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "mid_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "last_trade_price": {
+          "type": "string",
+          "example": "3024.66"
+        },
+        "daily_base_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "235.25"
+        },
+        "daily_quote_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "93566.25"
+        },
+        "daily_price_low": {
+          "type": "number",
+          "format": "double",
+          "example": "3014.66"
+        },
+        "daily_price_high": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "daily_price_change": {
+          "type": "number",
+          "format": "double",
+          "example": "3.66"
+        }
+      },
+      "title": "SpotMarketStats",
+      "required": [
+        "symbol",
+        "market_id",
+        "index_price",
+        "mid_price",
+        "last_trade_price",
+        "daily_base_token_volume",
+        "daily_quote_token_volume",
+        "daily_price_low",
+        "daily_price_high",
+        "daily_price_change"
+      ]
+    },
+    "SpotOrderBookDetail": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "example": "ETH"
+        },
+        "market_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "market_type": {
+          "type": "string",
+          "example": "perp",
+          "enum": [
+            "perp",
+            "spot"
+          ]
+        },
+        "base_asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
+        "quote_asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "2"
+        },
+        "status": {
+          "type": "string",
+          "example": "active",
+          "enum": [
+            "inactive",
+            "active"
+          ]
+        },
+        "taker_fee": {
+          "type": "string",
+          "example": "0.0001"
+        },
+        "maker_fee": {
+          "type": "string",
+          "example": "0.0000"
+        },
+        "liquidation_fee": {
+          "type": "string",
+          "example": "0.01"
+        },
+        "min_base_amount": {
+          "type": "string",
+          "example": "0.01"
+        },
+        "min_quote_amount": {
+          "type": "string",
+          "example": "0.1"
+        },
+        "order_quote_limit": {
+          "type": "string",
+          "example": "235.25"
+        },
+        "supported_size_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "supported_price_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "supported_quote_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "size_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "price_decimals": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "4"
+        },
+        "last_trade_price": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "daily_trades_count": {
+          "type": "integer",
+          "format": "int64",
+          "example": "68"
+        },
+        "daily_base_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "235.25"
+        },
+        "daily_quote_token_volume": {
+          "type": "number",
+          "format": "double",
+          "example": "93566.25"
+        },
+        "daily_price_low": {
+          "type": "number",
+          "format": "double",
+          "example": "3014.66"
+        },
+        "daily_price_high": {
+          "type": "number",
+          "format": "double",
+          "example": "3024.66"
+        },
+        "daily_price_change": {
+          "type": "number",
+          "format": "double",
+          "example": "3.66"
+        },
+        "daily_chart": {
+          "type": "object",
+          "example": "{1640995200:3024.66}",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "title": "SpotOrderBookDetail",
+      "required": [
+        "symbol",
+        "market_id",
+        "market_type",
+        "base_asset_id",
+        "quote_asset_id",
+        "status",
+        "taker_fee",
+        "maker_fee",
+        "liquidation_fee",
+        "min_base_amount",
+        "min_quote_amount",
+        "order_quote_limit",
+        "supported_size_decimals",
+        "supported_price_decimals",
+        "supported_quote_decimals",
+        "size_decimals",
+        "price_decimals",
+        "last_trade_price",
+        "daily_trades_count",
+        "daily_base_token_volume",
+        "daily_quote_token_volume",
+        "daily_price_low",
+        "daily_price_high",
+        "daily_price_change",
+        "daily_chart"
       ]
     },
     "Status": {
@@ -6733,12 +7616,13 @@
           "enum": [
             "trade",
             "liquidation",
-            "deleverage"
+            "deleverage",
+            "market-settlement"
           ]
         },
         "market_id": {
           "type": "integer",
-          "format": "uint8",
+          "format": "int16",
           "example": "1"
         },
         "size": {
@@ -6759,6 +7643,16 @@
           "example": "145"
         },
         "bid_id": {
+          "type": "integer",
+          "format": "int64",
+          "example": "245"
+        },
+        "ask_client_id": {
+          "type": "integer",
+          "format": "int64",
+          "example": "145"
+        },
+        "bid_client_id": {
           "type": "integer",
           "format": "int64",
           "example": "245"
@@ -6846,6 +7740,8 @@
         "usd_amount",
         "ask_id",
         "bid_id",
+        "ask_client_id",
+        "bid_client_id",
         "ask_account_id",
         "bid_account_id",
         "is_maker_ask",
@@ -6946,6 +7842,11 @@
         "id": {
           "type": "string"
         },
+        "asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
         "amount": {
           "type": "string",
           "example": "0.1"
@@ -6959,7 +7860,12 @@
           "type": "string",
           "enum": [
             "L2TransferInflow",
-            "L2TransferOutflow"
+            "L2TransferOutflow",
+            "L2BurnSharesInflow",
+            "L2BurnSharesOutflow",
+            "L2MintSharesInflow",
+            "L2MintSharesOutflow",
+            "L2SelfTransfer"
           ]
         },
         "from_l1_address": {
@@ -6980,6 +7886,20 @@
           "format": "int64",
           "example": "1"
         },
+        "from_route": {
+          "type": "string",
+          "enum": [
+            "spot",
+            "perps"
+          ]
+        },
+        "to_route": {
+          "type": "string",
+          "enum": [
+            "spot",
+            "perps"
+          ]
+        },
         "tx_hash": {
           "type": "string",
           "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
@@ -6988,6 +7908,7 @@
       "title": "TransferHistoryItem",
       "required": [
         "id",
+        "asset_id",
         "amount",
         "timestamp",
         "type",
@@ -6995,6 +7916,8 @@
         "to_l1_address",
         "from_account_index",
         "to_account_index",
+        "from_route",
+        "to_route",
         "tx_hash"
       ]
     },
@@ -7072,6 +7995,11 @@
         "parent_hash": {
           "type": "string",
           "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+        },
+        "api_key_index": {
+          "type": "integer",
+          "format": "uint8",
+          "example": "0"
         }
       },
       "title": "Tx",
@@ -7090,7 +8018,8 @@
         "queued_at",
         "executed_at",
         "sequence_index",
-        "parent_hash"
+        "parent_hash",
+        "api_key_index"
       ]
     },
     "TxHash": {
@@ -7216,6 +8145,11 @@
         "id": {
           "type": "string"
         },
+        "asset_id": {
+          "type": "integer",
+          "format": "int16",
+          "example": "1"
+        },
         "amount": {
           "type": "string",
           "example": "0.1"
@@ -7250,6 +8184,7 @@
       "title": "WithdrawHistoryItem",
       "required": [
         "id",
+        "asset_id",
         "amount",
         "timestamp",
         "status",

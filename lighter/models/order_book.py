@@ -28,23 +28,34 @@ class OrderBook(BaseModel):
     """ # noqa: E501
     symbol: StrictStr
     market_id: StrictInt
+    market_type: StrictStr
+    base_asset_id: StrictInt
+    quote_asset_id: StrictInt
     status: StrictStr
     taker_fee: StrictStr
     maker_fee: StrictStr
     liquidation_fee: StrictStr
     min_base_amount: StrictStr
     min_quote_amount: StrictStr
+    order_quote_limit: StrictStr
     supported_size_decimals: StrictInt
     supported_price_decimals: StrictInt
     supported_quote_decimals: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals"]
+
+    @field_validator('market_type')
+    def market_type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['perp', 'spot']):
+            raise ValueError("must be one of enum values ('perp', 'spot')")
+        return value
 
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['inactive', 'frozen', 'active']):
-            raise ValueError("must be one of enum values ('inactive', 'frozen', 'active')")
+        if value not in set(['inactive', 'active']):
+            raise ValueError("must be one of enum values ('inactive', 'active')")
         return value
 
     model_config = ConfigDict(
@@ -107,12 +118,16 @@ class OrderBook(BaseModel):
         _obj = cls.model_validate({
             "symbol": obj.get("symbol"),
             "market_id": obj.get("market_id"),
+            "market_type": obj.get("market_type"),
+            "base_asset_id": obj.get("base_asset_id"),
+            "quote_asset_id": obj.get("quote_asset_id"),
             "status": obj.get("status"),
             "taker_fee": obj.get("taker_fee"),
             "maker_fee": obj.get("maker_fee"),
             "liquidation_fee": obj.get("liquidation_fee"),
             "min_base_amount": obj.get("min_base_amount"),
             "min_quote_amount": obj.get("min_quote_amount"),
+            "order_quote_limit": obj.get("order_quote_limit"),
             "supported_size_decimals": obj.get("supported_size_decimals"),
             "supported_price_decimals": obj.get("supported_price_decimals"),
             "supported_quote_decimals": obj.get("supported_quote_decimals")

@@ -27,6 +27,7 @@ class TransferHistoryItem(BaseModel):
     TransferHistoryItem
     """ # noqa: E501
     id: StrictStr
+    asset_id: StrictInt
     amount: StrictStr
     timestamp: StrictInt
     type: StrictStr
@@ -34,15 +35,31 @@ class TransferHistoryItem(BaseModel):
     to_l1_address: StrictStr
     from_account_index: StrictInt
     to_account_index: StrictInt
+    from_route: StrictStr
+    to_route: StrictStr
     tx_hash: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["id", "amount", "timestamp", "type", "from_l1_address", "to_l1_address", "from_account_index", "to_account_index", "tx_hash"]
+    __properties: ClassVar[List[str]] = ["id", "asset_id", "amount", "timestamp", "type", "from_l1_address", "to_l1_address", "from_account_index", "to_account_index", "from_route", "to_route", "tx_hash"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['L2TransferInflow', 'L2TransferOutflow']):
-            raise ValueError("must be one of enum values ('L2TransferInflow', 'L2TransferOutflow')")
+        if value not in set(['L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer']):
+            raise ValueError("must be one of enum values ('L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer')")
+        return value
+
+    @field_validator('from_route')
+    def from_route_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['spot', 'perps']):
+            raise ValueError("must be one of enum values ('spot', 'perps')")
+        return value
+
+    @field_validator('to_route')
+    def to_route_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['spot', 'perps']):
+            raise ValueError("must be one of enum values ('spot', 'perps')")
         return value
 
     model_config = ConfigDict(
@@ -104,6 +121,7 @@ class TransferHistoryItem(BaseModel):
 
         _obj = cls.model_validate({
             "id": obj.get("id"),
+            "asset_id": obj.get("asset_id"),
             "amount": obj.get("amount"),
             "timestamp": obj.get("timestamp"),
             "type": obj.get("type"),
@@ -111,6 +129,8 @@ class TransferHistoryItem(BaseModel):
             "to_l1_address": obj.get("to_l1_address"),
             "from_account_index": obj.get("from_account_index"),
             "to_account_index": obj.get("to_account_index"),
+            "from_route": obj.get("from_route"),
+            "to_route": obj.get("to_route"),
             "tx_hash": obj.get("tx_hash")
         })
         # store additional fields in additional_properties

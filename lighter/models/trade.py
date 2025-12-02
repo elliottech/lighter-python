@@ -35,6 +35,8 @@ class Trade(BaseModel):
     usd_amount: StrictStr
     ask_id: StrictInt
     bid_id: StrictInt
+    ask_client_id: StrictInt
+    bid_client_id: StrictInt
     ask_account_id: StrictInt
     bid_account_id: StrictInt
     is_maker_ask: StrictBool
@@ -51,13 +53,13 @@ class Trade(BaseModel):
     maker_initial_margin_fraction_before: Optional[StrictInt]
     maker_position_sign_changed: Optional[StrictBool]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed"]
+    __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_client_id", "bid_client_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['trade', 'liquidation', 'deleverage']):
-            raise ValueError("must be one of enum values ('trade', 'liquidation', 'deleverage')")
+        if value not in set(['trade', 'liquidation', 'deleverage', 'market-settlement']):
+            raise ValueError("must be one of enum values ('trade', 'liquidation', 'deleverage', 'market-settlement')")
         return value
 
     model_config = ConfigDict(
@@ -127,6 +129,8 @@ class Trade(BaseModel):
             "usd_amount": obj.get("usd_amount"),
             "ask_id": obj.get("ask_id"),
             "bid_id": obj.get("bid_id"),
+            "ask_client_id": obj.get("ask_client_id"),
+            "bid_client_id": obj.get("bid_client_id"),
             "ask_account_id": obj.get("ask_account_id"),
             "bid_account_id": obj.get("bid_account_id"),
             "is_maker_ask": obj.get("is_maker_ask"),

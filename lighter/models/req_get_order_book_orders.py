@@ -28,7 +28,7 @@ class ReqGetOrderBookOrders(BaseModel):
     ReqGetOrderBookOrders
     """ # noqa: E501
     market_id: StrictInt
-    limit: Annotated[int, Field(le=100, strict=True, ge=1)]
+    limit: Annotated[int, Field(le=250, strict=True, ge=1)]
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["market_id", "limit"]
 

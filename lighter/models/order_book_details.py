@@ -19,7 +19,8 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from lighter.models.order_book_detail import OrderBookDetail
+from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
+from lighter.models.spot_order_book_detail import SpotOrderBookDetail
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,9 +30,10 @@ class OrderBookDetails(BaseModel):
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    order_book_details: List[OrderBookDetail]
+    order_book_details: List[PerpsOrderBookDetail]
+    spot_order_book_details: List[SpotOrderBookDetail]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "order_book_details"]
+    __properties: ClassVar[List[str]] = ["code", "message", "order_book_details", "spot_order_book_details"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -81,6 +83,13 @@ class OrderBookDetails(BaseModel):
                 if _item:
                     _items.append(_item.to_dict())
             _dict['order_book_details'] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in spot_order_book_details (list)
+        _items = []
+        if self.spot_order_book_details:
+            for _item in self.spot_order_book_details:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['spot_order_book_details'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -100,7 +109,8 @@ class OrderBookDetails(BaseModel):
         _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "order_book_details": [OrderBookDetail.from_dict(_item) for _item in obj["order_book_details"]] if obj.get("order_book_details") is not None else None
+            "order_book_details": [PerpsOrderBookDetail.from_dict(_item) for _item in obj["order_book_details"]] if obj.get("order_book_details") is not None else None,
+            "spot_order_book_details": [SpotOrderBookDetail.from_dict(_item) for _item in obj["spot_order_book_details"]] if obj.get("spot_order_book_details") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

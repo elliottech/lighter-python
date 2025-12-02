@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -27,8 +27,19 @@ class ReqGetOrderBookDetails(BaseModel):
     ReqGetOrderBookDetails
     """ # noqa: E501
     market_id: Optional[StrictInt] = None
+    filter: Optional[StrictStr] = 'all'
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["market_id"]
+    __properties: ClassVar[List[str]] = ["market_id", "filter"]
+
+    @field_validator('filter')
+    def filter_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['all', 'spot', 'perp']):
+            raise ValueError("must be one of enum values ('all', 'spot', 'perp')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,7 +99,8 @@ class ReqGetOrderBookDetails(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "market_id": obj.get("market_id")
+            "market_id": obj.get("market_id"),
+            "filter": obj.get("filter") if obj.get("filter") is not None else 'all'
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
