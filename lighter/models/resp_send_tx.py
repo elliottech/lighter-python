@@ -30,7 +30,7 @@ class RespSendTx(BaseModel):
     message: Optional[StrictStr] = None
     tx_hash: StrictStr
     predicted_execution_time_ms: StrictInt
-    volume_quota_remaining: StrictInt
+    volume_quota_remaining: Optional[StrictInt] = None
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "tx_hash", "predicted_execution_time_ms", "volume_quota_remaining"]
 
