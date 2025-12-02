@@ -19,6 +19,11 @@
   - same flow as `create_modify_cancel_order_http.py`
   - sends TXs over WS instead of HTTP
 
+- `create_market_order_eth_buy.py`
+  - creates a market buy order for 0.1 ETH @ market price
+- `create_market_order_eth_sell.py`
+  - creates a market sell order for 0.1 ETH @ market price
+
 - `create_grouped_ioc_with_attached_sl_tp.py`
   - creates an ask (sell) IoC order for 0.1 ETH
   - along w/ the order, it sets up a Stop Loss (SL) and a Take Profit (TP) order for the whole size of the order
@@ -31,7 +36,7 @@
   - the orders will grow / shrink as you accumulate more position
   - the SL/TP orders are canceled when the sign of your position changes
 
-### On SL/TP orders
+## On SL/TP orders
 SL/TP orders need to be configured beyond just setting the trigger price. When the trigger price is set, 
 the order will just be executed, like a normal order. This means that a market order, for example, might not have enough slippage! \
 Let's say that you have a 1 BTC long position, and the current price is $110'000. \
@@ -43,7 +48,7 @@ What about the order types? Just as normal orders, SL/TP orders trigger an order
 - market order
 - limit IOC / GTC
 
-### Modify leverage / Margin Mode (Cross, Isolated) / Add Collateral to isolated-only positions
+## Modify leverage / Margin Mode (Cross, Isolated) / Add Collateral to isolated-only positions
 - `margin_eth_20x_cross_http`
   - sets ETH market to 20x leverage and cross-margin mode, using HTTP
 - `margin_eth_50x_isolate_ws`
@@ -53,13 +58,50 @@ What about the order types? Just as normal orders, SL/TP orders trigger an order
 - `margin_eth_remove_collateral_ws.py`
   - removes $5 USDC from the ETH position (must be opened and in isolated mode)
 
-### Batch orders
+## Batch orders
 - `send_batch_tx_http.py`
   - sends multiple orders in a single HTTP request
 - `send_batch_tx_ws.py`
   - sends multiple orders in a single WS request`
 
 Batch TXs will be executed back to back, without the possibility of other TXs interfering.
+
+## Spot Trading
+To trade spot markets, you need to have spot USDC. USDC used in your perpetual account will be used as collateral for your cross-positions.  
+USDC deposited in the spot account can only be used to buy spot assets.  
+To transfer USDC between spot <> perp balance, or vice verse, check out
+- `spot_self_transfer_perp_spot.py`
+- `spot_self_transfer_spot_perp.py`
+
+Order placement / trades work in the same way as for perpetual markets.  
+The fee will be paid in the received asset for premium spot trades.   
+This means that if you sell ETH, you'll receive less USDC, and if you BUY 1 ETH, you'll receive slightly less than 1 ETH.  
+You can check out the following examples, which should work on spot ETH by changing the market index to 2048 instead of 0.
+- `create_modify_cancel_order_http.py`
+- `create_modify_cancel_order_ws.py`
+- `create_market_order_eth_buy.py`
+- `create_market_order_eth_sell.py`
+- `send_batch_tx_http.py`
+- `send_batch_tx_ws.py`
+
+Trading setup is very similar to perpetual markets.  
+The only difference is that you'll need to hold USDC / ETH before placing an order.  
+For example, on perp markets you can place an order to short (sell) ETH without having to worry that much.    
+The limitation there would be to have enough available collateral to cover the order.  
+On spot orders, you need to have enough assets in your spot account to cover all open orders.  
+If you want to place two orders, to buy 1000 USDC worth of ETH and 1000 USDC worth of ZK, you'll need to have at least 2000 available USDC.  
+
+You can get the order book details (including symbol and market index) as well as quote asset id (ETH) and base asset id (USDC)  
+by following the example below:
+- `spot_get_order_books.py`
+
+Note: you'll need the quote asset id and base asset id to check available balance.  
+Available balance is not locked in open orders.
+
+To keep track of your spot balance, you can use HTTP calls or a websocket subscription.  
+Examples on how to do this can be found here:
+- `spot_get_account_assets_http.py`
+- `spot_get_account_assets_ws.py`
 
 ## Setup steps for mainnet
 - deposit money on Lighter to create an account first
