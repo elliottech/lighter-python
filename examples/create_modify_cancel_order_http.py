@@ -6,10 +6,13 @@ async def main():
     client, api_client, _ = default_example_setup()
     client.check_client()
 
+    # Note: change this to 2048 to trade spot ETH. Make sure you have at least 0.1 ETH to trade spot.
+    market_index = 0
+
     # create order
     api_key_index, nonce = client.nonce_manager.next_nonce()
     tx, tx_hash, err = await client.create_order(
-        market_index=0,
+        market_index=market_index,
         client_order_index=123,
         base_amount=1000,  # 0.1 ETH
         price=4050_00,  # $4050
@@ -29,7 +32,7 @@ async def main():
     # use the same API key so the TX goes after the create order TX
     api_key_index, nonce = client.nonce_manager.next_nonce(api_key_index)
     tx, tx_hash, err = await client.modify_order(
-        market_index=0,
+        market_index=market_index,
         order_index=123,
         base_amount=1100,  # 0.11 ETH
         price=4100_00,  # $4100
@@ -45,7 +48,7 @@ async def main():
     # use the same API key so the TX goes after the modify order TX
     api_key_index, nonce = client.nonce_manager.next_nonce(api_key_index)
     tx, tx_hash, err = await client.cancel_order(
-        market_index=0,
+        market_index=market_index,
         order_index=123,
         nonce=nonce,
         api_key_index=api_key_index,
