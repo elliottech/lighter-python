@@ -451,8 +451,8 @@ class SignerClient:
     def sign_cancel_order(self, market_index: int, order_index: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCancelOrder(market_index, order_index, nonce, api_key_index, self.account_index))
 
-    def sign_withdraw(self, usdc_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignWithdraw(usdc_amount, nonce, api_key_index, self.account_index))
+    def sign_withdraw(self, asset_index: int, route_type: int, amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignWithdraw(asset_index, route_type, amount, nonce, api_key_index, self.account_index))
 
     def sign_create_sub_account(self, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCreateSubAccount(nonce, api_key_index, self.account_index))
@@ -742,10 +742,15 @@ class SignerClient:
         )
 
     @process_api_key_and_nonce
-    async def withdraw(self, usdc_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
-        usdc_amount = int(usdc_amount * self.USDC_TICKER_SCALE)
+    async def withdraw(self, asset_id: int, route_type: int, amount: float, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
+        if asset_id == self.ASSET_ID_USDC:
+            amount = int(amount * self.USDC_TICKER_SCALE)
+        elif asset_id == self.ASSET_ID_ETH:
+            amount = int(amount * self.ETH_TICKER_SCALE)
+        else:
+            raise ValueError(f"Unsupported asset id: {asset_id}")
 
-        tx_type, tx_info, tx_hash, error = self.sign_withdraw(usdc_amount, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_withdraw(asset_id, route_type, amount, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
