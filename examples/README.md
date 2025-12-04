@@ -103,6 +103,13 @@ Examples on how to do this can be found here:
 - `spot_get_account_assets_http.py`
 - `spot_get_account_assets_ws.py`
 
+Moving money to / from subaccounts is possible for spot assets. 
+For USDC, you can move directly from main perp balance to subaccount spot balance, for example.
+More details can be found in the following example:
+- `sub_account_create.py`
+- `sub_account_transfer_eth.py`
+- `sub_account_transfer_usdc.py`
+
 ## Public Pools
 Public pools behave just like subaccounts, except that anyone can join them.  
 You can create / modify a public pool using the SDK. Check out the following example:
@@ -117,6 +124,33 @@ If you want to deposit / withdraw from a public pool, check the following exampl
 
 To get information about pools, check:
 - `public_pool_info.py`
+
+## Moving funds around
+- `withdraw_fast.py`
+  - send USDC directly from Lighter to Arbitrum
+- `withdraw_normal.py`
+  - send USDC/ETH from Lighter to Ethereum
+- `transfer.py`
+  - generic example of how to transfer funds between accounts.
+  - same functionality as `sub_account_transfer_eth` and `sub_account_transfer_usdc`
+
+## Transfer Notes
+The `memo` field is a user message, and it has to be exactly 32 bytes long. In case of fast withdrawals, you need to specify the recipient in the memo.  
+This is the case since the memo is part of the signature. This way, the recipient is verified.   
+
+When calling `client.transfer`, you pass the amount without needing to worry about the decimals.   
+When calling `client.sign_transfer` on the other hand, you need to specify the decimals and pass an integer.  
+
+The `fee` field can be obtained by calling `info_api.transfer_fee_info(...)`. The field can be passed as it is.  
+Transfers between subaccounts are free for all assets.
+
+When sending assets, you can specify the source and destination routes.  
+A route is either `perp` or `spot`. You can send USDC directly from your perp balance to another person's spot balance.  
+If you receive USDC in your perp account, it will be instantly used as collateral for open positions.  
+This also allows you to move USDC from your spot balance to your perp balance.  
+Spot assets (like ETH) need to have both the from and to route set to `spot`. 
+You can get all `asset_id`s by following the example below: 
+- `spot_get_order_books.py`
 
 ## Setup steps for mainnet
 - deposit money on Lighter to create an account first

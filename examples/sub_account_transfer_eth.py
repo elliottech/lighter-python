@@ -1,5 +1,4 @@
 import asyncio
-import lighter
 from utils import default_example_setup
 
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
@@ -13,9 +12,7 @@ async def main():
         print(f"CheckClient error: {err}")
         return
 
-    memo = "a"*32  # memo is a user message, and it has to be exactly 32 bytes long
-
-    # Note: For ETH transfers, the only acceptable route is SPOT -> SPOT
+    # You can find more notes on transfers in the README.md file, under `Transfer Notes`
     transfer_tx, response, err = await client.transfer(
         ETH_PRIVATE_KEY,
         to_account_index=TO_ACCOUNT_INDEX,
@@ -24,7 +21,7 @@ async def main():
         route_from=client.ROUTE_SPOT,
         route_to=client.ROUTE_SPOT,
         fee=0,
-        memo=memo,
+        memo="0x" + "00" * 32,
     )
     if err is not None:
        raise Exception(f"error transferring {err}")

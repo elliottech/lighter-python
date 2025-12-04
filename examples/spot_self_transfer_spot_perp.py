@@ -12,7 +12,7 @@ async def main():
         print(f"CheckClient error: {err}")
         return
 
-    memo = "a"*32  # memo is a user message, and it has to be exactly 32 bytes long
+    # You can find more notes on transfers in the README.md file, under `Transfer Notes`
     transfer_tx, response, err = await client.transfer(
         ETH_PRIVATE_KEY,
         to_account_index=client.account_index,
@@ -21,7 +21,7 @@ async def main():
         route_from=client.ROUTE_SPOT,
         route_to=client.ROUTE_PERP,
         fee=0,
-        memo=memo,
+        memo="0x" + "00" * 32,
     )
     if err is not None:
        raise Exception(f"error transferring {err}")

@@ -2,37 +2,36 @@ import asyncio
 import lighter
 from utils import default_example_setup
 
+ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
 TO_ACCOUNT_INDEX = 9
-ETH_PRIVATE_KEY = "0x..."
 
 
 async def main():
     client, api_client, _ = default_example_setup()
     info_api = lighter.InfoApi(api_client)
 
-    auth_token, _ = client.create_auth_token_with_expiry()
+    auth_token, err = client.create_auth_token_with_expiry()
+    if err:
+        raise Exception(f"Auth token failed: {err}")
+
     fee_info = await info_api.transfer_fee_info(client.account_index, authorization=auth_token, auth=auth_token, to_account_index=TO_ACCOUNT_INDEX)
-    print(fee_info)
 
-    err = client.check_client()
-    if err is not None:
-        print(f"CheckClient error: {err}")
-        return
-
-    memo = "a"*32  # memo is a user message, and it has to be exactly 32 bytes long
+    # You can find more notes on transfers in the README.md file, under `Transfer Notes`
     transfer_tx, response, err = await client.transfer(
-        ETH_PRIVATE_KEY,
-        usdc_amount=100,  # decimals are added by sdk
+        eth_private_key=ETH_PRIVATE_KEY,
         to_account_index=TO_ACCOUNT_INDEX,
+        asset_id=client.ASSET_ID_USDC,
+        route_from=client.ROUTE_PERP,
+        route_to=client.ROUTE_PERP,
+        amount=5,  # decimals are added by sdk
         fee=fee_info.transfer_fee_usdc,
-        memo=memo,
+        memo="0x" + "00" * 32,
     )
     if err is not None:
-       raise Exception(f"error transferring {err}")
+        raise Exception(f"error transferring {err}")
+
     print(transfer_tx, response)
 
-    lev_tx, response, err = await client.update_leverage(4, client.CROSS_MARGIN_MODE, 3)
-    print(lev_tx, response, err)
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,5 +1,4 @@
 import asyncio
-import lighter
 from utils import default_example_setup
 
 
