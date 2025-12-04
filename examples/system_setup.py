@@ -14,6 +14,10 @@ ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345
 API_KEY_INDEX = 3
 NUM_API_KEYS = 5
 
+# If you set this to something other than None, the script will use that account index instead of using the master account index.
+# This is useful if you have multiple accounts on the same L1 address or are the owner of a public pool.
+# You need to use the private key associated to the master account or the owner of the public pool to change the API keys.
+ACCOUNT_INDEX = None
 
 async def main():
     # verify that the account exists & fetch account index
@@ -21,25 +25,28 @@ async def main():
     eth_acc = eth_account.Account.from_key(ETH_PRIVATE_KEY)
     eth_address = eth_acc.address
 
-    try:
-        response = await lighter.AccountApi(api_client).accounts_by_l1_address(
-            l1_address=eth_address
-        )
-    except lighter.ApiException as e:
-        if e.data.message == "account not found":
-            print(f"error: account not found for {eth_address}")
-            return
-        else:
-            raise e
-
-    if len(response.sub_accounts) > 1:
-        for sub_account in response.sub_accounts:
-            print(f"found accountIndex: {sub_account.index}")
-
-        print("multiple accounts found, using the first one")
-        account_index = response.sub_accounts[0].index
+    if ACCOUNT_INDEX is not None:
+        account_index = ACCOUNT_INDEX
     else:
-        account_index = response.sub_accounts[0].index
+        try:
+            response = await lighter.AccountApi(api_client).accounts_by_l1_address(l1_address=eth_address)
+        except lighter.ApiException as e:
+            if e.data.message == "account not found":
+                print(f"error: account not found for {eth_address}")
+                return
+            else:
+                raise e
+
+        if len(response.sub_accounts) > 1:
+            for sub_account in response.sub_accounts:
+                print(f"found accountIndex: {sub_account.index}")
+
+            account = min(response.sub_accounts, key=lambda x: int(x.index))
+            account_index = account.index
+            print(f"multiple accounts found, using the master account {account_index}")
+        else:
+            account_index = response.sub_accounts[0].index
+
 
     # create a private/public key pair for the new API key
     # pass any string to be used as seed for create_api_key like
