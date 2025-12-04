@@ -107,7 +107,7 @@ def __populate_shared_library_functions(signer):
     signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelOrder.restype = SignedTxResponse
 
-    signer.SignWithdraw.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_ulonglong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignWithdraw.restype = SignedTxResponse
 
     signer.SignCreateSubAccount.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -444,8 +444,8 @@ class SignerClient:
     def sign_cancel_order(self, market_index: int, order_index: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCancelOrder(market_index, order_index, nonce, api_key_index, self.account_index))
 
-    def sign_withdraw(self, usdc_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignWithdraw(usdc_amount, nonce, api_key_index, self.account_index))
+    def sign_withdraw(self, asset_index: int, route_type: int, usdc_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignWithdraw(asset_index, route_type, usdc_amount, nonce, api_key_index, self.account_index))
 
     def sign_create_sub_account(self, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCreateSubAccount(nonce, api_key_index, self.account_index))
@@ -735,10 +735,10 @@ class SignerClient:
         )
 
     @process_api_key_and_nonce
-    async def withdraw(self, usdc_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
+    async def withdraw(self, usdc_amount, asset_index: int = 3, route_type: int = 0, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
         usdc_amount = int(usdc_amount * self.USDC_TICKER_SCALE)
 
-        tx_type, tx_info, tx_hash, error = self.sign_withdraw(usdc_amount, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_withdraw(asset_index, route_type, usdc_amount, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
