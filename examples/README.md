@@ -103,6 +103,21 @@ Examples on how to do this can be found here:
 - `spot_get_account_assets_http.py`
 - `spot_get_account_assets_ws.py`
 
+## Public Pools
+Public pools behave just like subaccounts, except that anyone can join them.  
+You can create / modify a public pool using the SDK. Check out the following example:
+- `public_pool_create_modify.py` 
+
+To create API keys for a public pool, you need to run the setup script but specify the `ACCOUNT_INDEX` to be the one of the public pool.  
+After that, you can trade from the public as from any other account.
+
+If you want to deposit / withdraw from a public pool, check the following example:
+- `public_pool_deposit.py`
+- `public_pool_withdraw.py`
+
+To get information about pools, check:
+- `public_pool_info.py`
+
 ## Setup steps for mainnet
 - deposit money on Lighter to create an account first
 - change the URL to `mainnet.zklighter.elliot.ai`
