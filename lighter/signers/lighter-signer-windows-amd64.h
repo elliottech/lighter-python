@@ -111,7 +111,7 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern __declspec(dllexport) ApiKeyResponse GenerateAPIKey(char* cSeed);
+extern __declspec(dllexport) ApiKeyResponse GenerateAPIKey();
 extern __declspec(dllexport) char* CreateClient(char* cUrl, char* cPrivateKey, int cChainId, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) char* CheckClient(int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) SignedTxResponse SignChangePubKey(char* cPubKey, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);

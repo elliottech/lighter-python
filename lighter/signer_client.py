@@ -85,7 +85,7 @@ def __get_shared_library():
 
 
 def __populate_shared_library_functions(signer):
-    signer.GenerateAPIKey.argtypes = [ctypes.c_char_p]
+    signer.GenerateAPIKey.argtypes = []
     signer.GenerateAPIKey.restype = ApiKeyResponse
 
     signer.CreateClient.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_longlong]
@@ -159,8 +159,8 @@ def get_signer():
     return __signer
 
 
-def create_api_key(seed=""):
-    result = get_signer().GenerateAPIKey(ctypes.c_char_p(seed.encode("utf-8")))
+def create_api_key():
+    result = get_signer().GenerateAPIKey()
 
     private_key_str = result.privateKey.decode("utf-8") if result.privateKey else None
     public_key_str = result.publicKey.decode("utf-8") if result.publicKey else None
@@ -359,8 +359,8 @@ class SignerClient:
         return None
 
     @staticmethod
-    def create_api_key(self, seed=""):
-        return create_api_key(seed=seed)
+    def create_api_key(self):
+        return create_api_key()
 
     def get_api_key_nonce(self, api_key_index: int, nonce: int) -> Tuple[int, int]:
         if api_key_index != self.DEFAULT_API_KEY_INDEX and nonce != self.DEFAULT_NONCE:
