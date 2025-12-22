@@ -3,7 +3,6 @@ from websockets.sync.client import connect
 from websockets.client import connect as connect_async
 from lighter.configuration import Configuration
 
-
 class WsClient:
     def __init__(
         self,
@@ -51,6 +50,9 @@ class WsClient:
             self.handle_subscribed_account(message)
         elif message_type == "update/account_all":
             self.handle_update_account(message)
+        elif message_type == "ping":
+            # Respond to ping with pong
+            ws.send(json.dumps({"type": "pong"}))
         else:
             self.handle_unhandled_message(message)
 
@@ -60,6 +62,9 @@ class WsClient:
 
         if message_type == "connected":
             await self.handle_connected_async(ws)
+        elif message_type == "ping":
+            # Respond to ping with pong
+            await ws.send(json.dumps({"type": "pong"}))
         else:
             self.on_message(ws, message)
 

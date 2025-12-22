@@ -31,12 +31,16 @@ class DetailedCandlestick(BaseModel):
     high: Union[StrictFloat, StrictInt]
     low: Union[StrictFloat, StrictInt]
     close: Union[StrictFloat, StrictInt]
+    open_raw: Union[StrictFloat, StrictInt]
+    high_raw: Union[StrictFloat, StrictInt]
+    low_raw: Union[StrictFloat, StrictInt]
+    close_raw: Union[StrictFloat, StrictInt]
     volume0: Union[StrictFloat, StrictInt]
     volume1: Union[StrictFloat, StrictInt]
     last_trade_id: StrictInt
     trade_count: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["timestamp", "open", "high", "low", "close", "volume0", "volume1", "last_trade_id", "trade_count"]
+    __properties: ClassVar[List[str]] = ["timestamp", "open", "high", "low", "close", "open_raw", "high_raw", "low_raw", "close_raw", "volume0", "volume1", "last_trade_id", "trade_count"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -101,6 +105,10 @@ class DetailedCandlestick(BaseModel):
             "high": obj.get("high"),
             "low": obj.get("low"),
             "close": obj.get("close"),
+            "open_raw": obj.get("open_raw"),
+            "high_raw": obj.get("high_raw"),
+            "low_raw": obj.get("low_raw"),
+            "close_raw": obj.get("close_raw"),
             "volume0": obj.get("volume0"),
             "volume1": obj.get("volume1"),
             "last_trade_id": obj.get("last_trade_id"),

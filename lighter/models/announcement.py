@@ -29,8 +29,9 @@ class Announcement(BaseModel):
     title: StrictStr
     content: StrictStr
     created_at: StrictInt
+    expired_at: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["title", "content", "created_at"]
+    __properties: ClassVar[List[str]] = ["title", "content", "created_at", "expired_at"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -92,7 +93,8 @@ class Announcement(BaseModel):
         _obj = cls.model_validate({
             "title": obj.get("title"),
             "content": obj.get("content"),
-            "created_at": obj.get("created_at")
+            "created_at": obj.get("created_at"),
+            "expired_at": obj.get("expired_at")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

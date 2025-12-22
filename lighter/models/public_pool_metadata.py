@@ -30,17 +30,20 @@ class PublicPoolMetadata(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     account_index: StrictInt
+    created_at: StrictInt
+    master_account_index: StrictInt
     account_type: StrictInt
     name: StrictStr
     l1_address: StrictStr
     annual_percentage_yield: Union[StrictFloat, StrictInt]
+    sharpe_ratio: Union[StrictFloat, StrictInt]
     status: StrictInt
     operator_fee: StrictStr
     total_asset_value: StrictStr
     total_shares: StrictInt
     account_share: Optional[PublicPoolShare] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_index", "account_type", "name", "l1_address", "annual_percentage_yield", "status", "operator_fee", "total_asset_value", "total_shares", "account_share"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_index", "created_at", "master_account_index", "account_type", "name", "l1_address", "annual_percentage_yield", "sharpe_ratio", "status", "operator_fee", "total_asset_value", "total_shares", "account_share"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -106,10 +109,13 @@ class PublicPoolMetadata(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "account_index": obj.get("account_index"),
+            "created_at": obj.get("created_at"),
+            "master_account_index": obj.get("master_account_index"),
             "account_type": obj.get("account_type"),
             "name": obj.get("name"),
             "l1_address": obj.get("l1_address"),
             "annual_percentage_yield": obj.get("annual_percentage_yield"),
+            "sharpe_ratio": obj.get("sharpe_ratio"),
             "status": obj.get("status"),
             "operator_fee": obj.get("operator_fee"),
             "total_asset_value": obj.get("total_asset_value"),

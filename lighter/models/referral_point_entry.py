@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,10 +27,10 @@ class ReferralPointEntry(BaseModel):
     ReferralPointEntry
     """ # noqa: E501
     l1_address: StrictStr
-    total_points: StrictInt
-    week_points: StrictInt
-    total_reward_points: StrictInt
-    week_reward_points: StrictInt
+    total_points: Union[StrictFloat, StrictInt]
+    week_points: Union[StrictFloat, StrictInt]
+    total_reward_points: Union[StrictFloat, StrictInt]
+    week_reward_points: Union[StrictFloat, StrictInt]
     reward_point_multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["l1_address", "total_points", "week_points", "total_reward_points", "week_reward_points", "reward_point_multiplier"]

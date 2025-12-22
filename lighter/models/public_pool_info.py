@@ -34,10 +34,11 @@ class PublicPoolInfo(BaseModel):
     total_shares: StrictInt
     operator_shares: StrictInt
     annual_percentage_yield: Union[StrictFloat, StrictInt]
+    sharpe_ratio: Union[StrictFloat, StrictInt]
     daily_returns: List[DailyReturn]
     share_prices: List[SharePrice]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "daily_returns", "share_prices"]
+    __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "sharpe_ratio", "daily_returns", "share_prices"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -117,6 +118,7 @@ class PublicPoolInfo(BaseModel):
             "total_shares": obj.get("total_shares"),
             "operator_shares": obj.get("operator_shares"),
             "annual_percentage_yield": obj.get("annual_percentage_yield"),
+            "sharpe_ratio": obj.get("sharpe_ratio"),
             "daily_returns": [DailyReturn.from_dict(_item) for _item in obj["daily_returns"]] if obj.get("daily_returns") is not None else None,
             "share_prices": [SharePrice.from_dict(_item) for _item in obj["share_prices"]] if obj.get("share_prices") is not None else None
         })

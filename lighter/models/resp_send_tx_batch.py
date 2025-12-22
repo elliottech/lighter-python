@@ -30,8 +30,9 @@ class RespSendTxBatch(BaseModel):
     message: Optional[StrictStr] = None
     tx_hash: List[StrictStr]
     predicted_execution_time_ms: StrictInt
+    volume_quota_remaining: Optional[StrictInt] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "tx_hash", "predicted_execution_time_ms"]
+    __properties: ClassVar[List[str]] = ["code", "message", "tx_hash", "predicted_execution_time_ms", "volume_quota_remaining"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -94,7 +95,8 @@ class RespSendTxBatch(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "tx_hash": obj.get("tx_hash"),
-            "predicted_execution_time_ms": obj.get("predicted_execution_time_ms")
+            "predicted_execution_time_ms": obj.get("predicted_execution_time_ms"),
+            "volume_quota_remaining": obj.get("volume_quota_remaining")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

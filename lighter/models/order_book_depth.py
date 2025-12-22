@@ -32,8 +32,9 @@ class OrderBookDepth(BaseModel):
     asks: List[PriceLevel]
     bids: List[PriceLevel]
     offset: StrictInt
+    nonce: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "asks", "bids", "offset"]
+    __properties: ClassVar[List[str]] = ["code", "message", "asks", "bids", "offset", "nonce"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -111,7 +112,8 @@ class OrderBookDepth(BaseModel):
             "message": obj.get("message"),
             "asks": [PriceLevel.from_dict(_item) for _item in obj["asks"]] if obj.get("asks") is not None else None,
             "bids": [PriceLevel.from_dict(_item) for _item in obj["bids"]] if obj.get("bids") is not None else None,
-            "offset": obj.get("offset")
+            "offset": obj.get("offset"),
+            "nonce": obj.get("nonce")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

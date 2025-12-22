@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -29,9 +29,11 @@ class AccountLimits(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     max_llp_percentage: StrictInt
+    max_llp_amount: StrictStr
     user_tier: StrictStr
+    can_create_public_pool: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "max_llp_percentage", "user_tier"]
+    __properties: ClassVar[List[str]] = ["code", "message", "max_llp_percentage", "max_llp_amount", "user_tier", "can_create_public_pool"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -94,7 +96,9 @@ class AccountLimits(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "max_llp_percentage": obj.get("max_llp_percentage"),
-            "user_tier": obj.get("user_tier")
+            "max_llp_amount": obj.get("max_llp_amount"),
+            "user_tier": obj.get("user_tier"),
+            "can_create_public_pool": obj.get("can_create_public_pool")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

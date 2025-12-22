@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
@@ -36,9 +36,12 @@ class ReqGetTrades(BaseModel):
     cursor: Optional[StrictStr] = None
     var_from: Optional[StrictInt] = Field(default=-1, alias="from")
     ask_filter: Optional[StrictInt] = None
+    role: Optional[StrictStr] = 'all'
+    type: Optional[StrictStr] = 'all'
     limit: Annotated[int, Field(le=100, strict=True, ge=1)]
+    aggregate: Optional[StrictBool] = False
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["auth", "market_id", "account_index", "order_index", "sort_by", "sort_dir", "cursor", "from", "ask_filter", "limit"]
+    __properties: ClassVar[List[str]] = ["auth", "market_id", "account_index", "order_index", "sort_by", "sort_dir", "cursor", "from", "ask_filter", "role", "type", "limit", "aggregate"]
 
     @field_validator('sort_by')
     def sort_by_validate_enum(cls, value):
@@ -55,6 +58,26 @@ class ReqGetTrades(BaseModel):
 
         if value not in set(['desc']):
             raise ValueError("must be one of enum values ('desc')")
+        return value
+
+    @field_validator('role')
+    def role_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['all', 'maker', 'taker']):
+            raise ValueError("must be one of enum values ('all', 'maker', 'taker')")
+        return value
+
+    @field_validator('type')
+    def type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set(['all', 'trade', 'liquidation', 'deleverage', 'market-settlement']):
+            raise ValueError("must be one of enum values ('all', 'trade', 'liquidation', 'deleverage', 'market-settlement')")
         return value
 
     model_config = ConfigDict(
@@ -124,7 +147,10 @@ class ReqGetTrades(BaseModel):
             "cursor": obj.get("cursor"),
             "from": obj.get("from") if obj.get("from") is not None else -1,
             "ask_filter": obj.get("ask_filter"),
-            "limit": obj.get("limit")
+            "role": obj.get("role") if obj.get("role") is not None else 'all',
+            "type": obj.get("type") if obj.get("type") is not None else 'all',
+            "limit": obj.get("limit"),
+            "aggregate": obj.get("aggregate") if obj.get("aggregate") is not None else False
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

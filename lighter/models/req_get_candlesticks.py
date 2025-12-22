@@ -39,8 +39,8 @@ class ReqGetCandlesticks(BaseModel):
     @field_validator('resolution')
     def resolution_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['1m', '5m', '15m', '1h', '4h', '1d']):
-            raise ValueError("must be one of enum values ('1m', '5m', '15m', '1h', '4h', '1d')")
+        if value not in set(['1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d', '1w']):
+            raise ValueError("must be one of enum values ('1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d', '1w')")
         return value
 
     model_config = ConfigDict(

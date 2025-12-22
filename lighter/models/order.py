@@ -57,8 +57,10 @@ class Order(BaseModel):
     to_cancel_order_id_0: StrictStr
     block_height: StrictInt
     timestamp: StrictInt
+    created_at: StrictInt
+    updated_at: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "block_height", "timestamp"]
+    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "block_height", "timestamp", "created_at", "updated_at"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
@@ -77,8 +79,8 @@ class Order(BaseModel):
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['in-progress', 'pending', 'open', 'filled', 'canceled', 'canceled-post-only', 'canceled-reduce-only', 'canceled-position-not-allowed', 'canceled-margin-not-allowed', 'canceled-too-much-slippage', 'canceled-not-enough-liquidity', 'canceled-self-trade', 'canceled-expired', 'canceled-oco', 'canceled-child', 'canceled-liquidation']):
-            raise ValueError("must be one of enum values ('in-progress', 'pending', 'open', 'filled', 'canceled', 'canceled-post-only', 'canceled-reduce-only', 'canceled-position-not-allowed', 'canceled-margin-not-allowed', 'canceled-too-much-slippage', 'canceled-not-enough-liquidity', 'canceled-self-trade', 'canceled-expired', 'canceled-oco', 'canceled-child', 'canceled-liquidation')")
+        if value not in set(['in-progress', 'pending', 'open', 'filled', 'canceled', 'canceled-post-only', 'canceled-reduce-only', 'canceled-position-not-allowed', 'canceled-margin-not-allowed', 'canceled-too-much-slippage', 'canceled-not-enough-liquidity', 'canceled-self-trade', 'canceled-expired', 'canceled-oco', 'canceled-child', 'canceled-liquidation', 'canceled-invalid-balance']):
+            raise ValueError("must be one of enum values ('in-progress', 'pending', 'open', 'filled', 'canceled', 'canceled-post-only', 'canceled-reduce-only', 'canceled-position-not-allowed', 'canceled-margin-not-allowed', 'canceled-too-much-slippage', 'canceled-not-enough-liquidity', 'canceled-self-trade', 'canceled-expired', 'canceled-oco', 'canceled-child', 'canceled-liquidation', 'canceled-invalid-balance')")
         return value
 
     @field_validator('trigger_status')
@@ -176,7 +178,9 @@ class Order(BaseModel):
             "to_trigger_order_id_1": obj.get("to_trigger_order_id_1"),
             "to_cancel_order_id_0": obj.get("to_cancel_order_id_0"),
             "block_height": obj.get("block_height"),
-            "timestamp": obj.get("timestamp")
+            "timestamp": obj.get("timestamp"),
+            "created_at": obj.get("created_at"),
+            "updated_at": obj.get("updated_at")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
