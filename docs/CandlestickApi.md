@@ -4,7 +4,7 @@ All URIs are relative to *https://mainnet.zklighter.elliot.ai*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**candlesticks**](CandlestickApi.md#candlesticks) | **GET** /api/v1/candlesticks | candlesticks
+[**candlesticks**](CandlestickApi.md#candlesticks) | **GET** /api/v1/candles | candlesticks
 [**fundings**](CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
 
 

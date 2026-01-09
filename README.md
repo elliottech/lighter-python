@@ -78,7 +78,7 @@ Class | Method | HTTP request | Description
 *BlockApi* | [**block**](docs/BlockApi.md#block) | **GET** /api/v1/block | block
 *BlockApi* | [**blocks**](docs/BlockApi.md#blocks) | **GET** /api/v1/blocks | blocks
 *BlockApi* | [**current_height**](docs/BlockApi.md#current_height) | **GET** /api/v1/currentHeight | currentHeight
-*CandlestickApi* | [**candlesticks**](docs/CandlestickApi.md#candlesticks) | **GET** /api/v1/candlesticks | candlesticks
+*CandlestickApi* | [**candlesticks**](docs/CandlestickApi.md#candlesticks) | **GET** /api/v1/candles | candlesticks
 *CandlestickApi* | [**fundings**](docs/CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
 *OrderApi* | [**account_inactive_orders**](docs/OrderApi.md#account_inactive_orders) | **GET** /api/v1/accountInactiveOrders | accountInactiveOrders
 *OrderApi* | [**exchange_stats**](docs/OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats

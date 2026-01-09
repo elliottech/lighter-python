@@ -773,7 +773,7 @@
         "description": "Get if next bridge is fast"
       }
     },
-    "/api/v1/candlesticks": {
+    "/api/v1/candles": {
       "get": {
         "summary": "candlesticks",
         "operationId": "candlesticks",
