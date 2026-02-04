@@ -145,7 +145,7 @@ Re-running the setup script generates new API keys for index 253, which invalida
 ### Best Practices
 
 1. **Store tokens securely**: The `auth-tokens.json` file contains sensitive data (read only, but still)
-2. **Dedicated API key**: Use API key 253 for read-only token generation, as it can be invalidated easely.
+2. **Dedicated API key**: Use API key 253 for read-only token generation, as it can be invalidated easily.
 
 
 ## Troubleshooting
