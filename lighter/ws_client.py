@@ -173,7 +173,7 @@ class WsClient:
             if self.ws and not self.stop_event.is_set():
                 try:
                     self.ws.send(json.dumps({"type": "ping"}))
-                except:
+                except Exception:
                     break
 
     async def _ping_loop_async(self):
@@ -182,7 +182,7 @@ class WsClient:
             if self.ws and not self.stop_event.is_set():
                 try:
                     await self.ws.send(json.dumps({"type": "ping"}))
-                except:
+                except Exception:
                     break
 
     def run(self):
