@@ -1,4 +1,7 @@
 import json
+import threading
+import asyncio
+import time
 from websockets.sync.client import connect
 from websockets.client import connect as connect_async
 from lighter.configuration import Configuration
@@ -12,6 +15,7 @@ class WsClient:
         account_ids=[],
         on_order_book_update=print,
         on_account_update=print,
+        ping_interval=30,
     ):
         if host is None:
             host = Configuration.get_default().host.replace("https://", "")
@@ -33,6 +37,8 @@ class WsClient:
         self.on_account_update = on_account_update
 
         self.ws = None
+        self.ping_interval = ping_interval
+        self.stop_event = threading.Event()
 
     def on_message(self, ws, message):
         if isinstance(message, str):
@@ -148,21 +154,57 @@ class WsClient:
         raise Exception(f"Unhandled message: {message}")
 
     def on_error(self, ws, error):
+        self.stop_event.set()
         raise Exception(f"Error: {error}")
 
     def on_close(self, ws, close_status_code, close_msg):
+        self.stop_event.set()
         raise Exception(f"Closed: {close_status_code} {close_msg}")
 
+    def _ping_loop(self):
+        while not self.stop_event.is_set():
+            time.sleep(self.ping_interval)
+            if self.ws and not self.stop_event.is_set():
+                try:
+                    self.ws.send(json.dumps({"type": "ping"}))
+                except:
+                    break
+
+    async def _ping_loop_async(self):
+        while not self.stop_event.is_set():
+            await asyncio.sleep(self.ping_interval)
+            if self.ws and not self.stop_event.is_set():
+                try:
+                    await self.ws.send(json.dumps({"type": "ping"}))
+                except:
+                    break
+
     def run(self):
+        self.stop_event.clear()
         ws = connect(self.base_url)
         self.ws = ws
 
-        for message in ws:
-            self.on_message(ws, message)
+        ping_thread = threading.Thread(target=self._ping_loop, daemon=True)
+        ping_thread.start()
+
+        try:
+            for message in ws:
+                self.on_message(ws, message)
+        finally:
+            self.stop_event.set()
+            self.ws = None
 
     async def run_async(self):
+        self.stop_event.clear()
         ws = await connect_async(self.base_url)
         self.ws = ws
 
-        async for message in ws:
-            await self.on_message_async(ws, message)
+        ping_task = asyncio.create_task(self._ping_loop_async())
+
+        try:
+            async for message in ws:
+                await self.on_message_async(ws, message)
+        finally:
+            self.stop_event.set()
+            ping_task.cancel()
+            self.ws = None
