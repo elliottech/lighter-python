@@ -1,7 +1,6 @@
 import json
 import threading
 import asyncio
-import time
 from websockets.sync.client import connect
 from websockets.client import connect as connect_async
 from lighter.configuration import Configuration
@@ -196,14 +195,11 @@ class WsClient:
 
                 for message in ws:
                     self.on_message(ws, message)
-
-        except Exception as e:
-            print(f"Connection terminated unexpectedly: {e}")
         finally:
             stop_event.set()
-            self.ws = None
             if ping_thread:
                 ping_thread.join(timeout=1)
+            self.ws = None  # clear after thread has exited
 
     async def run_async(self):
         stop_event = asyncio.Event()
@@ -215,9 +211,6 @@ class WsClient:
 
                 async for message in ws:
                     await self.on_message_async(ws, message)
-
-        except Exception as e:
-            print(f"Connection terminated unexpectedly: {e}")
         finally:
             stop_event.set()
             if ping_task:
