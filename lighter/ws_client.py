@@ -59,6 +59,9 @@ class WsClient:
         elif message_type == "ping":
             # Respond to ping with pong
             ws.send(json.dumps({"type": "pong"}))
+        elif message_type == "pong":
+            # Noop
+            pass
         else:
             self.handle_unhandled_message(message)
 
@@ -71,6 +74,9 @@ class WsClient:
         elif message_type == "ping":
             # Respond to ping with pong
             await ws.send(json.dumps({"type": "pong"}))
+        elif message_type == "pong":
+            # Noop
+            pass
         else:
             self.on_message(ws, message)
 
