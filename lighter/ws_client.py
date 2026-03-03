@@ -38,7 +38,6 @@ class WsClient:
 
         self.ws = None
         self.ping_interval = ping_interval
-        self.stop_event = threading.Event()
 
     def on_message(self, ws, message):
         if isinstance(message, str):
@@ -60,7 +59,6 @@ class WsClient:
             # Respond to ping with pong
             ws.send(json.dumps({"type": "pong"}))
         elif message_type == "pong":
-            # Noop
             pass
         else:
             self.handle_unhandled_message(message)
@@ -160,57 +158,71 @@ class WsClient:
         raise Exception(f"Unhandled message: {message}")
 
     def on_error(self, ws, error):
-        self.stop_event.set()
         raise Exception(f"Error: {error}")
 
     def on_close(self, ws, close_status_code, close_msg):
-        self.stop_event.set()
         raise Exception(f"Closed: {close_status_code} {close_msg}")
 
-    def _ping_loop(self):
-        while not self.stop_event.is_set():
-            time.sleep(self.ping_interval)
-            if self.ws and not self.stop_event.is_set():
+    def _ping_loop(self, stop_event):
+        while not stop_event.is_set():
+            stop_event.wait(self.ping_interval)
+            if self.ws and not stop_event.is_set():
                 try:
                     self.ws.send(json.dumps({"type": "ping"}))
-                except Exception:
+                except Exception as e:
+                    print(f"Ping failed: {e}")
                     break
 
-    async def _ping_loop_async(self):
-        while not self.stop_event.is_set():
-            await asyncio.sleep(self.ping_interval)
-            if self.ws and not self.stop_event.is_set():
-                try:
+    async def _ping_loop_async(self, stop_event):
+        while not stop_event.is_set():
+            try:
+                await asyncio.sleep(self.ping_interval)
+                if self.ws and not stop_event.is_set():
                     await self.ws.send(json.dumps({"type": "ping"}))
-                except Exception:
-                    break
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                print(f"Async ping failed: {e}")
+                break
 
     def run(self):
-        self.stop_event.clear()
-        ws = connect(self.base_url)
-        self.ws = ws
-
-        ping_thread = threading.Thread(target=self._ping_loop, daemon=True)
-        ping_thread.start()
-
+        stop_event = threading.Event()
+        ping_thread = None
         try:
-            for message in ws:
-                self.on_message(ws, message)
+            with connect(self.base_url) as ws:
+                self.ws = ws
+                ping_thread = threading.Thread(target=self._ping_loop, args=(stop_event,), daemon=True)
+                ping_thread.start()
+
+                for message in ws:
+                    self.on_message(ws, message)
+
+        except Exception as e:
+            print(f"Connection terminated unexpectedly: {e}")
         finally:
-            self.stop_event.set()
+            stop_event.set()
             self.ws = None
+            if ping_thread:
+                ping_thread.join(timeout=1)
 
     async def run_async(self):
-        self.stop_event.clear()
-        ws = await connect_async(self.base_url)
-        self.ws = ws
-
-        ping_task = asyncio.create_task(self._ping_loop_async())
-
+        stop_event = asyncio.Event()
+        ping_task = None
         try:
-            async for message in ws:
-                await self.on_message_async(ws, message)
+            async with connect_async(self.base_url) as ws:
+                self.ws = ws
+                ping_task = asyncio.create_task(self._ping_loop_async(stop_event))
+
+                async for message in ws:
+                    await self.on_message_async(ws, message)
+
+        except Exception as e:
+            print(f"Connection terminated unexpectedly: {e}")
         finally:
-            self.stop_event.set()
-            ping_task.cancel()
+            stop_event.set()
+            if ping_task:
+                ping_task.cancel()
+                # Wait for the task to acknowledge cancellation
+                await asyncio.gather(ping_task, return_exceptions=True)
             self.ws = None
+
