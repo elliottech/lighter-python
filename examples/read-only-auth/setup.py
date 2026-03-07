@@ -21,9 +21,8 @@ async def setup_account(eth_private_key, account_index, base_url, api_key_index)
 
     tx_client = lighter.SignerClient(
         url=base_url,
-        private_key=private_key,
+        api_private_keys={api_key_index: private_key},
         account_index=account_index,
-        api_key_index=api_key_index,
     )
 
     response, err = await tx_client.change_api_key(

@@ -31,7 +31,7 @@ class ApiKeyResponse(ctypes.Structure):
 
 class CreateOrderTxReq(ctypes.Structure):
     _fields_ = [
-        ("MarketIndex", ctypes.c_uint8),
+        ("MarketIndex", ctypes.c_int),
         ("ClientOrderIndex", ctypes.c_longlong),
         ("BaseAmount", ctypes.c_longlong),
         ("Price", ctypes.c_uint32),
@@ -41,6 +41,9 @@ class CreateOrderTxReq(ctypes.Structure):
         ("ReduceOnly", ctypes.c_uint8),
         ("TriggerPrice", ctypes.c_uint32),
         ("OrderExpiry", ctypes.c_longlong),
+        ("IntegratorAccountIndex", ctypes.c_int64),
+        ("IntegratorMakerFee", ctypes.c_int64),
+        ("IntegratorTakerFee", ctypes.c_int64),
     ]
 
 
@@ -114,7 +117,7 @@ def __populate_shared_library_functions(signer):
     signer.SignChangePubKey.restype = SignedTxResponse
 
     signer.SignCreateOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
-                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateOrder.restype = SignedTxResponse
 
     signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -132,7 +135,7 @@ def __populate_shared_library_functions(signer):
     signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelAllOrders.restype = SignedTxResponse
 
-    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
     signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -161,6 +164,9 @@ def __populate_shared_library_functions(signer):
 
     signer.SignUpdateMargin.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateMargin.restype = SignedTxResponse
+
+    signer.SignApproveIntegrator.argtypes = [ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignApproveIntegrator.restype = SignedTxResponse
 
 
 def get_signer():
@@ -445,6 +451,10 @@ class SignerClient:
             reduce_only=False,
             trigger_price=NIL_TRIGGER_PRICE,
             order_expiry=DEFAULT_28_DAY_ORDER_EXPIRY,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
@@ -459,6 +469,9 @@ class SignerClient:
             reduce_only,
             trigger_price,
             order_expiry,
+            integrator_account_index,
+            integrator_taker_fee,
+            integrator_maker_fee,
             nonce,
             api_key_index,
             self.account_index,
@@ -490,8 +503,46 @@ class SignerClient:
     def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCancelAllOrders(time_in_force, timestamp_ms, nonce, api_key_index, self.account_index))
 
-    def sign_modify_order(self, market_index: int, order_index: int, base_amount: int, price: int, trigger_price: int = NIL_TRIGGER_PRICE, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, nonce, api_key_index, self.account_index))
+    def sign_modify_order(
+            self,
+            market_index: int,
+            order_index: int,
+            base_amount: int,
+            price: int,
+            trigger_price: int = NIL_TRIGGER_PRICE,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+    ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, nonce, api_key_index, self.account_index))
+
+    def sign_approve_integrator(
+            self,
+            eth_private_key: str,
+            integrator_account_index: int,
+            max_perps_taker_fee: int,
+            max_perps_maker_fee: int,
+            max_spot_taker_fee: int,
+            max_spot_maker_fee: int,
+            approval_expiry: int,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+    ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        res = self.signer.SignApproveIntegrator(
+            integrator_account_index,
+            max_perps_taker_fee,
+            max_perps_maker_fee,
+            max_spot_taker_fee,
+            max_spot_maker_fee,
+            approval_expiry,
+            nonce,
+            api_key_index,
+            self.account_index
+        )
+        return self.__decode_and_sign_tx_info(eth_private_key, res)
 
     def sign_transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), nonce, api_key_index, self.account_index))
@@ -530,6 +581,10 @@ class SignerClient:
             reduce_only=False,
             trigger_price=NIL_TRIGGER_PRICE,
             order_expiry=DEFAULT_28_DAY_ORDER_EXPIRY,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -544,8 +599,11 @@ class SignerClient:
             reduce_only,
             trigger_price,
             order_expiry,
-            nonce,
-            api_key_index,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
         )
         if error is not None:
             return None, None, error
@@ -560,6 +618,7 @@ class SignerClient:
             self,
             grouping_type: int,
             orders: List[CreateOrderTxReq],
+            *,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) ->Union[Tuple[CreateGroupedOrders, RespSendTx, None], Tuple[None, None, str]]:
@@ -585,6 +644,10 @@ class SignerClient:
             avg_execution_price,
             is_ask,
             reduce_only: bool = False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -598,6 +661,9 @@ class SignerClient:
             time_in_force=self.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL,
             order_expiry=self.DEFAULT_IOC_EXPIRY,
             reduce_only=reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -636,9 +702,13 @@ class SignerClient:
             max_slippage,
             is_ask,
             reduce_only: bool = False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
-            ideal_price=None
     ):
         quote_amount = int(quote_amount * 1e6)
         ob_orders = await self.order_api.order_book_orders(market_index, 100)
@@ -673,6 +743,9 @@ class SignerClient:
             time_in_force=self.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL,
             order_expiry=self.DEFAULT_IOC_EXPIRY,
             reduce_only=reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -686,9 +759,13 @@ class SignerClient:
             max_slippage,
             is_ask,
             reduce_only: bool = False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
-            ideal_price=None
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
         if ideal_price is None:
             logging.debug(
@@ -706,6 +783,9 @@ class SignerClient:
             time_in_force=self.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL,
             order_expiry=self.DEFAULT_IOC_EXPIRY,
             reduce_only=reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -719,9 +799,13 @@ class SignerClient:
             max_slippage,
             is_ask,
             reduce_only: bool = False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
-            ideal_price=None
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
         ob_orders = await self.order_api.order_book_orders(market_index, 100)
         if ideal_price is None:
@@ -751,6 +835,9 @@ class SignerClient:
             time_in_force=self.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL,
             order_expiry=self.DEFAULT_IOC_EXPIRY,
             reduce_only=reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -768,10 +855,22 @@ class SignerClient:
         logging.debug(f"Cancel Order Send. TxResponse: {api_response}")
         return CancelOrder.from_json(tx_info), api_response, None
 
-    async def create_tp_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False,
-                              nonce: int = DEFAULT_NONCE,
-                              api_key_index: int = DEFAULT_API_KEY_INDEX
-                              ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+    async def create_tp_order(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            price,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+      ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
         return await self.create_order(
             market_index,
             client_order_index,
@@ -783,14 +882,29 @@ class SignerClient:
             reduce_only,
             trigger_price,
             self.DEFAULT_28_DAY_ORDER_EXPIRY,
-            nonce,
-            api_key_index,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
         )
 
-    async def create_tp_limit_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False,
-                                    nonce: int = DEFAULT_NONCE,
-                                    api_key_index: int = DEFAULT_API_KEY_INDEX
-                                    ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+    async def create_tp_limit_order(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            price,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
         return await self.create_order(
             market_index,
             client_order_index,
@@ -802,14 +916,29 @@ class SignerClient:
             reduce_only,
             trigger_price,
             self.DEFAULT_28_DAY_ORDER_EXPIRY,
-            nonce,
-            api_key_index,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
         )
 
-    async def create_sl_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False,
-                              nonce: int = DEFAULT_NONCE,
-                              api_key_index: int = DEFAULT_API_KEY_INDEX
-                              ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+    async def create_sl_order(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            price,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
         return await self.create_order(
             market_index,
             client_order_index,
@@ -821,14 +950,29 @@ class SignerClient:
             reduce_only,
             trigger_price,
             self.DEFAULT_28_DAY_ORDER_EXPIRY,
-            nonce,
-            api_key_index,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
         )
 
-    async def create_sl_limit_order(self, market_index, client_order_index, base_amount, trigger_price, price, is_ask, reduce_only=False,
-                                    nonce: int = DEFAULT_NONCE,
-                                    api_key_index: int = DEFAULT_API_KEY_INDEX
-                                    ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+    async def create_sl_limit_order(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            price,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
         return await self.create_order(
             market_index,
             client_order_index,
@@ -840,8 +984,11 @@ class SignerClient:
             reduce_only,
             trigger_price,
             self.DEFAULT_28_DAY_ORDER_EXPIRY,
-            nonce,
-            api_key_index,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
         )
 
     @process_api_key_and_nonce
@@ -884,15 +1031,69 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def modify_order(
-            self, market_index, order_index, base_amount, price, trigger_price=NIL_TRIGGER_PRICE, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
+            self,
+            market_index,
+            order_index,
+            base_amount,
+            price,
+            trigger_price=NIL_TRIGGER_PRICE,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
     ):
-        tx_type, tx_info, tx_hash, error = self.sign_modify_order(market_index, order_index, base_amount, price, trigger_price, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_modify_order(
+            market_index,
+            order_index,
+            base_amount,
+            price,
+            trigger_price,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index
+        )
         if error is not None:
             return None, None, error
 
         logging.debug(f"Modify Order TxHash: {tx_hash} TxInfo: {tx_info}")
         api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
         logging.debug(f"Modify Order Send. TxResponse: {api_response}")
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def approve_integrator(
+            self,
+            eth_private_key: str,
+            integrator_account_index: int,
+            max_perps_taker_fee: int,
+            max_perps_maker_fee: int,
+            max_spot_taker_fee: int,
+            max_spot_maker_fee: int,
+            approval_expiry: int,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+    ):
+        tx_type, tx_info, tx_hash, error = self.sign_approve_integrator(
+            eth_private_key,
+            integrator_account_index,
+            max_perps_taker_fee,
+            max_perps_maker_fee,
+            max_spot_taker_fee,
+            max_spot_maker_fee,
+            approval_expiry,
+            nonce,
+            api_key_index
+        )
+        if error is not None:
+            return None, None, error
+
+        logging.debug(f"Approve Integrator TxHash: {tx_hash} TxInfo: {tx_info}")
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        logging.debug(f"Approve Integrator Send. TxResponse: {api_response}")
         return tx_info, api_response, None
 
     @process_api_key_and_nonce

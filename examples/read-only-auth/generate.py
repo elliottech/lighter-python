@@ -25,9 +25,8 @@ async def generate_tokens_for_account(account_info, base_url, duration_days):
 
     signer_client = lighter.SignerClient(
         url=base_url,
-        private_key=api_key_private_key,
+        api_private_keys={api_key_index: api_key_private_key},
         account_index=account_index,
-        api_key_index=api_key_index,
     )
 
     current_time = int(time.time())
