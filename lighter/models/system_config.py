@@ -33,8 +33,12 @@ class SystemConfig(BaseModel):
     funding_fee_rebate_account_index: StrictInt
     liquidity_pool_cooldown_period: StrictInt
     staking_pool_lockup_period: StrictInt
+    max_integrator_spot_taker_fee: StrictInt
+    max_integrator_spot_maker_fee: StrictInt
+    max_integrator_perps_taker_fee: StrictInt
+    max_integrator_perps_maker_fee: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "liquidity_pool_index", "staking_pool_index", "funding_fee_rebate_account_index", "liquidity_pool_cooldown_period", "staking_pool_lockup_period"]
+    __properties: ClassVar[List[str]] = ["code", "message", "liquidity_pool_index", "staking_pool_index", "funding_fee_rebate_account_index", "liquidity_pool_cooldown_period", "staking_pool_lockup_period", "max_integrator_spot_taker_fee", "max_integrator_spot_maker_fee", "max_integrator_perps_taker_fee", "max_integrator_perps_maker_fee"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -100,7 +104,11 @@ class SystemConfig(BaseModel):
             "staking_pool_index": obj.get("staking_pool_index"),
             "funding_fee_rebate_account_index": obj.get("funding_fee_rebate_account_index"),
             "liquidity_pool_cooldown_period": obj.get("liquidity_pool_cooldown_period"),
-            "staking_pool_lockup_period": obj.get("staking_pool_lockup_period")
+            "staking_pool_lockup_period": obj.get("staking_pool_lockup_period"),
+            "max_integrator_spot_taker_fee": obj.get("max_integrator_spot_taker_fee"),
+            "max_integrator_spot_maker_fee": obj.get("max_integrator_spot_maker_fee"),
+            "max_integrator_perps_taker_fee": obj.get("max_integrator_perps_taker_fee"),
+            "max_integrator_perps_maker_fee": obj.get("max_integrator_perps_maker_fee")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

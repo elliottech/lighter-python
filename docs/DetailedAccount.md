@@ -32,6 +32,7 @@ Name | Type | Description | Notes
 **pool_info** | [**PublicPoolInfo**](PublicPoolInfo.md) |  | 
 **shares** | [**List[PublicPoolShare]**](PublicPoolShare.md) |  | 
 **pending_unlocks** | [**List[PendingUnlock]**](PendingUnlock.md) |  | 
+**approved_integrators** | [**List[ApprovedIntegrator]**](ApprovedIntegrator.md) |  | 
 
 ## Example
 

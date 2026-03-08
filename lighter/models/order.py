@@ -55,13 +55,16 @@ class Order(BaseModel):
     to_trigger_order_id_0: StrictStr
     to_trigger_order_id_1: StrictStr
     to_cancel_order_id_0: StrictStr
+    integrator_fee_collector_index: StrictStr
+    integrator_taker_fee: StrictStr
+    integrator_maker_fee: StrictStr
     block_height: StrictInt
     timestamp: StrictInt
     created_at: StrictInt
     updated_at: StrictInt
     transaction_time: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "block_height", "timestamp", "created_at", "updated_at", "transaction_time"]
+    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "integrator_fee_collector_index", "integrator_taker_fee", "integrator_maker_fee", "block_height", "timestamp", "created_at", "updated_at", "transaction_time"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
@@ -178,6 +181,9 @@ class Order(BaseModel):
             "to_trigger_order_id_0": obj.get("to_trigger_order_id_0"),
             "to_trigger_order_id_1": obj.get("to_trigger_order_id_1"),
             "to_cancel_order_id_0": obj.get("to_cancel_order_id_0"),
+            "integrator_fee_collector_index": obj.get("integrator_fee_collector_index"),
+            "integrator_taker_fee": obj.get("integrator_taker_fee"),
+            "integrator_maker_fee": obj.get("integrator_maker_fee"),
             "block_height": obj.get("block_height"),
             "timestamp": obj.get("timestamp"),
             "created_at": obj.get("created_at"),

@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **l1_address** | **str** |  | 
 **referral_code** | **str** |  | 
 **used_at** | **int** |  | 
+**trade_stats** | [**TradeStats**](TradeStats.md) |  | 
 
 ## Example
 

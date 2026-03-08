@@ -34,6 +34,9 @@ Name | Type | Description | Notes
 **to_trigger_order_id_0** | **str** |  | 
 **to_trigger_order_id_1** | **str** |  | 
 **to_cancel_order_id_0** | **str** |  | 
+**integrator_fee_collector_index** | **str** |  | 
+**integrator_taker_fee** | **str** |  | 
+**integrator_maker_fee** | **str** |  | 
 **block_height** | **int** |  | 
 **timestamp** | **int** |  | 
 **created_at** | **int** |  | 

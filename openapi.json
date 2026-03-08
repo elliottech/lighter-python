@@ -3746,6 +3746,56 @@
         "scopes"
       ]
     },
+    "ApprovedIntegrator": {
+      "type": "object",
+      "properties": {
+        "account_index": {
+          "type": "integer",
+          "format": "int64",
+          "example": "54621"
+        },
+        "name": {
+          "type": "string",
+          "example": "Integrator1"
+        },
+        "max_perps_taker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "10"
+        },
+        "max_perps_maker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "1"
+        },
+        "max_spot_taker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "10"
+        },
+        "max_spot_maker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "1"
+        },
+        "approval_expiry": {
+          "type": "integer",
+          "format": "int64",
+          "example": "1640995200",
+          "description": " Timestamp in milliseconds, after which the integrator is no longer approved"
+        }
+      },
+      "title": "ApprovedIntegrator",
+      "required": [
+        "account_index",
+        "name",
+        "max_perps_taker_fee",
+        "max_perps_maker_fee",
+        "max_spot_taker_fee",
+        "max_spot_maker_fee",
+        "approval_expiry"
+      ]
+    },
     "Asset": {
       "type": "object",
       "properties": {
@@ -4320,6 +4370,12 @@
           "items": {
             "$ref": "#/definitions/PendingUnlock"
           }
+        },
+        "approved_integrators": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ApprovedIntegrator"
+          }
         }
       },
       "title": "DetailedAccount",
@@ -4349,7 +4405,8 @@
         "cross_asset_value",
         "pool_info",
         "shares",
-        "pending_unlocks"
+        "pending_unlocks",
+        "approved_integrators"
       ]
     },
     "DetailedAccounts": {
@@ -5299,6 +5356,18 @@
           "type": "string",
           "example": "1"
         },
+        "integrator_fee_collector_index": {
+          "type": "string",
+          "example": "1"
+        },
+        "integrator_taker_fee": {
+          "type": "string",
+          "example": "1"
+        },
+        "integrator_maker_fee": {
+          "type": "string",
+          "example": "1"
+        },
         "block_height": {
           "type": "integer",
           "format": "int64",
@@ -5356,6 +5425,9 @@
         "to_trigger_order_id_0",
         "to_trigger_order_id_1",
         "to_cancel_order_id_0",
+        "integrator_fee_collector_index",
+        "integrator_taker_fee",
+        "integrator_maker_fee",
         "block_height",
         "timestamp",
         "created_at",
@@ -6480,13 +6552,17 @@
         "used_at": {
           "type": "integer",
           "format": "int64"
+        },
+        "trade_stats": {
+          "$ref": "#/definitions/TradeStats"
         }
       },
       "title": "Referral",
       "required": [
         "l1_address",
         "referral_code",
-        "used_at"
+        "used_at",
+        "trade_stats"
       ]
     },
     "ReqAckNotif": {
@@ -8944,6 +9020,26 @@
           "type": "integer",
           "format": "int64",
           "example": "604800"
+        },
+        "max_integrator_spot_taker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "max_integrator_spot_maker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "max_integrator_perps_taker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
+        },
+        "max_integrator_perps_maker_fee": {
+          "type": "integer",
+          "format": "int32",
+          "example": "200"
         }
       },
       "title": "SystemConfig",
@@ -8953,7 +9049,11 @@
         "staking_pool_index",
         "funding_fee_rebate_account_index",
         "liquidity_pool_cooldown_period",
-        "staking_pool_lockup_period"
+        "staking_pool_lockup_period",
+        "max_integrator_spot_taker_fee",
+        "max_integrator_spot_maker_fee",
+        "max_integrator_perps_taker_fee",
+        "max_integrator_perps_maker_fee"
       ]
     },
     "Ticker": {
@@ -9152,6 +9252,50 @@
         "transaction_time",
         "ask_account_pnl",
         "bid_account_pnl"
+      ]
+    },
+    "TradeStats": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "web_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "web_volume": {
+          "type": "string"
+        },
+        "mobile_app_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mobile_app_volume": {
+          "type": "string"
+        },
+        "mobile_browser_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mobile_browser_volume": {
+          "type": "string"
+        }
+      },
+      "title": "TradeStats",
+      "required": [
+        "count",
+        "volume",
+        "web_count",
+        "web_volume",
+        "mobile_app_count",
+        "mobile_app_volume",
+        "mobile_browser_count",
+        "mobile_browser_volume"
       ]
     },
     "Trades": {

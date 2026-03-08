@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, Strict
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.account_asset import AccountAsset
 from lighter.models.account_position import AccountPosition
+from lighter.models.approved_integrator import ApprovedIntegrator
 from lighter.models.pending_unlock import PendingUnlock
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_share import PublicPoolShare
@@ -58,8 +59,9 @@ class DetailedAccount(BaseModel):
     pool_info: PublicPoolInfo
     shares: List[PublicPoolShare]
     pending_unlocks: List[PendingUnlock]
+    approved_integrators: List[ApprovedIntegrator]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time", "account_trading_mode", "account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "pending_unlocks"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time", "account_trading_mode", "account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "pending_unlocks", "approved_integrators"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -133,6 +135,13 @@ class DetailedAccount(BaseModel):
                 if _item:
                     _items.append(_item.to_dict())
             _dict['pending_unlocks'] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in approved_integrators (list)
+        _items = []
+        if self.approved_integrators:
+            for _item in self.approved_integrators:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['approved_integrators'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -176,7 +185,8 @@ class DetailedAccount(BaseModel):
             "cross_asset_value": obj.get("cross_asset_value"),
             "pool_info": PublicPoolInfo.from_dict(obj["pool_info"]) if obj.get("pool_info") is not None else None,
             "shares": [PublicPoolShare.from_dict(_item) for _item in obj["shares"]] if obj.get("shares") is not None else None,
-            "pending_unlocks": [PendingUnlock.from_dict(_item) for _item in obj["pending_unlocks"]] if obj.get("pending_unlocks") is not None else None
+            "pending_unlocks": [PendingUnlock.from_dict(_item) for _item in obj["pending_unlocks"]] if obj.get("pending_unlocks") is not None else None,
+            "approved_integrators": [ApprovedIntegrator.from_dict(_item) for _item in obj["approved_integrators"]] if obj.get("approved_integrators") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

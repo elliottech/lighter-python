@@ -19,20 +19,23 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
-from lighter.models.trade_stats import TradeStats
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Referral(BaseModel):
+class TradeStats(BaseModel):
     """
-    Referral
+    TradeStats
     """ # noqa: E501
-    l1_address: StrictStr
-    referral_code: StrictStr
-    used_at: StrictInt
-    trade_stats: TradeStats
+    count: StrictInt
+    volume: StrictStr
+    web_count: StrictInt
+    web_volume: StrictStr
+    mobile_app_count: StrictInt
+    mobile_app_volume: StrictStr
+    mobile_browser_count: StrictInt
+    mobile_browser_volume: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "referral_code", "used_at", "trade_stats"]
+    __properties: ClassVar[List[str]] = ["count", "volume", "web_count", "web_volume", "mobile_app_count", "mobile_app_volume", "mobile_browser_count", "mobile_browser_volume"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -52,7 +55,7 @@ class Referral(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Referral from a JSON string"""
+        """Create an instance of TradeStats from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,9 +78,6 @@ class Referral(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of trade_stats
-        if self.trade_stats:
-            _dict['trade_stats'] = self.trade_stats.to_dict()
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -87,7 +87,7 @@ class Referral(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Referral from a dict"""
+        """Create an instance of TradeStats from a dict"""
         if obj is None:
             return None
 
@@ -95,10 +95,14 @@ class Referral(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_construct(**{
-            "l1_address": obj.get("l1_address"),
-            "referral_code": obj.get("referral_code"),
-            "used_at": obj.get("used_at"),
-            "trade_stats": TradeStats.from_dict(obj["trade_stats"]) if obj.get("trade_stats") is not None else None
+            "count": obj.get("count"),
+            "volume": obj.get("volume"),
+            "web_count": obj.get("web_count"),
+            "web_volume": obj.get("web_volume"),
+            "mobile_app_count": obj.get("mobile_app_count"),
+            "mobile_app_volume": obj.get("mobile_app_volume"),
+            "mobile_browser_count": obj.get("mobile_browser_count"),
+            "mobile_browser_volume": obj.get("mobile_browser_volume")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

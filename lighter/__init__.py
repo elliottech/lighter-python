@@ -58,6 +58,7 @@ from lighter.models.announcement import Announcement
 from lighter.models.announcements import Announcements
 from lighter.models.api_key import ApiKey
 from lighter.models.api_token import ApiToken
+from lighter.models.approved_integrator import ApprovedIntegrator
 from lighter.models.asset import Asset
 from lighter.models.asset_details import AssetDetails
 from lighter.models.auth import Auth
@@ -190,6 +191,7 @@ from lighter.models.sub_accounts import SubAccounts
 from lighter.models.system_config import SystemConfig
 from lighter.models.ticker import Ticker
 from lighter.models.trade import Trade
+from lighter.models.trade_stats import TradeStats
 from lighter.models.trades import Trades
 from lighter.models.transfer_fee_info import TransferFeeInfo
 from lighter.models.transfer_history import TransferHistory

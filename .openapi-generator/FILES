@@ -16,6 +16,7 @@ docs/AnnouncementApi.md
 docs/Announcements.md
 docs/ApiKey.md
 docs/ApiToken.md
+docs/ApprovedIntegrator.md
 docs/Asset.md
 docs/AssetDetails.md
 docs/Auth.md
@@ -157,6 +158,7 @@ docs/SubAccounts.md
 docs/SystemConfig.md
 docs/Ticker.md
 docs/Trade.md
+docs/TradeStats.md
 docs/Trades.md
 docs/TransactionApi.md
 docs/TransferFeeInfo.md
@@ -205,6 +207,7 @@ lighter/models/announcement.py
 lighter/models/announcements.py
 lighter/models/api_key.py
 lighter/models/api_token.py
+lighter/models/approved_integrator.py
 lighter/models/asset.py
 lighter/models/asset_details.py
 lighter/models/auth.py
@@ -337,6 +340,7 @@ lighter/models/sub_accounts.py
 lighter/models/system_config.py
 lighter/models/ticker.py
 lighter/models/trade.py
+lighter/models/trade_stats.py
 lighter/models/trades.py
 lighter/models/transfer_fee_info.py
 lighter/models/transfer_history.py
@@ -353,6 +357,7 @@ lighter/rest.py
 setup.cfg
 test-requirements.txt
 test/__init__.py
+test/test_approved_integrator.py
 test/test_exchange_metric.py
 test/test_execute_stat.py
 test/test_lease_entry.py
@@ -376,5 +381,6 @@ test/test_slippage_result.py
 test/test_spot_avg_entry_price.py
 test/test_strategy.py
 test/test_system_config.py
+test/test_trade_stats.py
 test/test_user_referrals.py
 tox.ini
