@@ -153,6 +153,12 @@ def __populate_shared_library_functions(signer):
     signer.SignBurnShares.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignBurnShares.restype = SignedTxResponse
 
+    signer.SignStakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignStakeAssets.restype = SignedTxResponse
+
+    signer.SignUnstakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUnstakeAssets.restype = SignedTxResponse
+
     signer.SignUpdateLeverage.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateLeverage.restype = SignedTxResponse
 
@@ -561,6 +567,12 @@ class SignerClient:
 
     def sign_burn_shares(self, public_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignBurnShares(public_pool_index, share_amount, nonce, api_key_index, self.account_index))
+
+    def sign_stake_assets(self, staking_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignStakeAssets(staking_pool_index, share_amount, nonce, api_key_index, self.account_index))
+
+    def sign_unstake_assets(self, staking_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignUnstakeAssets(staking_pool_index, share_amount, nonce, api_key_index, self.account_index))
 
     def sign_update_leverage(self, market_index: int, fraction: int, margin_mode: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignUpdateLeverage(market_index, fraction, margin_mode, nonce, api_key_index, self.account_index))
@@ -1178,6 +1190,28 @@ class SignerClient:
         logging.debug(f"Burn Shares TxHash: {tx_hash} TxInfo: {tx_info}")
         api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
         logging.debug(f"Burn Shares Send. TxResponse: {api_response}")
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def stake_assets(self, staking_pool_index, share_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_stake_assets(staking_pool_index, share_amount, nonce, api_key_index)
+        if error is not None:
+            return None, None, error
+
+        logging.debug(f"Stake Assets TxHash: {tx_hash} TxInfo: {tx_info}")
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        logging.debug(f"Stake Assets Send. TxResponse: {api_response}")
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def unstake_assets(self, staking_pool_index, share_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_unstake_assets(staking_pool_index, share_amount, nonce, api_key_index)
+        if error is not None:
+            return None, None, error
+
+        logging.debug(f"Unstake Assets TxHash: {tx_hash} TxInfo: {tx_info}")
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        logging.debug(f"Unstake Assets Send. TxResponse: {api_response}")
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
