@@ -8,7 +8,8 @@ async def main():
 
     # Note: change this to 2048 to trade spot ETH. Make sure you have at least 0.1 ETH to trade spot.
     market_index = 0
-    integrator_account_index = 6
+    # integrator_account_index = 6
+    integrator_account_index = 281474976710647
     integrator_taker_fee = 1000
     integrator_maker_fee = 500
 

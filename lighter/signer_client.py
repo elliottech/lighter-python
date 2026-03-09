@@ -117,7 +117,7 @@ def __populate_shared_library_functions(signer):
     signer.SignChangePubKey.restype = SignedTxResponse
 
     signer.SignCreateOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
-                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateOrder.restype = SignedTxResponse
 
     signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -135,7 +135,7 @@ def __populate_shared_library_functions(signer):
     signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelAllOrders.restype = SignedTxResponse
 
-    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
     signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -549,6 +549,30 @@ class SignerClient:
             self.account_index
         )
         return self.__decode_and_sign_tx_info(eth_private_key, res)
+
+    def sign_approve_integrator_same_master_account(
+            self,
+            integrator_account_index: int,
+            max_perps_taker_fee: int,
+            max_perps_maker_fee: int,
+            max_spot_taker_fee: int,
+            max_spot_maker_fee: int,
+            approval_expiry: int,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+    ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        res = self.signer.SignApproveIntegrator(
+            integrator_account_index,
+            max_perps_taker_fee,
+            max_perps_maker_fee,
+            max_spot_taker_fee,
+            max_spot_maker_fee,
+            approval_expiry,
+            nonce,
+            api_key_index,
+            self.account_index
+        )
+        return self.__decode_tx_info(res)
 
     def sign_transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), nonce, api_key_index, self.account_index))
@@ -1091,6 +1115,36 @@ class SignerClient:
     ):
         tx_type, tx_info, tx_hash, error = self.sign_approve_integrator(
             eth_private_key,
+            integrator_account_index,
+            max_perps_taker_fee,
+            max_perps_maker_fee,
+            max_spot_taker_fee,
+            max_spot_maker_fee,
+            approval_expiry,
+            nonce,
+            api_key_index
+        )
+        if error is not None:
+            return None, None, error
+
+        logging.debug(f"Approve Integrator TxHash: {tx_hash} TxInfo: {tx_info}")
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        logging.debug(f"Approve Integrator Send. TxResponse: {api_response}")
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def approve_integrator_same_master_account(
+            self,
+            integrator_account_index: int,
+            max_perps_taker_fee: int,
+            max_perps_maker_fee: int,
+            max_spot_taker_fee: int,
+            max_spot_maker_fee: int,
+            approval_expiry: int,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+    ):
+        tx_type, tx_info, tx_hash, error = self.sign_approve_integrator_same_master_account(
             integrator_account_index,
             max_perps_taker_fee,
             max_perps_maker_fee,

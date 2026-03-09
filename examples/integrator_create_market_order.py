@@ -7,8 +7,9 @@ async def main():
     client.check_client()
 
     # Note: change this to 2048 to trade spot ETH. Make sure you have at least 0.1 ETH to trade spot.
-    market_index = 0
-    integrator_account_index = 6
+    market_index = 2048
+    # integrator_account_index = 6
+    integrator_account_index = 281474976710647
     integrator_taker_fee = 1000
     integrator_maker_fee = 500
 
@@ -16,8 +17,8 @@ async def main():
         market_index=market_index,
         client_order_index=0,
         base_amount=1000,  # 0.1 ETH
-        avg_execution_price=4000_00,
-        is_ask=False,
+        avg_execution_price=1900_00,
+        is_ask=True,
         integrator_account_index=integrator_account_index,
         integrator_taker_fee=integrator_taker_fee,
         integrator_maker_fee=integrator_maker_fee,
