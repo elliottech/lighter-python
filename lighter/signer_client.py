@@ -20,7 +20,6 @@ from lighter import nonce_manager
 from lighter.models.resp_send_tx import RespSendTx
 from lighter.models.resp_send_tx_batch import RespSendTxBatch
 from lighter.transactions import CreateOrder, CancelOrder, Withdraw, CreateGroupedOrders
-from lighter.libc import free
 
 CODE_OK = 200
 
@@ -99,8 +98,10 @@ def decode_and_free(ptr: Any) -> Optional[str]:
             return c_str.decode('utf-8')
         return None
     finally:
-        # Free the memory allocated by the C library
-        free(ptr)
+        # Free the memory using the signer's own Free function to ensure
+        # the same C runtime that allocated the memory also frees it.
+        # This is critical on Windows where different CRTs have separate heaps.
+        __signer.Free(ptr)
 
 
 def __populate_shared_library_functions(signer):
@@ -173,6 +174,9 @@ def __populate_shared_library_functions(signer):
 
     signer.SignApproveIntegrator.argtypes = [ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignApproveIntegrator.restype = SignedTxResponse
+
+    signer.Free.argtypes = [ctypes.c_void_p]
+    signer.Free.restype = None
 
 
 def get_signer():
