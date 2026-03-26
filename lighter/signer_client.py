@@ -1,4 +1,5 @@
 import ctypes
+import asyncio
 from fractions import Fraction
 from functools import wraps
 import inspect
@@ -6,6 +7,9 @@ import json
 import platform
 import logging
 import os
+import shutil
+import tempfile
+import threading
 import time
 from typing import Dict, List, Optional, Union, Tuple, Any
 
@@ -60,7 +64,7 @@ class SignedTxResponse(ctypes.Structure):
 __signer = None
 
 
-def __get_shared_library():
+def __get_shared_library_path() -> str:
     is_linux = platform.system() == "Linux"
     is_mac = platform.system() == "Darwin"
     is_windows = platform.system() == "Windows"
@@ -71,18 +75,33 @@ def __get_shared_library():
     path_to_signer_folders = os.path.join(current_file_directory, "signers")
 
     if is_arm and is_mac:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-darwin-arm64.dylib"))
+        return os.path.join(path_to_signer_folders, "lighter-signer-darwin-arm64.dylib")
     elif is_linux and is_x64:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-linux-amd64.so"))
+        return os.path.join(path_to_signer_folders, "lighter-signer-linux-amd64.so")
     elif is_linux and is_arm:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-linux-arm64.so"))
+        return os.path.join(path_to_signer_folders, "lighter-signer-linux-arm64.so")
     elif is_windows and is_x64:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-windows-amd64.dll"))
+        return os.path.join(path_to_signer_folders, "lighter-signer-windows-amd64.dll")
     else:
         raise Exception(
             f"Unsupported platform/architecture: {platform.system()}/{platform.machine()}. "
             "Currently supported: Linux(x86_64), macOS(arm64), and Windows(x86_64)."
         )
+
+
+def __get_shared_library(isolated: bool = False):
+    library_path = __get_shared_library_path()
+    temp_dir = None
+
+    if isolated:
+        temp_dir = tempfile.mkdtemp(prefix="lighter-signer-")
+        isolated_library_path = os.path.join(temp_dir, os.path.basename(library_path))
+        shutil.copy2(library_path, isolated_library_path)
+        library_path = isolated_library_path
+
+    signer = ctypes.CDLL(library_path)
+    __populate_shared_library_functions(signer)
+    return signer, temp_dir
 
 
 def decode_and_free(ptr: Any) -> Optional[str]:
@@ -124,7 +143,7 @@ def __populate_shared_library_functions(signer):
     signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelOrder.restype = SignedTxResponse
 
-    signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_ulonglong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignWithdraw.restype = SignedTxResponse
 
     signer.SignCreateSubAccount.argtypes = [ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -136,7 +155,7 @@ def __populate_shared_library_functions(signer):
     signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
-    signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignTransfer.restype = SignedTxResponse
 
     signer.SignCreatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -176,20 +195,23 @@ def __populate_shared_library_functions(signer):
     signer.Free.restype = None
 
 
-def get_signer():
+def get_signer(*, isolated: bool = False):
+    if isolated:
+        return __get_shared_library(isolated=True)
+
     # check if singleton exists already
     global __signer
     if __signer is not None:
-        return __signer
+        return __signer, None
 
     # create shared library & populate methods
-    __signer = __get_shared_library()
-    __populate_shared_library_functions(__signer)
-    return __signer
+    __signer, _ = __get_shared_library()
+    return __signer, None
 
 
 def create_api_key():
-    result = lighter.signer_client.get_signer().GenerateAPIKey()
+    signer, _ = lighter.signer_client.get_signer()
+    result = signer.GenerateAPIKey()
     private_key_str = decode_and_free(result.privateKey)
     public_key_str = decode_and_free(result.publicKey)
     error = decode_and_free(result.err)
@@ -238,9 +260,23 @@ def process_api_key_and_nonce(func):
 class SignerClient:
     DEFAULT_NONCE = -1
     DEFAULT_API_KEY_INDEX = 255
-    
+
     SKIP_NONCE_OFF = 0
     SKIP_NONCE_ON = 1
+    RESERVED_FRONTEND_API_KEY_INDICES = {0, 1, 2, 3}
+    MAX_CLIENT_ORDER_INDEX = 281_474_976_710_655
+    CLIENT_ORDER_INDEX_BASE_EPOCH_MS = 1_704_067_200_000  # 2024-01-01T00:00:00Z
+    CLIENT_ORDER_INDEX_COUNTER_MOD = 1000
+
+    @staticmethod
+    def _infer_chain_id(url: str) -> int:
+        lowered = url.lower()
+        if "mainnet" in lowered or "api.zklighter.elliot.ai" in lowered:
+            return 304
+        if "testnet" in lowered:
+            return 300
+        logging.warning("Could not infer chain_id from URL '%s'. Defaulting to testnet chain_id=300.", url)
+        return 300
 
     ETH_TICKER_SCALE = 1e8
     USDC_TICKER_SCALE = 1e6
@@ -271,6 +307,7 @@ class SignerClient:
     DEFAULT_28_DAY_ORDER_EXPIRY = -1
     DEFAULT_IOC_EXPIRY = 0
     DEFAULT_10_MIN_AUTH_EXPIRY = -1
+    MIN_ORDER_EXPIRY_BUFFER_MS = 5 * 60 * 1000
     MINUTE = 60
 
     CROSS_MARGIN_MODE = 0
@@ -311,18 +348,27 @@ class SignerClient:
             url,
             account_index,
             api_private_keys: Dict[int, str],
+            chain_id: Optional[int] = None,
             nonce_management_type=nonce_manager.NonceManagerType.OPTIMISTIC,
+            proxy: Optional[str] = None,
+            proxy_headers: Optional[Dict[str, str]] = None,
     ):
         self.url = url
-        self.chain_id = 304 if ("mainnet" in url or "api" in url) else 300
+        self.chain_id = chain_id if chain_id is not None else self._infer_chain_id(url)
 
         self.validate_api_private_keys(api_private_keys)
         self.api_key_dict = api_private_keys
         self.account_index = account_index
-        self.signer = get_signer()
-        self.api_client = lighter.ApiClient(configuration=Configuration(host=url))
+        self.signer, self._signer_temp_dir = get_signer(isolated=True)
+        configuration = Configuration(host=url)
+        if proxy is not None:
+            configuration.proxy = proxy
+        if proxy_headers is not None:
+            configuration.proxy_headers = proxy_headers
+        self.api_client = lighter.ApiClient(configuration=configuration)
         self.tx_api = lighter.TransactionApi(self.api_client)
         self.order_api = lighter.OrderApi(self.api_client)
+        self.account_api = lighter.AccountApi(self.api_client)
 
         self.nonce_manager = nonce_manager.nonce_manager_factory(
             nonce_manager_type=nonce_management_type,
@@ -330,6 +376,10 @@ class SignerClient:
             api_client=self.api_client,
             api_keys_list=list(api_private_keys.keys()),
         )
+        self._warned_reserved_api_key_indexes = set()
+        self._client_order_index_lock = threading.Lock()
+        self._client_order_index_last_epoch_ms = -1
+        self._client_order_index_counter = 0
         for api_key_index in api_private_keys.keys():
             self.create_client(api_key_index)
 
@@ -376,7 +426,16 @@ class SignerClient:
             if private_key.startswith("0x"):
                 private_keys[api_key_index] = private_key[2:]
 
+    def _warn_if_reserved_api_key_index(self, api_key_index: int):
+        if api_key_index in self.RESERVED_FRONTEND_API_KEY_INDICES and api_key_index not in self._warned_reserved_api_key_indexes:
+            logging.warning(
+                "api_key_index %s is reserved by frontend/mobile. Use an index in the 4-254 range for programmatic trading.",
+                api_key_index,
+            )
+            self._warned_reserved_api_key_indexes.add(api_key_index)
+
     def create_client(self, api_key_index):
+        self._warn_if_reserved_api_key_index(api_key_index)
         err_ptr = self.signer.CreateClient(
             self.url.encode('utf-8'),
             self.api_key_dict[api_key_index].encode('utf-8'),
@@ -419,6 +478,23 @@ class SignerClient:
                 raise Exception("ambiguous api key")
         return self.nonce_manager.next_nonce()
 
+    def next_client_order_index(self) -> int:
+        with self._client_order_index_lock:
+            current_epoch_ms = int(time.time() * 1000) - self.CLIENT_ORDER_INDEX_BASE_EPOCH_MS
+            if current_epoch_ms < 0:
+                current_epoch_ms = 0
+
+            if current_epoch_ms == self._client_order_index_last_epoch_ms:
+                self._client_order_index_counter = (self._client_order_index_counter + 1) % self.CLIENT_ORDER_INDEX_COUNTER_MOD
+            else:
+                self._client_order_index_last_epoch_ms = current_epoch_ms
+                self._client_order_index_counter = 0
+
+            client_order_index = current_epoch_ms * self.CLIENT_ORDER_INDEX_COUNTER_MOD + self._client_order_index_counter
+            if client_order_index > self.MAX_CLIENT_ORDER_INDEX:
+                raise ValidationError("Generated client_order_index exceeds protocol maximum")
+            return client_order_index
+
     def create_auth_token_with_expiry(self, deadline: int = DEFAULT_10_MIN_AUTH_EXPIRY, *, timestamp: int = None, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if deadline == SignerClient.DEFAULT_10_MIN_AUTH_EXPIRY:
             deadline = 10 * SignerClient.MINUTE
@@ -430,6 +506,22 @@ class SignerClient:
         auth = decode_and_free(result.str)
         error = decode_and_free(result.err)
         return auth, error
+
+    @staticmethod
+    def _normalize_order_expiry_for_tif(time_in_force: int, order_expiry: int) -> int:
+        if (
+            time_in_force == SignerClient.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL
+            and order_expiry == SignerClient.DEFAULT_28_DAY_ORDER_EXPIRY
+        ):
+            return SignerClient.DEFAULT_IOC_EXPIRY
+        if order_expiry > 0:
+            if order_expiry < 10_000_000_000:
+                raise ValidationError("order_expiry must be a Unix timestamp in milliseconds")
+
+            minimum_order_expiry = int(time.time() * 1000) + SignerClient.MIN_ORDER_EXPIRY_BUFFER_MS
+            if order_expiry < minimum_order_expiry:
+                raise ValidationError("order_expiry must be at least 5 minutes in the future")
+        return order_expiry
 
     def sign_change_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignChangePubKey(
@@ -470,6 +562,7 @@ class SignerClient:
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        normalized_order_expiry = self._normalize_order_expiry_for_tif(time_in_force, order_expiry)
         return self.__decode_tx_info(self.signer.SignCreateOrder(
             market_index,
             client_order_index,
@@ -480,7 +573,7 @@ class SignerClient:
             time_in_force,
             reduce_only,
             trigger_price,
-            order_expiry,
+            normalized_order_expiry,
             integrator_account_index,
             integrator_taker_fee,
             integrator_maker_fee,
@@ -739,6 +832,98 @@ class SignerClient:
         ideal_price = int((ob_orders.bids[0].price if is_ask else ob_orders.asks[0].price).replace(".", ""))
         return ideal_price
 
+    async def get_market_index_symbol_map(self, *, include_perps: bool = True, include_spot: bool = True) -> Dict[int, str]:
+        details = await self.order_api.order_book_details()
+        mapping: Dict[int, str] = {}
+
+        if include_perps and details.order_book_details:
+            for market in details.order_book_details:
+                mapping[int(market.market_id)] = market.symbol
+
+        if include_spot and details.spot_order_book_details:
+            for market in details.spot_order_book_details:
+                mapping[int(market.market_id)] = market.symbol
+
+        return mapping
+
+    async def get_market_index_for_symbol(self, symbol: str, *, include_perps: bool = True, include_spot: bool = True) -> Optional[int]:
+        target = symbol.strip().upper()
+        market_map = await self.get_market_index_symbol_map(include_perps=include_perps, include_spot=include_spot)
+        for market_index, market_symbol in market_map.items():
+            if market_symbol.upper() == target:
+                return market_index
+        return None
+
+    async def fetch_positions(self, *, by: str = "index", value: Optional[str] = None) -> List[Any]:
+        if value is None:
+            value = str(self.account_index)
+        details = await self.account_api.account(by=by, value=value)
+        if not details.accounts:
+            return []
+        return details.accounts[0].positions
+
+    async def fetch_order(
+            self,
+            *,
+            order_id: Optional[str] = None,
+            client_order_index: Optional[int] = None,
+            market_id: Optional[int] = None,
+            auth: Optional[str] = None,
+            inactive_limit: int = 50,
+    ) -> Optional[Any]:
+        if order_id is None and client_order_index is None:
+            raise ValidationError("either order_id or client_order_index must be provided")
+
+        active_task = self.order_api.account_active_orders(
+            account_index=self.account_index,
+            market_id=market_id,
+            auth=auth,
+        )
+        inactive_task = self.order_api.account_inactive_orders(
+            account_index=self.account_index,
+            market_id=market_id,
+            auth=auth,
+            limit=inactive_limit,
+        )
+        active, inactive = await asyncio.gather(active_task, inactive_task)
+
+        for source in (active.orders, inactive.orders):
+            for order in source:
+                if order_id is not None and order.order_id == order_id:
+                    return order
+                if client_order_index is not None and order.client_order_index == client_order_index:
+                    return order
+        return None
+
+    async def get_leverage_info(self) -> Dict[int, Dict[str, Optional[float]]]:
+        positions = await self.fetch_positions()
+        market_details = await self.order_api.order_book_details()
+
+        def _fraction_to_int(value: Any) -> int:
+            if isinstance(value, int):
+                return value
+            if isinstance(value, float):
+                return int(value)
+            return int(float(str(value)))
+
+        max_leverage_by_market: Dict[int, Optional[float]] = {}
+        if market_details.order_book_details:
+            for market in market_details.order_book_details:
+                min_imf = _fraction_to_int(market.min_initial_margin_fraction)
+                max_leverage_by_market[int(market.market_id)] = (10000 / min_imf) if min_imf > 0 else None
+
+        result: Dict[int, Dict[str, Optional[float]]] = {}
+        for position in positions:
+            current_imf = _fraction_to_int(position.initial_margin_fraction)
+            current_leverage = (10000 / current_imf) if current_imf > 0 else None
+            result[int(position.market_id)] = {
+                "leverage": current_leverage,
+                "margin_mode": int(position.margin_mode),
+                "max_leverage": max_leverage_by_market.get(int(position.market_id)),
+            }
+
+        return result
+
     async def get_potential_execution_price(self, market_index, amount, is_ask, is_amount_base=True, ob_orders=None) -> (float, int):
         if ob_orders is None:
             ob_orders = await self.order_api.order_book_orders(market_index, 100)
@@ -952,7 +1137,42 @@ class SignerClient:
             self.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL,
             reduce_only,
             trigger_price,
-            self.DEFAULT_28_DAY_ORDER_EXPIRY,
+            self.DEFAULT_IOC_EXPIRY,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
+        )
+
+    async def create_tp_market_order_limited_slippage(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            max_slippage,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+        if ideal_price is None:
+            ideal_price = trigger_price
+        acceptable_execution_price = round(ideal_price * (1 + max_slippage * (-1 if is_ask else 1)))
+        return await self.create_tp_order(
+            market_index=market_index,
+            client_order_index=client_order_index,
+            base_amount=base_amount,
+            trigger_price=trigger_price,
+            price=acceptable_execution_price,
+            is_ask=is_ask,
+            reduce_only=reduce_only,
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
@@ -1024,7 +1244,72 @@ class SignerClient:
             self.ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL,
             reduce_only,
             trigger_price,
-            self.DEFAULT_28_DAY_ORDER_EXPIRY,
+            self.DEFAULT_IOC_EXPIRY,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
+        )
+
+    async def create_sl_market_order(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+        return await self.create_sl_order(
+            market_index=market_index,
+            client_order_index=client_order_index,
+            base_amount=base_amount,
+            trigger_price=trigger_price,
+            price=trigger_price,
+            is_ask=is_ask,
+            reduce_only=reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            nonce=nonce,
+            api_key_index=api_key_index,
+        )
+
+    async def create_sl_market_order_limited_slippage(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            max_slippage,
+            is_ask,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+        if ideal_price is None:
+            ideal_price = trigger_price
+        acceptable_execution_price = round(ideal_price * (1 + max_slippage * (-1 if is_ask else 1)))
+        return await self.create_sl_order(
+            market_index=market_index,
+            client_order_index=client_order_index,
+            base_amount=base_amount,
+            trigger_price=trigger_price,
+            price=acceptable_execution_price,
+            is_ask=is_ask,
+            reduce_only=reduce_only,
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
@@ -1345,7 +1630,17 @@ class SignerClient:
     async def send_tx(self, tx_type: StrictInt, tx_info: str) -> RespSendTx:
         if tx_info[0] != "{":
             raise Exception(tx_info)
-        return await self.tx_api.send_tx(tx_type=tx_type, tx_info=tx_info)
+        response = await self.tx_api.send_tx(tx_type=tx_type, tx_info=tx_info)
+        parsed_message = self._try_parse_json_message(response.message)
+        if parsed_message is not None:
+            response.additional_properties["parsed_message"] = parsed_message
+        if response.code in (21120, 21136):
+            response.additional_properties["troubleshooting"] = (
+                "invalid signature/public key: ensure chain_id matches network, "
+                "re-generate/refresh API key pair, initialize SignerClient with api_private_keys={api_key_index: private_key}, "
+                "and use API key indexes 4-254 for bots"
+            )
+        return response
 
     async def send_tx_batch(self, tx_types: List[StrictInt], tx_infos: List[str]) -> RespSendTxBatch:
         if len(tx_types) != len(tx_infos):
@@ -1355,10 +1650,17 @@ class SignerClient:
 
         if tx_infos[0][0] != "{":
             raise Exception(tx_infos)
-        return await self.tx_api.send_tx_batch(tx_types=json.dumps(tx_types), tx_infos=json.dumps(tx_infos))
+        response = await self.tx_api.send_tx_batch(tx_types=json.dumps(tx_types), tx_infos=json.dumps(tx_infos))
+        parsed_message = self._try_parse_json_message(response.message)
+        if parsed_message is not None:
+            response.additional_properties["parsed_message"] = parsed_message
+        return response
 
     async def close(self):
         await self.api_client.close()
+        if getattr(self, "_signer_temp_dir", None):
+            shutil.rmtree(self._signer_temp_dir, ignore_errors=True)
+            self._signer_temp_dir = None
 
     @staticmethod
     def are_keys_equal(key1, key2) -> bool:
@@ -1368,3 +1670,13 @@ class SignerClient:
         if key2.startswith("0x"):
             start_index2 = 2
         return key1[start_index1:] == key2[start_index2:]
+
+    @staticmethod
+    def _try_parse_json_message(message: Optional[str]) -> Optional[dict]:
+        if not message:
+            return None
+        try:
+            parsed = json.loads(message)
+            return parsed if isinstance(parsed, dict) else None
+        except (json.JSONDecodeError, TypeError):
+            return None

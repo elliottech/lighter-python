@@ -14,7 +14,12 @@
 """  # noqa: E501
 
 
-__version__ = "1.0.0"
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("lighter-sdk")
+except PackageNotFoundError:
+    __version__ = "0+unknown"
 
 # import apis into sdk package
 from lighter.api.account_api import AccountApi

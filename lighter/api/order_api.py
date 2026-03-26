@@ -51,7 +51,7 @@ class OrderApi:
     async def account_active_orders(
         self,
         account_index: StrictInt,
-        market_id: StrictInt,
+        market_id: Optional[StrictInt] = None,
         authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
         auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
@@ -130,7 +130,7 @@ class OrderApi:
     async def account_active_orders_with_http_info(
         self,
         account_index: StrictInt,
-        market_id: StrictInt,
+        market_id: Optional[StrictInt] = None,
         authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
         auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
@@ -209,7 +209,7 @@ class OrderApi:
     async def account_active_orders_without_preload_content(
         self,
         account_index: StrictInt,
-        market_id: StrictInt,
+        market_id: Optional[StrictInt] = None,
         authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
         auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
@@ -3774,8 +3774,9 @@ class OrderApi:
             
             _query_params.append(('limit', limit))
             
-        if aggregate is not None:
-            
+        if aggregate is None:
+            _query_params.append(('aggregate', False))
+        else:
             _query_params.append(('aggregate', aggregate))
             
         # process the header parameters
