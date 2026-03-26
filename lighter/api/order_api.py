@@ -51,7 +51,7 @@ class OrderApi:
     async def account_active_orders(
         self,
         account_index: StrictInt,
-        market_id: Optional[StrictInt] = None,
+        market_id: StrictInt,
         authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
         auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
@@ -130,7 +130,7 @@ class OrderApi:
     async def account_active_orders_with_http_info(
         self,
         account_index: StrictInt,
-        market_id: Optional[StrictInt] = None,
+        market_id: StrictInt,
         authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
         auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
@@ -209,7 +209,7 @@ class OrderApi:
     async def account_active_orders_without_preload_content(
         self,
         account_index: StrictInt,
-        market_id: Optional[StrictInt] = None,
+        market_id: StrictInt,
         authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
         auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
@@ -319,9 +319,9 @@ class OrderApi:
             
             _query_params.append(('account_index', account_index))
             
-        if market_id is not None:
-            
-            _query_params.append(('market_id', market_id))
+        if market_id is None:
+            raise ApiValueError("Missing the required parameter `market_id` when calling `account_active_orders`")
+        _query_params.append(('market_id', market_id))
             
         # process the header parameters
         # process the form parameters
