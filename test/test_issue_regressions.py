@@ -141,6 +141,7 @@ def test_linux_aarch64_loads_arm_shared_library():
             self.CreateAuthToken = FakeFunction()
             self.SignUpdateMargin = FakeFunction()
             self.SignApproveIntegrator = FakeFunction()
+            self.Free = FakeFunction()
 
     def fake_cdll(path):
         nonlocal captured_path
