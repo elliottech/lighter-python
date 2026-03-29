@@ -32,6 +32,7 @@ from lighter.models.trades import Trades
 
 from lighter.api_client import ApiClient, RequestSerialized
 from lighter.api_response import ApiResponse
+from lighter.exceptions import ApiValueError
 from lighter.rest import RESTResponseType
 
 
