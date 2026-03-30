@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lighter-sdk"
-version = "1.0.7"
+version = "1.0.87"
 description = "Python client for Lighter"
 authors = ["elliot"]
 license = "NoLicense"
