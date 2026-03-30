@@ -39,10 +39,7 @@ class CreateOrderTxReq(ctypes.Structure):
         ("TimeInForce", ctypes.c_uint8),
         ("ReduceOnly", ctypes.c_uint8),
         ("TriggerPrice", ctypes.c_uint32),
-        ("OrderExpiry", ctypes.c_longlong),
-        ("IntegratorAccountIndex", ctypes.c_int64),
-        ("IntegratorMakerFee", ctypes.c_int64),
-        ("IntegratorTakerFee", ctypes.c_int64),
+        ("OrderExpiry", ctypes.c_longlong)
     ]
 
 
@@ -114,53 +111,53 @@ def __populate_shared_library_functions(signer):
     signer.CheckClient.argtypes = [ctypes.c_int, ctypes.c_longlong]
     signer.CheckClient.restype = ctypes.c_void_p
 
-    signer.SignChangePubKey.argtypes = [ctypes.c_char_p, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignChangePubKey.argtypes = [ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignChangePubKey.restype = SignedTxResponse
 
     signer.SignCreateOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
-                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateOrder.restype = SignedTxResponse
 
-    signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateGroupedOrders.restype = SignedTxResponse
 
-    signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelOrder.restype = SignedTxResponse
 
-    signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignWithdraw.restype = SignedTxResponse
 
-    signer.SignCreateSubAccount.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCreateSubAccount.argtypes = [ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateSubAccount.restype = SignedTxResponse
 
-    signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelAllOrders.restype = SignedTxResponse
 
-    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
-    signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignTransfer.restype = SignedTxResponse
 
-    signer.SignCreatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCreatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreatePublicPool.restype = SignedTxResponse
 
-    signer.SignUpdatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdatePublicPool.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdatePublicPool.restype = SignedTxResponse
 
-    signer.SignMintShares.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignMintShares.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignMintShares.restype = SignedTxResponse
 
-    signer.SignBurnShares.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignBurnShares.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignBurnShares.restype = SignedTxResponse
 
-    signer.SignStakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignStakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignStakeAssets.restype = SignedTxResponse
 
-    signer.SignUnstakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUnstakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUnstakeAssets.restype = SignedTxResponse
 
-    signer.SignUpdateLeverage.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdateLeverage.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateLeverage.restype = SignedTxResponse
 
     signer.CreateAuthToken.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -169,10 +166,10 @@ def __populate_shared_library_functions(signer):
     # Note: SwitchAPIKey is no longer exported in the new binary
     # All functions now take api_key_index directly, so switching is handled via parameters
 
-    signer.SignUpdateMargin.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdateMargin.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateMargin.restype = SignedTxResponse
 
-    signer.SignApproveIntegrator.argtypes = [ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignApproveIntegrator.argtypes = [ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignApproveIntegrator.restype = SignedTxResponse
 
     signer.Free.argtypes = [ctypes.c_void_p]
@@ -241,6 +238,9 @@ def process_api_key_and_nonce(func):
 class SignerClient:
     DEFAULT_NONCE = -1
     DEFAULT_API_KEY_INDEX = 255
+    
+    SKIP_NONCE_OFF = 0
+    SKIP_NONCE_ON = 1
 
     ETH_TICKER_SCALE = 1e8
     USDC_TICKER_SCALE = 1e6
@@ -431,16 +431,17 @@ class SignerClient:
         error = decode_and_free(result.err)
         return auth, error
 
-    def sign_change_api_key(self, eth_private_key: str, new_pubkey: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+    def sign_change_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignChangePubKey(
             ctypes.c_char_p(new_pubkey.encode("utf-8")),
+            skip_nonce,
             nonce,
             api_key_index,
             self.account_index
         ))
 
-    async def change_api_key(self, eth_private_key: str, new_pubkey: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_change_api_key(eth_private_key, new_pubkey, nonce, api_key_index)
+    async def change_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_change_api_key(eth_private_key, new_pubkey, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, error
 
@@ -465,6 +466,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
@@ -482,6 +484,7 @@ class SignerClient:
             integrator_account_index,
             integrator_taker_fee,
             integrator_maker_fee,
+            skip_nonce,
             nonce,
             api_key_index,
             self.account_index,
@@ -491,6 +494,10 @@ class SignerClient:
             self,
             grouping_type: int,
             orders: List[CreateOrderTxReq],
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index=DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
@@ -498,20 +505,20 @@ class SignerClient:
         orders_arr = arr_type(*orders)
 
         return self.__decode_tx_info(self.signer.SignCreateGroupedOrders(
-            grouping_type, orders_arr, len(orders), nonce, api_key_index, self.account_index
+            grouping_type, orders_arr, len(orders), integrator_account_index, integrator_taker_fee, integrator_maker_fee, skip_nonce, nonce, api_key_index, self.account_index
         ))
 
-    def sign_cancel_order(self, market_index: int, order_index: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignCancelOrder(market_index, order_index, nonce, api_key_index, self.account_index))
+    def sign_cancel_order(self, market_index: int, order_index: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignCancelOrder(market_index, order_index, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_withdraw(self, asset_index: int, route_type: int, amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignWithdraw(asset_index, route_type, amount, nonce, api_key_index, self.account_index))
+    def sign_withdraw(self, asset_index: int, route_type: int, amount: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignWithdraw(asset_index, route_type, amount, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_create_sub_account(self, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignCreateSubAccount(nonce, api_key_index, self.account_index))
+    def sign_create_sub_account(self, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignCreateSubAccount(skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignCancelAllOrders(time_in_force, timestamp_ms, nonce, api_key_index, self.account_index))
+    def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignCancelAllOrders(time_in_force, timestamp_ms, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_modify_order(
             self,
@@ -524,10 +531,11 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, nonce, api_key_index, self.account_index))
+        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_approve_integrator(
             self,
@@ -538,6 +546,7 @@ class SignerClient:
             max_spot_taker_fee: int,
             max_spot_maker_fee: int,
             approval_expiry: int,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
@@ -548,6 +557,7 @@ class SignerClient:
             max_spot_taker_fee,
             max_spot_maker_fee,
             approval_expiry,
+            skip_nonce,
             nonce,
             api_key_index,
             self.account_index
@@ -562,6 +572,7 @@ class SignerClient:
             max_spot_taker_fee: int,
             max_spot_maker_fee: int,
             approval_expiry: int,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
@@ -572,41 +583,42 @@ class SignerClient:
             max_spot_taker_fee,
             max_spot_maker_fee,
             approval_expiry,
+            skip_nonce,
             nonce,
             api_key_index,
             self.account_index
         )
         return self.__decode_tx_info(res)
 
-    def sign_transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), nonce, api_key_index, self.account_index))
+    def sign_transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_transfer_same_master_account(self, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), nonce, api_key_index, self.account_index))
+    def sign_transfer_same_master_account(self, to_account_index: int, asset_id: int, route_from: int, route_to: int, usdc_amount: int, fee: int, memo: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignTransfer(to_account_index, asset_id, route_from, route_to, usdc_amount, fee, ctypes.c_char_p(memo.encode("utf-8")), skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_create_public_pool(self, operator_fee: int, initial_total_shares: int, min_operator_share_rate: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignCreatePublicPool(operator_fee, initial_total_shares, min_operator_share_rate, nonce, api_key_index, self.account_index))
+    def sign_create_public_pool(self, operator_fee: int, initial_total_shares: int, min_operator_share_rate: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignCreatePublicPool(operator_fee, initial_total_shares, min_operator_share_rate, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_update_public_pool(self, public_pool_index: int, status: int, operator_fee: int, min_operator_share_rate: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignUpdatePublicPool(public_pool_index, status, operator_fee, min_operator_share_rate, nonce, api_key_index, self.account_index))
+    def sign_update_public_pool(self, public_pool_index: int, status: int, operator_fee: int, min_operator_share_rate: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignUpdatePublicPool(public_pool_index, status, operator_fee, min_operator_share_rate, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_mint_shares(self, public_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignMintShares(public_pool_index, share_amount, nonce, api_key_index, self.account_index))
+    def sign_mint_shares(self, public_pool_index: int, share_amount: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignMintShares(public_pool_index, share_amount, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_burn_shares(self, public_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignBurnShares(public_pool_index, share_amount, nonce, api_key_index, self.account_index))
+    def sign_burn_shares(self, public_pool_index: int, share_amount: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignBurnShares(public_pool_index, share_amount, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_stake_assets(self, staking_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignStakeAssets(staking_pool_index, share_amount, nonce, api_key_index, self.account_index))
+    def sign_stake_assets(self, staking_pool_index: int, share_amount: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignStakeAssets(staking_pool_index, share_amount, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_unstake_assets(self, staking_pool_index: int, share_amount: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignUnstakeAssets(staking_pool_index, share_amount, nonce, api_key_index, self.account_index))
+    def sign_unstake_assets(self, staking_pool_index: int, share_amount: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignUnstakeAssets(staking_pool_index, share_amount, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_update_leverage(self, market_index: int, fraction: int, margin_mode: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignUpdateLeverage(market_index, fraction, margin_mode, nonce, api_key_index, self.account_index))
+    def sign_update_leverage(self, market_index: int, fraction: int, margin_mode: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignUpdateLeverage(market_index, fraction, margin_mode, skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_update_margin(self, market_index: int, usdc_amount: int, direction: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignUpdateMargin(market_index, usdc_amount, direction, nonce, api_key_index, self.account_index))
+    def sign_update_margin(self, market_index: int, usdc_amount: int, direction: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignUpdateMargin(market_index, usdc_amount, direction, skip_nonce, nonce, api_key_index, self.account_index))
 
     @process_api_key_and_nonce
     async def create_order(
@@ -625,6 +637,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce : int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -642,6 +655,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -659,14 +673,22 @@ class SignerClient:
             grouping_type: int,
             orders: List[CreateOrderTxReq],
             *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            skip_nonce : int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) ->Union[Tuple[CreateGroupedOrders, RespSendTx, None], Tuple[None, None, str]]:
         tx_type, tx_info, tx_hash, error = self.sign_create_grouped_orders(
             grouping_type,
             orders,
-            nonce,
-            api_key_index
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
+            nonce=nonce,
+            api_key_index=api_key_index
         )
         if error is not None:
             return None, None, error
@@ -688,6 +710,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -704,6 +727,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -747,6 +771,7 @@ class SignerClient:
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
             ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
     ):
@@ -786,6 +811,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -804,6 +830,7 @@ class SignerClient:
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
             ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -826,6 +853,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -844,6 +872,7 @@ class SignerClient:
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
             ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -878,14 +907,15 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
 
     @process_api_key_and_nonce
-    async def cancel_order(self, market_index, order_index, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
+    async def cancel_order(self, market_index, order_index, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
                            ) -> Union[Tuple[CancelOrder, RespSendTx, None], Tuple[None, None, str]]:
-        tx_type, tx_info, tx_hash, error = self.sign_cancel_order(market_index, order_index, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_cancel_order(market_index, order_index, skip_nonce, nonce, api_key_index)
 
         if error is not None:
             return None, None, error
@@ -908,6 +938,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
       ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -925,6 +956,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -942,6 +974,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
         ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -959,6 +992,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -976,6 +1010,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
         ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -993,6 +1028,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
@@ -1010,6 +1046,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
         ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -1027,18 +1064,19 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
         )
 
     @process_api_key_and_nonce
-    async def withdraw(self, asset_id: int, route_type: int, amount: float, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
+    async def withdraw(self, asset_id: int, route_type: int, amount: float, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
         if asset_id in self.ASSET_TO_TICKER_SCALE:
             amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
         else:
             raise ValueError(f"Unsupported asset id: {asset_id}")
 
-        tx_type, tx_info, tx_hash, error = self.sign_withdraw(asset_id, route_type, amount, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_withdraw(asset_id, route_type, amount, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1048,8 +1086,8 @@ class SignerClient:
         return Withdraw.from_json(tx_info), api_response, None
 
     @process_api_key_and_nonce
-    async def create_sub_account(self, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_create_sub_account(nonce, api_key_index)
+    async def create_sub_account(self, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_create_sub_account(skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1059,8 +1097,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def cancel_all_orders(self, time_in_force, timestamp_ms, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX)-> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
-        tx_type, tx_info, tx_hash, error = self.sign_cancel_all_orders(time_in_force, timestamp_ms, nonce, api_key_index)
+    async def cancel_all_orders(self, time_in_force, timestamp_ms, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX)-> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
+        tx_type, tx_info, tx_hash, error = self.sign_cancel_all_orders(time_in_force, timestamp_ms, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1081,6 +1119,7 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ):
@@ -1093,6 +1132,7 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index
         )
@@ -1114,6 +1154,7 @@ class SignerClient:
             max_spot_taker_fee: int,
             max_spot_maker_fee: int,
             approval_expiry: int,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ):
@@ -1125,6 +1166,7 @@ class SignerClient:
             max_spot_taker_fee,
             max_spot_maker_fee,
             approval_expiry,
+            skip_nonce,
             nonce,
             api_key_index
         )
@@ -1145,6 +1187,7 @@ class SignerClient:
             max_spot_taker_fee: int,
             max_spot_maker_fee: int,
             approval_expiry: int,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ):
@@ -1155,6 +1198,7 @@ class SignerClient:
             max_spot_taker_fee,
             max_spot_maker_fee,
             approval_expiry,
+            skip_nonce,
             nonce,
             api_key_index
         )
@@ -1167,13 +1211,13 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+    async def transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if asset_id in self.ASSET_TO_TICKER_SCALE:
             amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
         else:
             raise ValueError(f"Unsupported asset id: {asset_id}")
 
-        tx_type, tx_info, tx_hash, error = self.sign_transfer(eth_private_key, to_account_index, asset_id, route_from, route_to, amount, fee, memo, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_transfer(eth_private_key, to_account_index, asset_id, route_from, route_to, amount, fee, memo, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1183,13 +1227,13 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def transfer_same_master_account(self, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+    async def transfer_same_master_account(self, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if asset_id in self.ASSET_TO_TICKER_SCALE:
             amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
         else:
             raise ValueError(f"Unsupported asset id: {asset_id}")
 
-        tx_type, tx_info, tx_hash, error = self.sign_transfer_same_master_account(to_account_index, asset_id, route_from, route_to, amount, fee, memo, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_transfer_same_master_account(to_account_index, asset_id, route_from, route_to, amount, fee, memo, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1200,10 +1244,10 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def create_public_pool(
-            self, operator_fee, initial_total_shares, min_operator_share_rate, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
+            self, operator_fee, initial_total_shares, min_operator_share_rate, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
     ):
         tx_type, tx_info, tx_hash, error = self.sign_create_public_pool(
-            operator_fee, initial_total_shares, min_operator_share_rate, nonce, api_key_index
+            operator_fee, initial_total_shares, min_operator_share_rate, skip_nonce, nonce, api_key_index
         )
         if error is not None:
             return None, None, error
@@ -1215,10 +1259,10 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def update_public_pool(
-            self, public_pool_index, status, operator_fee, min_operator_share_rate, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
+            self, public_pool_index, status, operator_fee, min_operator_share_rate, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX
     ):
         tx_type, tx_info, tx_hash, error = self.sign_update_public_pool(
-            public_pool_index, status, operator_fee, min_operator_share_rate, nonce, api_key_index
+            public_pool_index, status, operator_fee, min_operator_share_rate, skip_nonce, nonce, api_key_index
         )
         if error is not None:
             return None, None, error
@@ -1229,8 +1273,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def mint_shares(self, public_pool_index, share_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_mint_shares(public_pool_index, share_amount, nonce, api_key_index)
+    async def mint_shares(self, public_pool_index, share_amount, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_mint_shares(public_pool_index, share_amount, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1240,8 +1284,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def burn_shares(self, public_pool_index, share_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_burn_shares(public_pool_index, share_amount, nonce, api_key_index)
+    async def burn_shares(self, public_pool_index, share_amount, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_burn_shares(public_pool_index, share_amount, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1251,8 +1295,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def stake_assets(self, staking_pool_index, share_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_stake_assets(staking_pool_index, share_amount, nonce, api_key_index)
+    async def stake_assets(self, staking_pool_index, share_amount, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_stake_assets(staking_pool_index, share_amount, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1262,8 +1306,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def unstake_assets(self, staking_pool_index, share_amount, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_unstake_assets(staking_pool_index, share_amount, nonce, api_key_index)
+    async def unstake_assets(self, staking_pool_index, share_amount, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_unstake_assets(staking_pool_index, share_amount, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1273,9 +1317,9 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def update_leverage(self, market_index, margin_mode, leverage, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+    async def update_leverage(self, market_index, margin_mode, leverage, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         imf = int(10_000 / leverage)
-        tx_type, tx_info, tx_hash, error = self.sign_update_leverage(market_index, imf, margin_mode, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_update_leverage(market_index, imf, margin_mode, skip_nonce, nonce, api_key_index)
 
         if error is not None:
             return None, None, error
@@ -1286,9 +1330,9 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def update_margin(self, market_index: int, usdc_amount: float, direction: int, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+    async def update_margin(self, market_index: int, usdc_amount: float, direction: int, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         usdc_amount = int(usdc_amount * self.USDC_TICKER_SCALE)
-        tx_type, tx_info, tx_hash, error = self.sign_update_margin(market_index, usdc_amount, direction, nonce, api_key_index)
+        tx_type, tx_info, tx_hash, error = self.sign_update_margin(market_index, usdc_amount, direction, skip_nonce, nonce, api_key_index)
 
         if error is not None:
             return None, None, error
