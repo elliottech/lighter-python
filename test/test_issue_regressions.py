@@ -230,7 +230,7 @@ def test_sign_update_leverage_forwards_margin_mode_to_signer():
     finally:
         SignerClient._SignerClient__decode_tx_info = original_decode
 
-    assert fake_signer.captured_args == (3, 500, SignerClient.ISOLATED_MARGIN_MODE, 17, 9, 42)
+    assert fake_signer.captured_args == (3, 500, SignerClient.ISOLATED_MARGIN_MODE, SignerClient.SKIP_NONCE_OFF, 17, 9, 42)
 
 
 def test_update_leverage_keeps_public_margin_mode_and_fraction_mapping():
@@ -240,8 +240,8 @@ def test_update_leverage_keeps_public_margin_mode_and_fraction_mapping():
 
     captured = {}
 
-    def fake_sign_update_leverage(market_index, fraction, margin_mode, nonce, api_key_index):
-        captured["args"] = (market_index, fraction, margin_mode, nonce, api_key_index)
+    def fake_sign_update_leverage(market_index, fraction, margin_mode, skip_nonce, nonce, api_key_index):
+        captured["args"] = (market_index, fraction, margin_mode, skip_nonce, nonce, api_key_index)
         return 1, '{"MarginMode":1}', '0xabc', None
 
     client.sign_update_leverage = fake_sign_update_leverage
@@ -257,7 +257,7 @@ def test_update_leverage_keeps_public_margin_mode_and_fraction_mapping():
         )
     )
 
-    assert captured["args"] == (3, 500, SignerClient.ISOLATED_MARGIN_MODE, 17, 9)
+    assert captured["args"] == (3, 500, SignerClient.ISOLATED_MARGIN_MODE, SignerClient.SKIP_NONCE_OFF, 17, 9)
 
 
 def test_package_version_matches_distribution_metadata_when_installed():
@@ -445,6 +445,7 @@ def test_sign_withdraw_forwards_asset_route_and_amount():
         SignerClient.ASSET_ID_USDC,
         SignerClient.ROUTE_SPOT,
         123456,
+        SignerClient.SKIP_NONCE_OFF,
         9,
         7,
         42,
@@ -617,9 +618,10 @@ def test_sign_create_grouped_orders_forwards_grouping_type_and_order_count():
     captured = {}
 
     class FakeSigner:
-        def SignCreateGroupedOrders(self, grouping_type, orders_arr, count, nonce, api_key_index, account_index):
+        def SignCreateGroupedOrders(self, grouping_type, orders_arr, count, integrator_account_index, integrator_taker_fee, integrator_maker_fee, skip_nonce, nonce, api_key_index, account_index):
             captured["grouping_type"] = grouping_type
             captured["count"] = count
+            captured["skip_nonce"] = skip_nonce
             captured["nonce"] = nonce
             captured["api_key_index"] = api_key_index
             # return a SignedTxResponse-like object with null fields so decode works
@@ -656,6 +658,7 @@ def test_sign_create_grouped_orders_forwards_grouping_type_and_order_count():
 
     assert captured["grouping_type"] == SignerClient.GROUPING_TYPE_ONE_CANCELS_THE_OTHER
     assert captured["count"] == 2
+    assert captured["skip_nonce"] == SignerClient.SKIP_NONCE_OFF
     assert captured["nonce"] == 42
     assert captured["api_key_index"] == 7
 

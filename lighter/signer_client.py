@@ -1159,6 +1159,7 @@ class SignerClient:
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
             ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
         ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
@@ -1296,6 +1297,7 @@ class SignerClient:
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
             ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
         ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
