@@ -29,8 +29,9 @@ class ReqGetAccountMetadata(BaseModel):
     by: StrictStr
     value: StrictStr
     auth: Optional[StrictStr] = None
+    cursor: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["by", "value", "auth"]
+    __properties: ClassVar[List[str]] = ["by", "value", "auth", "cursor"]
 
     @field_validator('by')
     def by_validate_enum(cls, value):
@@ -99,7 +100,8 @@ class ReqGetAccountMetadata(BaseModel):
         _obj = cls.model_construct(**{
             "by": obj.get("by"),
             "value": obj.get("value"),
-            "auth": obj.get("auth")
+            "auth": obj.get("auth"),
+            "cursor": obj.get("cursor")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

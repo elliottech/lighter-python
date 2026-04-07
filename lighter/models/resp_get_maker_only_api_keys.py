@@ -19,20 +19,18 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from lighter.models.account_metadata import AccountMetadata
 from typing import Optional, Set
 from typing_extensions import Self
 
-class AccountMetadatas(BaseModel):
+class RespGetMakerOnlyApiKeys(BaseModel):
     """
-    AccountMetadatas
+    RespGetMakerOnlyApiKeys
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    account_metadatas: List[AccountMetadata]
-    next_cursor: Optional[StrictStr] = None
+    api_key_indexes: List[Int16]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_metadatas", "next_cursor"]
+    __properties: ClassVar[List[str]] = ["code", "message", "api_key_indexes"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -52,7 +50,7 @@ class AccountMetadatas(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of AccountMetadatas from a JSON string"""
+        """Create an instance of RespGetMakerOnlyApiKeys from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,13 +73,13 @@ class AccountMetadatas(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in account_metadatas (list)
+        # override the default output from pydantic by calling `to_dict()` of each item in api_key_indexes (list)
         _items = []
-        if self.account_metadatas:
-            for _item in self.account_metadatas:
+        if self.api_key_indexes:
+            for _item in self.api_key_indexes:
                 if _item:
                     _items.append(_item.to_dict())
-            _dict['account_metadatas'] = _items
+            _dict['api_key_indexes'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -91,7 +89,7 @@ class AccountMetadatas(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of AccountMetadatas from a dict"""
+        """Create an instance of RespGetMakerOnlyApiKeys from a dict"""
         if obj is None:
             return None
 
@@ -101,8 +99,7 @@ class AccountMetadatas(BaseModel):
         _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "account_metadatas": [AccountMetadata.from_dict(_item) for _item in obj["account_metadatas"]] if obj.get("account_metadatas") is not None else None,
-            "next_cursor": obj.get("next_cursor")
+            "api_key_indexes": [Int16.from_dict(_item) for _item in obj["api_key_indexes"]] if obj.get("api_key_indexes") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

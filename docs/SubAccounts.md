@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **message** | **str** |  | [optional] 
 **l1_address** | **str** |  | 
 **sub_accounts** | [**List[Account]**](Account.md) |  | 
+**next_cursor** | **str** |  | [optional] 
 
 ## Example
 

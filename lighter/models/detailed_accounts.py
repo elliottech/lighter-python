@@ -31,8 +31,9 @@ class DetailedAccounts(BaseModel):
     message: Optional[StrictStr] = None
     total: StrictInt
     accounts: List[DetailedAccount]
+    next_cursor: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "total", "accounts"]
+    __properties: ClassVar[List[str]] = ["code", "message", "total", "accounts", "next_cursor"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -102,7 +103,8 @@ class DetailedAccounts(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "total": obj.get("total"),
-            "accounts": [DetailedAccount.from_dict(_item) for _item in obj["accounts"]] if obj.get("accounts") is not None else None
+            "accounts": [DetailedAccount.from_dict(_item) for _item in obj["accounts"]] if obj.get("accounts") is not None else None,
+            "next_cursor": obj.get("next_cursor")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

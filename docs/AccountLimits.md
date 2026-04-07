@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **max_llp_amount** | **str** |  | 
 **user_tier** | **str** |  | 
 **can_create_public_pool** | **bool** |  | 
+**user_tier_name** | **str** |  | 
 **current_maker_fee_tick** | **int** |  | 
 **current_taker_fee_tick** | **int** |  | 
 **leased_lit** | **str** |  | 

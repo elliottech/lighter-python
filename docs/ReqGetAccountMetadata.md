@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **by** | **str** |  | 
 **value** | **str** |  | 
 **auth** | **str** |  | [optional] 
+**cursor** | **str** |  | [optional] 
 
 ## Example
 

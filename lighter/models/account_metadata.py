@@ -31,9 +31,10 @@ class AccountMetadata(BaseModel):
     description: StrictStr
     can_invite: StrictBool = Field(description=" Remove After FE uses L1 meta endpoint")
     referral_points_percentage: StrictStr = Field(description=" Remove After FE uses L1 meta endpoint")
+    can_rfq: StrictBool
     created_at: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at"]
+    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "can_rfq", "created_at"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -98,6 +99,7 @@ class AccountMetadata(BaseModel):
             "description": obj.get("description"),
             "can_invite": obj.get("can_invite"),
             "referral_points_percentage": obj.get("referral_points_percentage"),
+            "can_rfq": obj.get("can_rfq"),
             "created_at": obj.get("created_at")
         })
         # store additional fields in additional_properties

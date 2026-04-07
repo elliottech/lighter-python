@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **message** | **str** |  | [optional] 
 **total** | **int** |  | 
 **accounts** | [**List[DetailedAccount]**](DetailedAccount.md) |  | 
+**next_cursor** | **str** |  | [optional] 
 
 ## Example
 

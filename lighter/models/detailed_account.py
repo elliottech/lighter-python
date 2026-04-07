@@ -51,6 +51,7 @@ class DetailedAccount(BaseModel):
     description: StrictStr
     can_invite: StrictBool = Field(description=" Remove After FE uses L1 meta endpoint")
     referral_points_percentage: StrictStr = Field(description=" Remove After FE uses L1 meta endpoint")
+    can_rfq: StrictBool
     created_at: StrictInt
     positions: List[AccountPosition]
     assets: List[AccountAsset]
@@ -61,7 +62,7 @@ class DetailedAccount(BaseModel):
     pending_unlocks: List[PendingUnlock]
     approved_integrators: List[ApprovedIntegrator]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time", "account_trading_mode", "account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "pending_unlocks", "approved_integrators"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time", "account_trading_mode", "account_index", "name", "description", "can_invite", "referral_points_percentage", "can_rfq", "created_at", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "pending_unlocks", "approved_integrators"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -178,6 +179,7 @@ class DetailedAccount(BaseModel):
             "description": obj.get("description"),
             "can_invite": obj.get("can_invite"),
             "referral_points_percentage": obj.get("referral_points_percentage"),
+            "can_rfq": obj.get("can_rfq"),
             "created_at": obj.get("created_at"),
             "positions": [AccountPosition.from_dict(_item) for _item in obj["positions"]] if obj.get("positions") is not None else None,
             "assets": [AccountAsset.from_dict(_item) for _item in obj["assets"]] if obj.get("assets") is not None else None,

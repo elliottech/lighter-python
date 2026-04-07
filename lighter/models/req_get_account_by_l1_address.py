@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,8 +27,9 @@ class ReqGetAccountByL1Address(BaseModel):
     ReqGetAccountByL1Address
     """ # noqa: E501
     l1_address: StrictStr
+    cursor: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address"]
+    __properties: ClassVar[List[str]] = ["l1_address", "cursor"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,7 +89,8 @@ class ReqGetAccountByL1Address(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_construct(**{
-            "l1_address": obj.get("l1_address")
+            "l1_address": obj.get("l1_address"),
+            "cursor": obj.get("cursor")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

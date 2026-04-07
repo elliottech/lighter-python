@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,8 +28,10 @@ class ReqGetAccount(BaseModel):
     """ # noqa: E501
     by: StrictStr
     value: StrictStr
+    active_only: Optional[StrictBool] = False
+    cursor: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["by", "value"]
+    __properties: ClassVar[List[str]] = ["by", "value", "active_only", "cursor"]
 
     @field_validator('by')
     def by_validate_enum(cls, value):
@@ -97,7 +99,9 @@ class ReqGetAccount(BaseModel):
 
         _obj = cls.model_construct(**{
             "by": obj.get("by"),
-            "value": obj.get("value")
+            "value": obj.get("value"),
+            "active_only": obj.get("active_only") if obj.get("active_only") is not None else False,
+            "cursor": obj.get("cursor")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
