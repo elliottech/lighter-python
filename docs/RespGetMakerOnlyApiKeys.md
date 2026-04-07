@@ -3,11 +3,11 @@
 
 ## Properties
 
-Name | Type | Description | Notes
------------- | ------------- | ------------- | -------------
-**code** | **int** |  | 
-**message** | **str** |  | [optional] 
-**api_key_indexes** | [**List[Int16]**](Int16.md) |  | 
+Name | Type          | Description | Notes
+------------ |---------------| ------------- | -------------
+**code** | **int**       |  | 
+**message** | **str**       |  | [optional] 
+**api_key_indexes** | **List[int]** |  | 
 
 ## Example
 

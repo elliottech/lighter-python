@@ -28,7 +28,7 @@ class RespGetMakerOnlyApiKeys(BaseModel):
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    api_key_indexes: List[Int16]
+    api_key_indexes: List[StrictInt]
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "api_key_indexes"]
 
@@ -99,7 +99,7 @@ class RespGetMakerOnlyApiKeys(BaseModel):
         _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "api_key_indexes": [Int16.from_dict(_item) for _item in obj["api_key_indexes"]] if obj.get("api_key_indexes") is not None else None
+            "api_key_indexes": obj.get("api_key_indexes"),
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
