@@ -31,12 +31,12 @@ class Candle(BaseModel):
     h: Union[StrictFloat, StrictInt] = Field(description=" high")
     l: Union[StrictFloat, StrictInt] = Field(description=" low")
     c: Union[StrictFloat, StrictInt] = Field(description=" close")
-    o: Union[StrictFloat, StrictInt] = Field(description=" open_raw", alias="O")
-    h: Union[StrictFloat, StrictInt] = Field(description=" high_raw", alias="H")
-    l: Union[StrictFloat, StrictInt] = Field(description=" low_raw", alias="L")
-    c: Union[StrictFloat, StrictInt] = Field(description=" close_raw", alias="C")
+    open_raw: Union[StrictFloat, StrictInt] = Field(description=" open_raw", alias="O")
+    high_raw: Union[StrictFloat, StrictInt] = Field(description=" high_raw", alias="H")
+    low_raw: Union[StrictFloat, StrictInt] = Field(description=" low_raw", alias="L")
+    close_raw: Union[StrictFloat, StrictInt] = Field(description=" close_raw", alias="C")
     v: Union[StrictFloat, StrictInt] = Field(description=" volume0")
-    v: Union[StrictFloat, StrictInt] = Field(description=" volume1", alias="V")
+    volume_raw: Union[StrictFloat, StrictInt] = Field(description=" volume1", alias="V")
     i: StrictInt = Field(description=" last_trade_id")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["t", "o", "h", "l", "c", "O", "H", "L", "C", "v", "V", "i"]
@@ -104,12 +104,12 @@ class Candle(BaseModel):
             "h": obj.get("h"),
             "l": obj.get("l"),
             "c": obj.get("c"),
-            "O": obj.get("O"),
-            "H": obj.get("H"),
-            "L": obj.get("L"),
-            "C": obj.get("C"),
+            "open_raw": obj.get("O"),
+            "high_raw": obj.get("H"),
+            "low_raw": obj.get("L"),
+            "close_raw": obj.get("C"),
             "v": obj.get("v"),
-            "V": obj.get("V"),
+            "volume_raw": obj.get("V"),
             "i": obj.get("i")
         })
         # store additional fields in additional_properties
