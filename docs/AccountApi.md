@@ -17,6 +17,7 @@ Method | HTTP request | Description
 [**leases**](AccountApi.md#leases) | **GET** /api/v1/leases | leases
 [**liquidations**](AccountApi.md#liquidations) | **GET** /api/v1/liquidations | liquidations
 [**lit_lease**](AccountApi.md#lit_lease) | **POST** /api/v1/litLease | litLease
+[**partner_stats**](AccountApi.md#partner_stats) | **GET** /api/v1/partnerStats | partnerStats
 [**pnl**](AccountApi.md#pnl) | **GET** /api/v1/pnl | pnl
 [**position_funding**](AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 [**public_pools_metadata**](AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
@@ -970,6 +971,79 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: multipart/form-data
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **partner_stats**
+> PartnerStats partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+
+partnerStats
+
+Get partner stats
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.partner_stats import PartnerStats
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    account_index = 56 # int | 
+    start_timestamp = 56 # int |  (optional)
+    end_timestamp = 56 # int |  (optional)
+
+    try:
+        # partnerStats
+        api_response = await api_instance.partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+        print("The response of AccountApi->partner_stats:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->partner_stats: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **start_timestamp** | **int**|  | [optional] 
+ **end_timestamp** | **int**|  | [optional] 
+
+### Return type
+
+[**PartnerStats**](PartnerStats.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 ### HTTP response details

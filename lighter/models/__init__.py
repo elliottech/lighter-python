@@ -74,6 +74,7 @@ from lighter.models.order_book_orders import OrderBookOrders
 from lighter.models.order_book_stats import OrderBookStats
 from lighter.models.order_books import OrderBooks
 from lighter.models.orders import Orders
+from lighter.models.partner_stats import PartnerStats
 from lighter.models.pending_unlock import PendingUnlock
 from lighter.models.perps_market_stats import PerpsMarketStats
 from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
@@ -114,10 +115,12 @@ from lighter.models.req_get_l1_tx import ReqGetL1Tx
 from lighter.models.req_get_latest_deposit import ReqGetLatestDeposit
 from lighter.models.req_get_leases import ReqGetLeases
 from lighter.models.req_get_liquidation_infos import ReqGetLiquidationInfos
+from lighter.models.req_get_maker_only_api_keys import ReqGetMakerOnlyApiKeys
 from lighter.models.req_get_next_nonce import ReqGetNextNonce
 from lighter.models.req_get_order_book_details import ReqGetOrderBookDetails
 from lighter.models.req_get_order_book_orders import ReqGetOrderBookOrders
 from lighter.models.req_get_order_books import ReqGetOrderBooks
+from lighter.models.req_get_partner_stats import ReqGetPartnerStats
 from lighter.models.req_get_position_funding import ReqGetPositionFunding
 from lighter.models.req_get_public_pools_metadata import ReqGetPublicPoolsMetadata
 from lighter.models.req_get_push_notif_settings import ReqGetPushNotifSettings
@@ -141,12 +144,14 @@ from lighter.models.resp_get_fastwithdrawal_info import RespGetFastwithdrawalInf
 from lighter.models.resp_get_is_next_bridge_fast import RespGetIsNextBridgeFast
 from lighter.models.resp_get_lease_options import RespGetLeaseOptions
 from lighter.models.resp_get_leases import RespGetLeases
+from lighter.models.resp_get_maker_only_api_keys import RespGetMakerOnlyApiKeys
 from lighter.models.resp_get_push_notif_settings import RespGetPushNotifSettings
 from lighter.models.resp_post_api_token import RespPostApiToken
 from lighter.models.resp_public_pools_metadata import RespPublicPoolsMetadata
 from lighter.models.resp_revoke_api_token import RespRevokeApiToken
 from lighter.models.resp_send_tx import RespSendTx
 from lighter.models.resp_send_tx_batch import RespSendTxBatch
+from lighter.models.resp_set_maker_only_api_keys import RespSetMakerOnlyApiKeys
 from lighter.models.resp_withdrawal_delay import RespWithdrawalDelay
 from lighter.models.result_code import ResultCode
 from lighter.models.risk_info import RiskInfo
