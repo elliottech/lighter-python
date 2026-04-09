@@ -32,6 +32,7 @@ from lighter.models.trades import Trades
 
 from lighter.api_client import ApiClient, RequestSerialized
 from lighter.api_response import ApiResponse
+from lighter.exceptions import ApiValueError
 from lighter.rest import RESTResponseType
 
 
@@ -319,9 +320,9 @@ class OrderApi:
             
             _query_params.append(('account_index', account_index))
             
-        if market_id is not None:
-            
-            _query_params.append(('market_id', market_id))
+        if market_id is None:
+            raise ApiValueError("Missing the required parameter `market_id` when calling `account_active_orders`")
+        _query_params.append(('market_id', market_id))
             
         # process the header parameters
         # process the form parameters
@@ -3774,8 +3775,9 @@ class OrderApi:
             
             _query_params.append(('limit', limit))
             
-        if aggregate is not None:
-            
+        if aggregate is None:
+            _query_params.append(('aggregate', False))
+        else:
             _query_params.append(('aggregate', aggregate))
             
         # process the header parameters

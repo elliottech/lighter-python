@@ -56,6 +56,13 @@ class AccountApi:
             api_client = ApiClient.get_default()
         self.api_client = api_client
 
+    @staticmethod
+    def _normalize_l1_address(l1_address: str) -> str:
+        normalized = l1_address.strip()
+        if normalized and not normalized.startswith(("0x", "0X")):
+            normalized = f"0x{normalized}"
+        return normalized
+
 
     async def account(
         self,
@@ -109,6 +116,9 @@ class AccountApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+
+        if by in ("l1_address", "l1Address"):
+            value = self._normalize_l1_address(value)
 
         _param = self._account_serialize(
             by=by,
@@ -189,6 +199,9 @@ class AccountApi:
         :return: Returns the result object.
         """ # noqa: E501
 
+        if by in ("l1_address", "l1Address"):
+            value = self._normalize_l1_address(value)
+
         _param = self._account_serialize(
             by=by,
             value=value,
@@ -267,6 +280,9 @@ class AccountApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+
+        if by in ("l1_address", "l1Address"):
+            value = self._normalize_l1_address(value)
 
         _param = self._account_serialize(
             by=by,
@@ -1035,6 +1051,8 @@ class AccountApi:
         :return: Returns the result object.
         """ # noqa: E501
 
+        l1_address = self._normalize_l1_address(l1_address)
+
         _param = self._accounts_by_l1_address_serialize(
             l1_address=l1_address,
             cursor=cursor,
@@ -1106,6 +1124,8 @@ class AccountApi:
         :return: Returns the result object.
         """ # noqa: E501
 
+        l1_address = self._normalize_l1_address(l1_address)
+
         _param = self._accounts_by_l1_address_serialize(
             l1_address=l1_address,
             cursor=cursor,
@@ -1176,6 +1196,8 @@ class AccountApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+
+        l1_address = self._normalize_l1_address(l1_address)
 
         _param = self._accounts_by_l1_address_serialize(
             l1_address=l1_address,

@@ -5294,7 +5294,7 @@
         "order_expiry": {
           "type": "integer",
           "format": "int64",
-          "example": "1640995200"
+          "example": "1640995200000"
         },
         "status": {
           "type": "string",
@@ -8610,7 +8610,7 @@
         "order_expiry": {
           "type": "integer",
           "format": "int64",
-          "example": "1640995200"
+          "example": "1640995200000"
         },
         "transaction_time": {
           "type": "integer",

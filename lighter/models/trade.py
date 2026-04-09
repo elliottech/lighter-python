@@ -45,12 +45,12 @@ class Trade(BaseModel):
     taker_fee: StrictInt
     taker_position_size_before: StrictStr
     taker_entry_quote_before: StrictStr
-    taker_initial_margin_fraction_before: StrictInt
+    taker_initial_margin_fraction_before: Optional[StrictInt] = None
     taker_position_sign_changed: StrictBool
     maker_fee: StrictInt
     maker_position_size_before: StrictStr
     maker_entry_quote_before: StrictStr
-    maker_initial_margin_fraction_before: StrictInt
+    maker_initial_margin_fraction_before: Optional[StrictInt] = None
     maker_position_sign_changed: StrictBool
     transaction_time: StrictInt
     ask_account_pnl: StrictStr

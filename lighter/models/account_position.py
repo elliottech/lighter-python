@@ -41,10 +41,11 @@ class AccountPosition(BaseModel):
     liquidation_price: StrictStr
     total_funding_paid_out: Optional[StrictStr] = None
     margin_mode: StrictInt
+    leverage: Optional[StrictInt] = None
     allocated_margin: StrictStr
     total_discount: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["market_id", "symbol", "initial_margin_fraction", "open_order_count", "pending_order_count", "position_tied_order_count", "sign", "position", "avg_entry_price", "position_value", "unrealized_pnl", "realized_pnl", "liquidation_price", "total_funding_paid_out", "margin_mode", "allocated_margin", "total_discount"]
+    __properties: ClassVar[List[str]] = ["market_id", "symbol", "initial_margin_fraction", "open_order_count", "pending_order_count", "position_tied_order_count", "sign", "position", "avg_entry_price", "position_value", "unrealized_pnl", "realized_pnl", "liquidation_price", "total_funding_paid_out", "margin_mode", "leverage", "allocated_margin", "total_discount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -119,6 +120,7 @@ class AccountPosition(BaseModel):
             "liquidation_price": obj.get("liquidation_price"),
             "total_funding_paid_out": obj.get("total_funding_paid_out"),
             "margin_mode": obj.get("margin_mode"),
+            "leverage": obj.get("leverage"),
             "allocated_margin": obj.get("allocated_margin"),
             "total_discount": obj.get("total_discount")
         })
