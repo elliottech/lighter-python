@@ -65,7 +65,7 @@ target/
 .ipynb_checkpoints
 openapi-generator-cli.jar
 
-
+.DS_Store
 .idea
 
 examples/secrets.py
