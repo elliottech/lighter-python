@@ -22,6 +22,7 @@ from lighter.paper_client.risk import (
     update_position_metrics,
 )
 from lighter.paper_client.types import (
+    AccountTier,
     MarketConfig,
     PaperAccount,
     PaperAccountHealth,
@@ -58,6 +59,7 @@ class PaperClient:
         ws_url: Optional[str] = None,
         ws_path: str = "/stream",
         initial_snapshot_timeout: float = 10.0,
+        account_tier: AccountTier = AccountTier.STANDARD,
     ) -> None:
         if initial_collateral_usdc <= 0:
             raise ValueError(
@@ -66,6 +68,8 @@ class PaperClient:
             )
         if order_book_limit < 1 or order_book_limit > 250:
             raise ValueError("order_book_limit must be between 1 and 250")
+
+        self._account_tier = account_tier
 
         self.api_client = api_client
         self.order_api = order_api if order_api is not None else OrderApi(api_client)
@@ -276,12 +280,17 @@ class PaperClient:
         for detail in details.order_book_details:
             if detail.market_id != market_id:
                 continue
-            self.market_configs[market_id] = self._market_config_from_detail(detail)
+            self.market_configs[market_id] = self._market_config_from_detail(
+                detail, self._account_tier
+            )
             return
         raise ValueError(f"perps order book detail not found for market {market_id}")
 
     @staticmethod
-    def _market_config_from_detail(detail: PerpsOrderBookDetail) -> MarketConfig:
+    def _market_config_from_detail(
+        detail: PerpsOrderBookDetail,
+        tier: AccountTier,
+    ) -> MarketConfig:
         if detail.market_type != "perp":
             raise ValueError(
                 "paper trading only supports perp markets, "
@@ -296,8 +305,8 @@ class PaperClient:
             min_initial_margin_fraction=detail.min_initial_margin_fraction,
             maintenance_margin_fraction=detail.maintenance_margin_fraction,
             closeout_margin_fraction=detail.closeout_margin_fraction,
-            taker_fee=float(detail.taker_fee),
-            maker_fee=float(detail.maker_fee),
+            taker_fee=tier.taker_fee,
+            maker_fee=tier.maker_fee,
             min_base_amount=float(detail.min_base_amount),
             min_quote_amount=float(detail.min_quote_amount),
             last_trade_price=float(detail.last_trade_price),

@@ -1,7 +1,37 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from enum import IntEnum
+from enum import Enum, IntEnum
 from typing import Dict, List, Optional
+
+_FEE_TICK = 1_000_000
+
+
+class AccountTier(Enum):
+    """Publicly documented account tiers with associated fee schedules.
+
+    Each value is ``(taker_fee, maker_fee)`` expressed as fractions
+    (i.e. ``280 / 1_000_000 == 0.000280 == 0.028 %``).
+
+    Source: https://docs.lighter.xyz/trading/trading-fees
+    """
+
+    STANDARD = (0.0, 0.0)
+    PREMIUM = (280 / _FEE_TICK, 40 / _FEE_TICK)
+    PREMIUM_1 = (273 / _FEE_TICK, 39 / _FEE_TICK)
+    PREMIUM_2 = (266 / _FEE_TICK, 38 / _FEE_TICK)
+    PREMIUM_3 = (252 / _FEE_TICK, 36 / _FEE_TICK)
+    PREMIUM_4 = (238 / _FEE_TICK, 34 / _FEE_TICK)
+    PREMIUM_5 = (224 / _FEE_TICK, 32 / _FEE_TICK)
+    PREMIUM_6 = (210 / _FEE_TICK, 30 / _FEE_TICK)
+    PREMIUM_7 = (196 / _FEE_TICK, 28 / _FEE_TICK)
+
+    @property
+    def taker_fee(self) -> float:
+        return self.value[0]
+
+    @property
+    def maker_fee(self) -> float:
+        return self.value[1]
 
 
 class PaperOrderType(IntEnum):

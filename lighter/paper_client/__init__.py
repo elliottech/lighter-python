@@ -1,6 +1,7 @@
 from lighter.paper_client.client import PaperClient
 from lighter.paper_client.order_book import InMemoryOrderBook, OrderBookLevel
 from lighter.paper_client.types import (
+    AccountTier,
     MarketConfig,
     PaperAccount,
     PaperAccountHealth,
@@ -15,6 +16,7 @@ from lighter.paper_client.types import (
 )
 
 __all__ = [
+    "AccountTier",
     "InMemoryOrderBook",
     "MarketConfig",
     "OrderBookLevel",

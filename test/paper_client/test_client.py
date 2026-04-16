@@ -2,6 +2,7 @@ import unittest
 
 from lighter.paper_client.accounting import apply_fill
 from lighter.paper_client import (
+    AccountTier,
     PaperClient,
     PaperHealthStatus,
     PaperOrderRequest,
@@ -35,7 +36,7 @@ class TestPaperClient(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(buy_result.fills), 2)
         self.assertAlmostEqual(buy_result.avg_price, 3000.5)
         self.assertAlmostEqual(buy_result.quote_amount, 3000.5)
-        self.assertAlmostEqual(buy_result.total_fee, 1.50025)
+        self.assertAlmostEqual(buy_result.total_fee, 0.0)
 
         position = client.get_position(0)
         self.assertIsNotNone(position)
@@ -193,6 +194,35 @@ class TestPaperClient(unittest.IsolatedAsyncioTestCase):
         position = client.get_position(0)
         self.assertIsNotNone(position)
         self.assertAlmostEqual(position.unrealized_pnl, 99.5)
+
+    async def test_premium_tier_applies_fees(self) -> None:
+        order_api = FakeOrderApi()
+        order_api.books[0] = book(
+            asks=[("3000.00", "0.5"), ("3001.00", "2.0")],
+            bids=[("2999.00", "0.5"), ("2998.00", "2.0")],
+        )
+        client = PaperClient(
+            None, 5000.0, order_api=order_api, account_tier=AccountTier.PREMIUM
+        )
+        await client.track_market_snapshot(0)
+
+        result = await client.create_paper_order(
+            PaperOrderRequest(
+                market_id=0,
+                side=PaperOrderSide.BUY,
+                base_amount=1.0,
+            )
+        )
+
+        # premium taker fee = 280 / 1_000_000 = 0.000280
+        # fill 1: 0.5 * 3000 * 0.000280 = 0.42
+        # fill 2: 0.5 * 3001 * 0.000280 = 0.42014
+        expected_fee = 0.5 * 3000 * 0.000280 + 0.5 * 3001 * 0.000280
+        self.assertAlmostEqual(result.total_fee, expected_fee, places=8)
+
+    def test_default_tier_is_standard(self) -> None:
+        client = PaperClient(None, 5000.0, order_api=FakeOrderApi())
+        self.assertEqual(client._account_tier, AccountTier.STANDARD)
 
     async def test_repeated_orders_produce_identical_fills(self) -> None:
         order_api = FakeOrderApi()
