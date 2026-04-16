@@ -206,6 +206,8 @@ from lighter.models.zk_lighter_info import ZkLighterInfo
 from lighter.ws_client import WsClient
 from lighter.signer_client import SignerClient, create_api_key
 from lighter.paper_client import (
+    InMemoryOrderBook,
+    OrderBookLevel,
     PaperAccount,
     PaperAccountHealth,
     PaperClient,

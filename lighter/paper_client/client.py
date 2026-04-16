@@ -5,7 +5,7 @@ from lighter.api.order_api import OrderApi
 from lighter.api_client import ApiClient
 from lighter.configuration import Configuration
 from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
-from lighter.order_book_runtime import InMemoryOrderBook
+from lighter.paper_client.order_book import InMemoryOrderBook
 from lighter.paper_client.accounting import (
     copy_account,
     copy_position,
@@ -34,6 +34,20 @@ from lighter.paper_client.types import (
 
 
 class PaperClient:
+    """Local simulation client for testing trading strategies against real Lighter order book data.
+
+    Maintains a virtual account with simulated collateral, executes taker-only fills
+    against live or snapshot order book state, and tracks positions, PnL, and account
+    health locally.
+
+    Limitations:
+        - Perp markets only — spot markets are not supported.
+        - Taker-only — supports MARKET and IOC order types, no resting limit orders.
+        - Cross-margin only — isolated margin is not simulated.
+        - No funding simulation — funding rate payments are not applied to positions.
+        - Read-only simulation — no transactions are submitted to the exchange; all state is local.
+    """
+
     def __init__(
         self,
         api_client: Optional[ApiClient],

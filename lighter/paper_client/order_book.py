@@ -49,6 +49,11 @@ class OrderBookLevel:
 
 @dataclass
 class InMemoryOrderBook:
+    """Sorted in-memory order book built for ``PaperClient`` to simulate 
+    taker fills against order book data. Keeps asks sorted ascending and 
+    bids sorted descending so the best prices are always at index 0.  
+    """
+
     asks: List[OrderBookLevel] = field(default_factory=list)
     bids: List[OrderBookLevel] = field(default_factory=list)
     offset: Optional[int] = None

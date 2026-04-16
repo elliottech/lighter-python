@@ -4,7 +4,7 @@ from lighter.models.order_book_depth import OrderBookDepth
 from lighter.models.order_book_orders import OrderBookOrders
 from lighter.models.price_level import PriceLevel
 from lighter.models.simple_order import SimpleOrder
-from lighter.order_book_runtime import InMemoryOrderBook
+from lighter.paper_client.order_book import InMemoryOrderBook
 
 
 def make_runtime() -> InMemoryOrderBook:

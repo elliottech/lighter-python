@@ -1,7 +1,7 @@
 from math import fabs, pow
 from typing import Iterable, List, Tuple
 
-from lighter.order_book_runtime import OrderBookLevel
+from lighter.paper_client.order_book import OrderBookLevel
 from lighter.paper_client.types import (
     MarketConfig,
     PaperFill,

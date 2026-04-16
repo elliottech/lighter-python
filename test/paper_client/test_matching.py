@@ -1,6 +1,6 @@
 import unittest
 
-from lighter.order_book_runtime import OrderBookLevel
+from lighter.paper_client.order_book import OrderBookLevel
 from lighter.paper_client.matching import simulate_match, validate_order
 from lighter.paper_client.types import (
     PaperOrderRequest,
