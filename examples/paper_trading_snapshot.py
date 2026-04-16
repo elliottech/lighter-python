@@ -11,7 +11,7 @@ import lighter
 async def main():
     api_client = lighter.ApiClient(
         configuration=lighter.Configuration(
-            host="https://testnet.zklighter.elliot.ai",
+            host="https://mainnet.zklighter.elliot.ai",
         ),
     )
 

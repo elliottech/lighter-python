@@ -4,7 +4,7 @@ Subscribes to real-time order book updates via WebSocket and simulates
 trades against continuously updated book state.
 
 The paper client manages its own internal WebSocket listener and
-InMemoryOrderBook — it does not use lighter.WsClient.order_book_states.
+sorted order book.
 """
 
 import asyncio
@@ -14,7 +14,7 @@ import lighter
 async def main():
     api_client = lighter.ApiClient(
         configuration=lighter.Configuration(
-            host="https://testnet.zklighter.elliot.ai",
+            host="https://mainnet.zklighter.elliot.ai",
         ),
     )
 
