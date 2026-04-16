@@ -73,9 +73,9 @@ class PaperClient:
         self.account = new_paper_account(initial_collateral_usdc)
         self.market_configs: Dict[int, MarketConfig] = {}
         self.order_books: Dict[int, InMemoryOrderBook] = {}
-        self.ws_url = (
-            ws_url if ws_url is not None else self._default_ws_url(api_client, ws_path)
-        )
+        raw_ws_url = ws_url if ws_url is not None else self._default_ws_url(api_client, ws_path)
+        separator = "&" if "?" in raw_ws_url else "?"
+        self.ws_url = f"{raw_ws_url}{separator}encoding=json"
         self.initial_snapshot_timeout = initial_snapshot_timeout
         self._live_listeners: Dict[int, PaperOrderBookListener] = {}
         self._state_lock = asyncio.Lock()

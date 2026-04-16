@@ -90,8 +90,11 @@ class PaperOrderBookListener:
 
     async def _handle_raw_message(self, raw_message: Any) -> None:
         if isinstance(raw_message, bytes):
-            raw_message = raw_message.decode()
-        message = json.loads(raw_message) if isinstance(raw_message, str) else raw_message
+            raise TypeError(
+                "received binary websocket frame; paper client only supports "
+                "JSON encoding (ensure ws URL includes ?encoding=json)"
+            )
+        message = json.loads(raw_message)
         message_type = message.get("type")
 
         if message_type == "connected":
