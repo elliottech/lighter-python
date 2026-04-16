@@ -101,7 +101,7 @@ def apply_fill(
         )
     )
 
-    if new_position == 0:
+    if abs(new_position) < 1e-12:
         del account.positions[market_id]
 
     return realized_pnl
