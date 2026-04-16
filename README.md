@@ -64,6 +64,82 @@ python examples/ws.py
 python examples/create_cancel_order.py
 ```
 
+## Paper Trading
+
+`PaperClient` is a local simulation client for testing trading strategies against real Lighter order book data without risking real funds. It maintains its own virtual account with simulated collateral, executes taker-only fills against live or snapshot order book state, and tracks positions, PnL, and account health locally.
+
+### Snapshot Mode
+
+Fetch a one-time order book snapshot and simulate trades against it:
+
+```python
+import asyncio
+import lighter
+
+async def main():
+    api_client = lighter.ApiClient()
+    paper = lighter.PaperClient(api_client, initial_collateral_usdc=10_000)
+
+    await paper.track_market_snapshot(market_id=0)  # ETH-PERP
+
+    result = await paper.create_paper_order(
+        lighter.PaperOrderRequest(
+            market_id=0,
+            side=lighter.PaperOrderSide.BUY,
+            base_amount=0.5,
+        )
+    )
+    print(f"Filled {result.filled_size} @ avg {result.avg_price:.2f}")
+    print(f"Health: {paper.get_health()}")
+
+    await api_client.close()
+
+asyncio.run(main())
+```
+
+### Live Mode
+
+Subscribe to real-time order book updates via WebSocket. The paper client manages its own internal WebSocket listener and `InMemoryOrderBook` — it does not use or depend on `lighter.WsClient.order_book_states`.
+
+```python
+import asyncio
+import lighter
+
+async def main():
+    api_client = lighter.ApiClient()
+    paper = lighter.PaperClient(api_client, initial_collateral_usdc=10_000)
+
+    await paper.track_market(market_id=0)  # live WebSocket feed
+
+    result = await paper.create_paper_order(
+        lighter.PaperOrderRequest(
+            market_id=0,
+            side=lighter.PaperOrderSide.BUY,
+            base_amount=0.5,
+        )
+    )
+    print(f"Filled {result.filled_size} @ avg {result.avg_price:.2f}")
+
+    await paper.close()
+    await api_client.close()
+
+asyncio.run(main())
+```
+
+### v1 Scope & Limitations
+
+- **Perp markets only** — spot markets (market_id >= 2048) are not supported
+- **Taker-only** — supports `MARKET` and `IOC` order types; no resting limit orders
+- **Cross-margin only** — isolated margin is not simulated
+- **No funding simulation** — funding rate payments are not applied to positions
+- **Read-only simulation** — no transactions are submitted to the exchange; all state is local
+
+### Example Scripts
+
+- [Snapshot flow](examples/paper_trading_snapshot.py) — one-shot order book fetch and trade simulation
+- [Live flow](examples/paper_trading_live.py) — real-time WebSocket feed with continuous trading
+- [Health inspection](examples/paper_trading_health.py) — monitor account health and liquidation prices
+
 ## Documentation for API Endpoints
 
 All URIs are relative to *https://mainnet.zklighter.elliot.ai*

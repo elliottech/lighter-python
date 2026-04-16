@@ -205,3 +205,16 @@ from lighter.models.withdraw_history_item import WithdrawHistoryItem
 from lighter.models.zk_lighter_info import ZkLighterInfo
 from lighter.ws_client import WsClient
 from lighter.signer_client import SignerClient, create_api_key
+from lighter.paper_client import (
+    PaperAccount,
+    PaperAccountHealth,
+    PaperClient,
+    PaperFill,
+    PaperHealthStatus,
+    PaperOrderRequest,
+    PaperOrderResult,
+    PaperOrderSide,
+    PaperOrderType,
+    PaperPosition,
+    PaperTrade,
+)
