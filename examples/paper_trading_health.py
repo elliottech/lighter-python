@@ -91,7 +91,8 @@ async def main():
     print()
     print("-" * 60)
     print("COMPARISON")
-    print(f"  Conservative liq price: {'n/a (can\'t be liquidated)' if cons_liq == 0 else f'${cons_liq:.2f}'}")
+    cons_liq_str = "n/a (can't be liquidated)" if cons_liq == 0 else f"${cons_liq:.2f}"
+    print(f"  Conservative liq price: {cons_liq_str}")
     print(f"  Aggressive liq price:   ${aggr_liq:.2f}  (${aggr_mark - aggr_liq:.2f} below mark)")
     print("-" * 60)
 
