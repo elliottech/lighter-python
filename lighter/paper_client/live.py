@@ -71,7 +71,6 @@ class PaperOrderBookListener:
         try:
             async with websocket_connect(self.ws_url) as websocket:
                 self._websocket = websocket
-                await self._send_subscribe()
 
                 async for raw_message in websocket:
                     await self._handle_raw_message(raw_message)
