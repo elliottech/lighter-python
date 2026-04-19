@@ -81,20 +81,25 @@ def compute_health(
     tav = compute_total_account_value(account, mark_prices)
     imr = compute_initial_margin_requirement(account, mark_prices, configs)
     mmr = compute_maintenance_margin_requirement(account, mark_prices, configs)
-    comr = compute_closeout_margin_requirement(account, mark_prices, configs)
 
     if tav < 0:
         status = PaperHealthStatus.BANKRUPTCY
-    elif tav < comr:
-        status = PaperHealthStatus.FULL_LIQUIDATION
-    elif tav < mmr:
-        status = PaperHealthStatus.PARTIAL_LIQUIDATION
+    # Not in scope for paper trading
+    # elif tav < comr:
+    #     status = PaperHealthStatus.FULL_LIQUIDATION
+    # elif tav < mmr:
+    #     status = PaperHealthStatus.PARTIAL_LIQUIDATION
     elif tav < imr:
         status = PaperHealthStatus.PRE_LIQUIDATION
     else:
         status = PaperHealthStatus.HEALTHY
 
-    margin_usage = imr / tav * 100 if tav > 0 else 0.0
+    if imr == 0:
+        margin_usage = 0.0
+    elif tav > 0:
+        margin_usage = imr / tav * 100
+    else:
+        margin_usage = float("inf")
     total_notional = 0.0
     for market_id, position in account.positions.items():
         mark_price = mark_prices.get(market_id)
@@ -109,6 +114,7 @@ def compute_health(
         maintenance_margin_requirement=mmr,
         margin_usage=margin_usage,
         leverage=leverage,
+        has_been_liquidated=account.has_been_liquidated,
     )
 
 

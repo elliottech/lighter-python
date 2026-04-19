@@ -47,10 +47,12 @@ class PaperOrderSide(IntEnum):
 class PaperHealthStatus(IntEnum):
     HEALTHY = 0
     PRE_LIQUIDATION = 1
-    PARTIAL_LIQUIDATION = 2
-    FULL_LIQUIDATION = 3
+    # Values 2 (PARTIAL_LIQUIDATION) and 3 (FULL_LIQUIDATION) are reserved:
+    # in real Lighter, accounts pass through TAV < MMR and TAV < COMR states,
+    # but the paper sim collapses them. Liquidation runs atomically with every
+    # mark update, so any position whose mark crosses liquidation_price is wiped
+    # in the same tick.    
     BANKRUPTCY = 4
-
 
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
@@ -120,6 +122,11 @@ class PaperAccountHealth:
     maintenance_margin_requirement: float
     margin_usage: float
     leverage: float
+    # Sticky for the lifetime of the PaperClient session: set to True the first
+    # time a paper liquidation fires and never cleared (no deposit/reset API).
+    # Reads as "this session has experienced at least one liquidation", not
+    # "currently liquidating". Recreate the PaperClient to reset.
+    has_been_liquidated: bool = False
 
 
 @dataclass
@@ -128,6 +135,7 @@ class PaperAccount:
     collateral: float
     positions: Dict[int, PaperPosition] = field(default_factory=dict)
     trades: List[PaperTrade] = field(default_factory=list)
+    has_been_liquidated: bool = False
 
 
 @dataclass(frozen=True)
@@ -147,7 +155,5 @@ class MarketConfig:
     last_trade_price: float
 
 
-PositionMap = Dict[int, PaperPosition]
 MarkPriceMap = Dict[int, float]
 MarketConfigMap = Dict[int, MarketConfig]
-MaybePosition = Optional[PaperPosition]

@@ -38,31 +38,34 @@ class TestHealth(unittest.TestCase):
         health = compute_health(a, {0: 100.0}, {0: cfg()})
         self.assertEqual(health.status, PaperHealthStatus.PRE_LIQUIDATION)
 
-    def test_health_partial_liquidation(self):
-        a = new_paper_account(4.5)
-        apply_fill(a, 0, PaperOrderSide.BUY, 1.0, 100.0, 0)
-        health = compute_health(a, {0: 100.0}, {0: cfg()})
-        self.assertEqual(health.status, PaperHealthStatus.PARTIAL_LIQUIDATION)
-
-    def test_health_full_liquidation(self):
-        a = new_paper_account(2)
-        apply_fill(a, 0, PaperOrderSide.BUY, 1.0, 100.0, 0)
-        health = compute_health(a, {0: 100.0}, {0: cfg()})
-        self.assertEqual(health.status, PaperHealthStatus.FULL_LIQUIDATION)
-
     def test_health_bankruptcy(self):
         a = new_paper_account(1)
         apply_fill(a, 0, PaperOrderSide.BUY, 1.0, 200.0, 0)
         health = compute_health(a, {0: 100.0}, {0: cfg()})
         self.assertEqual(health.status, PaperHealthStatus.BANKRUPTCY)
 
-    def test_margin_usage_and_leverage_zero_tav(self):
+    def test_margin_usage_inf_when_underwater_with_position(self):
         a = new_paper_account(1)
         apply_fill(a, 0, PaperOrderSide.BUY, 1.0, 200.0, 0)
-        # TAV = 1 + (100 - 200) = -99 <= 0
+        # TAV = 1 + (100 - 200) = -99 <= 0, position still open so IMR > 0
         health = compute_health(a, {0: 100.0}, {0: cfg()})
-        self.assertAlmostEqual(health.margin_usage, 0.0)
+        self.assertEqual(health.margin_usage, float("inf"))
         self.assertAlmostEqual(health.leverage, 0.0)
+
+    def test_margin_usage_zero_when_no_positions(self):
+        # Flat account with no IMR should read 0.0, not inf.
+        a = new_paper_account(1000)
+        health = compute_health(a, {}, {})
+        self.assertEqual(health.status, PaperHealthStatus.HEALTHY)
+        self.assertAlmostEqual(health.margin_usage, 0.0)
+
+        # Same rule after a round-trip wipes collateral to zero / negative.
+        a2 = new_paper_account(1)
+        apply_fill(a2, 0, PaperOrderSide.BUY, 1.0, 200.0, 10)
+        apply_fill(a2, 0, PaperOrderSide.SELL, 1.0, 100.0, 10)
+        # No positions remaining, TAV <= 0 due to realized loss + fees.
+        health2 = compute_health(a2, {0: 100.0}, {0: cfg()})
+        self.assertAlmostEqual(health2.margin_usage, 0.0)
 
 
 class TestLiquidationPrice(unittest.TestCase):
@@ -106,6 +109,48 @@ class TestCheckAndLiquidate(unittest.TestCase):
         self.assertNotIn(0, a.positions)
         liq_trade = a.trades[-1]
         self.assertTrue(liq_trade.is_liquidation)
+
+    def test_liquidation_scenario(self):
+        # User longs 0.05 BTC at $100k with $1000 collateral, 10% IMF / 5% MMF.
+        # Mark drifts down through pre-liquidation and crosses liq_price;
+        # position gets wiped, and has_been_liquidated gets flagged on get_health().
+        a = new_paper_account(1000)
+        c = {0: cfg(0, imf=1000, mmf=500, comf=250)}
+        apply_fill(a, 0, PaperOrderSide.BUY, 0.05, 100_000.0, 0)
+
+        # T0 - just opened, healthy
+        h0 = compute_health(a, {0: 100_000.0}, c)
+        self.assertEqual(h0.status, PaperHealthStatus.HEALTHY)
+        self.assertFalse(h0.has_been_liquidated)
+        self.assertAlmostEqual(h0.total_account_value, 1000.0)
+        self.assertAlmostEqual(h0.margin_usage, 50.0)
+
+        # T1 - mark drops to 92k, still healthy
+        h1 = compute_health(a, {0: 92_000.0}, c)
+        self.assertEqual(h1.status, PaperHealthStatus.HEALTHY)
+        self.assertFalse(h1.has_been_liquidated)
+
+        # T2 - mark drops to 88k, enters pre-liquidation
+        h2 = compute_health(a, {0: 88_000.0}, c)
+        self.assertEqual(h2.status, PaperHealthStatus.PRE_LIQUIDATION)
+        self.assertFalse(h2.has_been_liquidated)
+        self.assertGreater(h2.margin_usage, 100.0)
+
+        # T3 - mark crosses liq_price, liquidation fires
+        liquidated = check_and_liquidate(a, {0: 84_000.0}, c)
+        self.assertEqual(liquidated, [0])
+        self.assertNotIn(0, a.positions)
+        self.assertTrue(a.trades[-1].is_liquidation)
+
+        # T4 continued - health now reads HEALTHY (no positions) BUT the
+        # sticky flag tells the user what happened.
+        h3 = compute_health(a, {0: 84_000.0}, c)
+        self.assertEqual(h3.status, PaperHealthStatus.HEALTHY)
+        self.assertTrue(h3.has_been_liquidated)
+        self.assertEqual(h3.initial_margin_requirement, 0.0)
+        self.assertEqual(h3.maintenance_margin_requirement, 0.0)
+        self.assertAlmostEqual(h3.margin_usage, 0.0)  
+        self.assertLess(h3.total_account_value, 1000.0)
 
 
 class TestUpdatePositionMetrics(unittest.TestCase):

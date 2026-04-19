@@ -31,6 +31,7 @@ def copy_account(account: PaperAccount) -> PaperAccount:
             for market_id, position in account.positions.items()
         },
         trades=list(account.trades),
+        has_been_liquidated=account.has_been_liquidated,
     )
 
 
@@ -100,6 +101,8 @@ def apply_fill(
             timestamp=utc_now(),
         )
     )
+    if is_liquidation:
+        account.has_been_liquidated = True
 
     if abs(new_position) < 1e-12:
         del account.positions[market_id]

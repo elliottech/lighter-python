@@ -1,4 +1,5 @@
 import asyncio
+from threading import RLock
 from typing import Any, Dict, List, Mapping, Optional
 
 from lighter.api.order_api import OrderApi
@@ -83,6 +84,7 @@ class PaperClient:
         self.initial_snapshot_timeout = initial_snapshot_timeout
         self._live_listeners: Dict[int, PaperOrderBookListener] = {}
         self._state_lock = asyncio.Lock()
+        self._state_snapshot_lock = RLock()
 
     async def track_market_snapshot(self, market_id: int) -> None:
         self._validate_perp_market_id(market_id)
@@ -132,98 +134,111 @@ class PaperClient:
             limit=self.order_book_limit,
         )
         async with self._state_lock:
-            book = self.order_books.get(market_id)
-            if book is None:
-                book = InMemoryOrderBook()
-                self.order_books[market_id] = book
+            with self._state_snapshot_lock:
+                book = self.order_books.get(market_id)
+                if book is None:
+                    book = InMemoryOrderBook()
+                    self.order_books[market_id] = book
 
-            book.apply_snapshot(snapshot)
-            self._check_liquidation_and_update_metrics()
+                book.apply_snapshot(snapshot)
+                self._check_liquidation_and_update_metrics()
 
     async def create_paper_order(
         self,
         request: PaperOrderRequest,
     ) -> PaperOrderResult:
         async with self._state_lock:
-            config = self.market_configs.get(request.market_id)
-            if config is None:
-                raise ValueError(
-                    f"market {request.market_id} not tracked, "
-                    "call track_market or track_market_snapshot first"
+            with self._state_snapshot_lock:
+                config = self.market_configs.get(request.market_id)
+                if config is None:
+                    raise ValueError(
+                        f"market {request.market_id} not tracked, "
+                        "call track_market or track_market_snapshot first"
+                    )
+
+                book = self.order_books.get(request.market_id)
+                if book is None:
+                    raise ValueError(f"no order book for market {request.market_id}")
+
+                validate_order(request, config)
+                fills, unfilled = simulate_match(
+                    request, list(book.asks), list(book.bids), config
                 )
 
-            book = self.order_books.get(request.market_id)
-            if book is None:
-                raise ValueError(f"no order book for market {request.market_id}")
+                total_filled_size = 0.0
+                total_quote = 0.0
+                total_fee = 0.0
+                for fill in fills:
+                    apply_fill(
+                        self.account,
+                        request.market_id,
+                        request.side,
+                        fill.size,
+                        fill.price,
+                        fill.fee,
+                    )
+                    total_filled_size += fill.size
+                    total_quote += fill.size * fill.price
+                    total_fee += fill.fee
 
-            validate_order(request, config)
-            fills, unfilled = simulate_match(
-                request, list(book.asks), list(book.bids), config
-            )
-
-            total_filled_size = 0.0
-            total_quote = 0.0
-            total_fee = 0.0
-            for fill in fills:
-                apply_fill(
-                    self.account,
-                    request.market_id,
-                    request.side,
-                    fill.size,
-                    fill.price,
-                    fill.fee,
+                avg_price = (
+                    total_quote / total_filled_size if total_filled_size > 0 else 0.0
                 )
-                total_filled_size += fill.size
-                total_quote += fill.size * fill.price
-                total_fee += fill.fee
+                liquidated_markets = self._check_liquidation_and_update_metrics()
 
-            avg_price = (
-                total_quote / total_filled_size if total_filled_size > 0 else 0.0
-            )
-            liquidated_markets = self._check_liquidation_and_update_metrics()
-
-            return PaperOrderResult(
-                order_type=request.order_type,
-                side=request.side,
-                market_id=request.market_id,
-                fills=fills,
-                filled_size=total_filled_size,
-                avg_price=avg_price,
-                total_fee=total_fee,
-                quote_amount=total_quote,
-                unfilled=unfilled,
-                timestamp=utc_now(),
-                liquidated=request.market_id in liquidated_markets,
-            )
+                return PaperOrderResult(
+                    order_type=request.order_type,
+                    side=request.side,
+                    market_id=request.market_id,
+                    fills=fills,
+                    filled_size=total_filled_size,
+                    avg_price=avg_price,
+                    total_fee=total_fee,
+                    quote_amount=total_quote,
+                    unfilled=unfilled,
+                    timestamp=utc_now(),
+                    liquidated=request.market_id in liquidated_markets,
+                )
 
     def get_health(self) -> PaperAccountHealth:
-        return compute_health(self.account, self._get_mark_prices(), self.market_configs)
+        with self._state_snapshot_lock:
+            return compute_health(
+                self.account,
+                self._get_mark_prices(),
+                self.market_configs,
+            )
 
     def get_liquidation_price(self, market_id: int) -> float:
-        return compute_liquidation_price(
-            self.account,
-            market_id,
-            self._get_mark_prices(),
-            self.market_configs,
-        )
+        with self._state_snapshot_lock:
+            return compute_liquidation_price(
+                self.account,
+                market_id,
+                self._get_mark_prices(),
+                self.market_configs,
+            )
 
     def get_position(self, market_id: int) -> Optional[PaperPosition]:
-        return copy_position(self.account.positions.get(market_id))
+        with self._state_snapshot_lock:
+            return copy_position(self.account.positions.get(market_id))
 
     def get_account(self) -> PaperAccount:
-        return copy_account(self.account)
+        with self._state_snapshot_lock:
+            return copy_account(self.account)
 
     def get_collateral(self) -> float:
-        return self.account.collateral
+        with self._state_snapshot_lock:
+            return self.account.collateral
 
     def get_trades(self) -> List[PaperTrade]:
-        return list(self.account.trades)
+        with self._state_snapshot_lock:
+            return list(self.account.trades)
 
     def get_portfolio_value(self) -> float:
-        mark_prices = self._get_mark_prices()
-        if self.account.positions and not mark_prices:
-            raise ValueError("no mark prices available")
-        return compute_total_account_value(self.account, mark_prices)
+        with self._state_snapshot_lock:
+            mark_prices = self._get_mark_prices()
+            if self.account.positions and not mark_prices:
+                raise ValueError("no mark prices available")
+            return compute_total_account_value(self.account, mark_prices)
 
     async def _handle_live_order_book_message(
         self,
@@ -232,12 +247,13 @@ class PaperClient:
         is_snapshot: bool,
     ) -> None:
         async with self._state_lock:
-            book = self.order_books.setdefault(market_id, InMemoryOrderBook())
-            if is_snapshot:
-                book.apply_snapshot(order_book)
-            else:
-                book.apply_delta(order_book)
-            self._check_liquidation_and_update_metrics()
+            with self._state_snapshot_lock:
+                book = self.order_books.setdefault(market_id, InMemoryOrderBook())
+                if is_snapshot:
+                    book.apply_snapshot(order_book)
+                else:
+                    book.apply_delta(order_book)
+                self._check_liquidation_and_update_metrics()
 
     def _check_liquidation_and_update_metrics(self) -> List[int]:
         liquidated_markets = check_and_liquidate(
@@ -280,9 +296,10 @@ class PaperClient:
         for detail in details.order_book_details:
             if detail.market_id != market_id:
                 continue
-            self.market_configs[market_id] = self._market_config_from_detail(
-                detail, self._account_tier
-            )
+            with self._state_snapshot_lock:
+                self.market_configs[market_id] = self._market_config_from_detail(
+                    detail, self._account_tier
+                )
             return
         raise ValueError(f"perps order book detail not found for market {market_id}")
 
