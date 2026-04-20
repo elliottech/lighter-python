@@ -57,12 +57,6 @@ def validate_order(request: PaperOrderRequest, config: MarketConfig) -> None:
     if request.base_amount <= 0:
         raise ValueError(f"base amount must be positive, got {request.base_amount}")
 
-    if request.base_amount < config.min_base_amount:
-        raise ValueError(
-            f"base amount {request.base_amount} below minimum "
-            f"{config.min_base_amount} for {config.symbol}"
-        )
-
     if not _fits_decimals(request.base_amount, config.size_decimals):
         raise ValueError(
             f"base amount {request.base_amount} exceeds "
@@ -76,13 +70,6 @@ def validate_order(request: PaperOrderRequest, config: MarketConfig) -> None:
             raise ValueError(
                 f"price {request.price} exceeds "
                 f"{config.price_decimals} price decimals for {config.symbol}"
-            )
-
-        estimated_quote = request.base_amount * request.price
-        if estimated_quote < config.min_quote_amount:
-            raise ValueError(
-                f"estimated quote amount {estimated_quote} below minimum "
-                f"{config.min_quote_amount} for {config.symbol}"
             )
 
 

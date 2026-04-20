@@ -16,11 +16,6 @@ class TestValidateOrder(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_order(req, cfg())
 
-    def test_validate_rejects_below_min_base(self):
-        req = PaperOrderRequest(market_id=0, side=PaperOrderSide.BUY, base_amount=0.0001)
-        with self.assertRaises(ValueError):
-            validate_order(req, cfg(min_base_amount=0.001))
-
     def test_validate_rejects_bad_size_decimals(self):
         req = PaperOrderRequest(market_id=0, side=PaperOrderSide.BUY, base_amount=0.001)
         with self.assertRaises(ValueError):
@@ -41,15 +36,6 @@ class TestValidateOrder(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             validate_order(req, cfg(price_decimals=2))
-
-    def test_validate_rejects_ioc_below_min_quote(self):
-        req = PaperOrderRequest(
-            market_id=0, side=PaperOrderSide.BUY, base_amount=0.001,
-            price=0.50, order_type=PaperOrderType.IOC,
-        )
-        with self.assertRaises(ValueError):
-            validate_order(req, cfg(min_quote_amount=1.0))
-
 
 class TestSimulateMatch(unittest.TestCase):
     def test_market_buy_against_empty_book(self):
