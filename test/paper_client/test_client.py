@@ -109,7 +109,7 @@ class TestPaperClient(unittest.IsolatedAsyncioTestCase):
         self.assertGreater(health.leverage, 0)
         self.assertLess(health.leverage, 2)
 
-    async def test_liquidated_result_is_scoped_to_request_market(self) -> None:
+    async def test_order_can_trigger_cross_market_liquidation(self) -> None:
         order_api = FakeOrderApi()
         order_api.details[1] = default_detail(1, "BTC")
         order_api.details[1].maintenance_margin_fraction = 500
@@ -140,11 +140,11 @@ class TestPaperClient(unittest.IsolatedAsyncioTestCase):
             )
         )
 
-        self.assertFalse(result.liquidated)
+        self.assertIsNotNone(result)
         self.assertIsNone(client.get_position(0))
         self.assertIsNone(client.get_position(1))
 
-    async def test_request_market_liquidation_sets_result_flag(self) -> None:
+    async def test_request_market_liquidation_clears_position(self) -> None:
         order_api = FakeOrderApi()
         order_api.details[0].maintenance_margin_fraction = 500
         order_api.details[0].closeout_margin_fraction = 250
@@ -161,8 +161,9 @@ class TestPaperClient(unittest.IsolatedAsyncioTestCase):
             PaperOrderRequest(0, PaperOrderSide.BUY, 0.1)
         )
 
-        self.assertTrue(result.liquidated)
+        self.assertIsNotNone(result)
         self.assertIsNone(client.get_position(0))
+        self.assertTrue(client.get_health().has_been_liquidated)
 
     async def test_mark_price_fallback_to_last_trade_price(self) -> None:
         order_api = FakeOrderApi()

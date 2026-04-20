@@ -87,7 +87,6 @@ class PaperOrderResult:
     quote_amount: float
     unfilled: float
     timestamp: datetime
-    liquidated: bool = False
 
 
 @dataclass

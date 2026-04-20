@@ -87,13 +87,17 @@ async def main():
     # Show the contrast
     cons_liq = conservative.get_liquidation_price(0)
     aggr_liq = aggressive.get_liquidation_price(0)
-    aggr_mark = aggressive.get_position(0).mark_price
+    aggr_pos = aggressive.get_position(0)
     print()
     print("-" * 60)
     print("COMPARISON")
     cons_liq_str = "n/a (can't be liquidated)" if cons_liq == 0 else f"${cons_liq:.2f}"
     print(f"  Conservative liq price: {cons_liq_str}")
-    print(f"  Aggressive liq price:   ${aggr_liq:.2f}  (${aggr_mark - aggr_liq:.2f} below mark)")
+    if aggr_pos is None:
+        reason = "already liquidated" if aggressive.get_health().has_been_liquidated else "no open position"
+        print(f"  Aggressive position:    {reason}")
+    else:
+        print(f"  Aggressive liq price:   ${aggr_liq:.2f}  (${aggr_pos.mark_price - aggr_liq:.2f} below mark)")
     print("-" * 60)
 
     await api_client.close()

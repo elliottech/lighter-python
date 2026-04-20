@@ -184,7 +184,7 @@ class PaperClient:
                 avg_price = (
                     total_quote / total_filled_size if total_filled_size > 0 else 0.0
                 )
-                liquidated_markets = self._check_liquidation_and_update_metrics()
+                self._check_liquidation_and_update_metrics()
 
                 return PaperOrderResult(
                     order_type=request.order_type,
@@ -197,7 +197,6 @@ class PaperClient:
                     quote_amount=total_quote,
                     unfilled=unfilled,
                     timestamp=utc_now(),
-                    liquidated=request.market_id in liquidated_markets,
                 )
 
     def get_health(self) -> PaperAccountHealth:
