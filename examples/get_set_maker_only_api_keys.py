@@ -20,6 +20,21 @@ async def main():
         authorization=auth_token,
     )
     print("get:", resp)
+
+    # clear maker only restrictions
+    resp = await account_api.set_maker_only_api_keys(
+        account_index=client.account_index,
+        api_key_indexes=json.dumps([]),
+        authorization=auth_token,
+    )
+
+    resp = await account_api.get_maker_only_api_keys(
+        account_index=client.account_index,
+        authorization=auth_token,
+    )
+    print("get:", resp)
+
+
     await client.close()
     await api_client.close()
 
