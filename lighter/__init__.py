@@ -203,5 +203,10 @@ from lighter.models.validator_info import ValidatorInfo
 from lighter.models.withdraw_history import WithdrawHistory
 from lighter.models.withdraw_history_item import WithdrawHistoryItem
 from lighter.models.zk_lighter_info import ZkLighterInfo
+from lighter.models.resp_get_maker_only_api_keys import RespGetMakerOnlyApiKeys
+from lighter.models.resp_set_maker_only_api_keys import RespSetMakerOnlyApiKeys
+from lighter.models.req_get_partner_stats import ReqGetPartnerStats
+from lighter.models.req_get_maker_only_api_keys import ReqGetMakerOnlyApiKeys
+from lighter.models.partner_stats import PartnerStats
 from lighter.ws_client import WsClient
 from lighter.signer_client import SignerClient, create_api_key
