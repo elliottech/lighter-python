@@ -21,19 +21,16 @@ from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class PerpsMarketStats(BaseModel):
     """
     PerpsMarketStats
     """ # noqa: E501
-    symbol: StrictStr
     market_id: StrictInt
     index_price: StrictStr
     mark_price: StrictStr
     open_interest: StrictStr
-    open_interest_limit: StrictStr
-    funding_clamp_small: StrictStr
-    funding_clamp_big: StrictStr
     last_trade_price: StrictStr
     current_funding_rate: StrictStr
     funding_rate: StrictStr
@@ -43,11 +40,16 @@ class PerpsMarketStats(BaseModel):
     daily_price_low: Union[StrictFloat, StrictInt]
     daily_price_high: Union[StrictFloat, StrictInt]
     daily_price_change: Union[StrictFloat, StrictInt]
+    symbol: StrictStr
+    funding_clamp_small: StrictStr
+    funding_clamp_big: StrictStr
+    open_interest_limit: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "index_price", "mark_price", "open_interest", "open_interest_limit", "funding_clamp_small", "funding_clamp_big", "last_trade_price", "current_funding_rate", "funding_rate", "funding_timestamp", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change"]
+    __properties: ClassVar[List[str]] = ["market_id", "index_price", "mark_price", "open_interest", "last_trade_price", "current_funding_rate", "funding_rate", "funding_timestamp", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "symbol", "funding_clamp_small", "funding_clamp_big", "open_interest_limit"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -59,8 +61,7 @@ class PerpsMarketStats(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -103,15 +104,11 @@ class PerpsMarketStats(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
-            "symbol": obj.get("symbol"),
+        _obj = cls.model_validate({
             "market_id": obj.get("market_id"),
             "index_price": obj.get("index_price"),
             "mark_price": obj.get("mark_price"),
             "open_interest": obj.get("open_interest"),
-            "open_interest_limit": obj.get("open_interest_limit"),
-            "funding_clamp_small": obj.get("funding_clamp_small"),
-            "funding_clamp_big": obj.get("funding_clamp_big"),
             "last_trade_price": obj.get("last_trade_price"),
             "current_funding_rate": obj.get("current_funding_rate"),
             "funding_rate": obj.get("funding_rate"),
@@ -120,7 +117,11 @@ class PerpsMarketStats(BaseModel):
             "daily_quote_token_volume": obj.get("daily_quote_token_volume"),
             "daily_price_low": obj.get("daily_price_low"),
             "daily_price_high": obj.get("daily_price_high"),
-            "daily_price_change": obj.get("daily_price_change")
+            "daily_price_change": obj.get("daily_price_change"),
+            "symbol": obj.get("symbol"),
+            "funding_clamp_small": obj.get("funding_clamp_small"),
+            "funding_clamp_big": obj.get("funding_clamp_big"),
+            "open_interest_limit": obj.get("open_interest_limit")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

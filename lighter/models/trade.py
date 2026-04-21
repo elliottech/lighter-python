@@ -17,10 +17,11 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Trade(BaseModel):
     """
@@ -35,28 +36,37 @@ class Trade(BaseModel):
     usd_amount: StrictStr
     ask_id: StrictInt
     bid_id: StrictInt
-    ask_client_id: StrictInt
-    bid_client_id: StrictInt
     ask_account_id: StrictInt
     bid_account_id: StrictInt
     is_maker_ask: StrictBool
     block_height: StrictInt
     timestamp: StrictInt
-    taker_fee: StrictInt
+    taker_fee: Optional[StrictInt] = None
     taker_position_size_before: StrictStr
     taker_entry_quote_before: StrictStr
     taker_initial_margin_fraction_before: StrictInt
     taker_position_sign_changed: StrictBool
-    maker_fee: StrictInt
+    maker_fee: Optional[StrictInt] = None
     maker_position_size_before: StrictStr
     maker_entry_quote_before: StrictStr
     maker_initial_margin_fraction_before: StrictInt
     maker_position_sign_changed: StrictBool
     transaction_time: StrictInt
-    ask_account_pnl: StrictStr
-    bid_account_pnl: StrictStr
+    bid_account_pnl: StrictStr = Field(description="Realized PnL for the queried account index, triggered by reducing a short position")
+    ask_account_pnl: StrictStr = Field(description="Realized PnL for the queried account index, triggered by reducing a long position, or a spot position")
+    ask_client_id: StrictInt
+    bid_client_id: StrictInt
+    ask_client_id_str: StrictStr
+    bid_client_id_str: StrictStr
+    ask_id_str: Optional[StrictStr] = None
+    bid_id_str: Optional[StrictStr] = None
+    trade_id_str: StrictStr
+    integrator_maker_fee: StrictInt
+    integrator_maker_fee_collector_index: StrictInt
+    integrator_taker_fee: StrictInt
+    integrator_taker_fee_collector_index: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_client_id", "bid_client_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed", "transaction_time", "ask_account_pnl", "bid_account_pnl"]
+    __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed", "transaction_time", "bid_account_pnl", "ask_account_pnl", "ask_client_id", "bid_client_id", "ask_client_id_str", "bid_client_id_str", "ask_id_str", "bid_id_str", "trade_id_str", "integrator_maker_fee", "integrator_maker_fee_collector_index", "integrator_taker_fee", "integrator_taker_fee_collector_index"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
@@ -66,7 +76,8 @@ class Trade(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -78,8 +89,7 @@ class Trade(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -122,7 +132,7 @@ class Trade(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "trade_id": obj.get("trade_id"),
             "tx_hash": obj.get("tx_hash"),
             "type": obj.get("type"),
@@ -132,8 +142,6 @@ class Trade(BaseModel):
             "usd_amount": obj.get("usd_amount"),
             "ask_id": obj.get("ask_id"),
             "bid_id": obj.get("bid_id"),
-            "ask_client_id": obj.get("ask_client_id"),
-            "bid_client_id": obj.get("bid_client_id"),
             "ask_account_id": obj.get("ask_account_id"),
             "bid_account_id": obj.get("bid_account_id"),
             "is_maker_ask": obj.get("is_maker_ask"),
@@ -150,8 +158,19 @@ class Trade(BaseModel):
             "maker_initial_margin_fraction_before": obj.get("maker_initial_margin_fraction_before"),
             "maker_position_sign_changed": obj.get("maker_position_sign_changed"),
             "transaction_time": obj.get("transaction_time"),
+            "bid_account_pnl": obj.get("bid_account_pnl"),
             "ask_account_pnl": obj.get("ask_account_pnl"),
-            "bid_account_pnl": obj.get("bid_account_pnl")
+            "ask_client_id": obj.get("ask_client_id"),
+            "bid_client_id": obj.get("bid_client_id"),
+            "ask_client_id_str": obj.get("ask_client_id_str"),
+            "bid_client_id_str": obj.get("bid_client_id_str"),
+            "ask_id_str": obj.get("ask_id_str"),
+            "bid_id_str": obj.get("bid_id_str"),
+            "trade_id_str": obj.get("trade_id_str"),
+            "integrator_maker_fee": obj.get("integrator_maker_fee"),
+            "integrator_maker_fee_collector_index": obj.get("integrator_maker_fee_collector_index"),
+            "integrator_taker_fee": obj.get("integrator_taker_fee"),
+            "integrator_taker_fee_collector_index": obj.get("integrator_taker_fee_collector_index")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqGetAccountTxs(BaseModel):
     """
@@ -31,10 +32,10 @@ class ReqGetAccountTxs(BaseModel):
     limit: Optional[Annotated[int, Field(le=100, strict=True, ge=1)]] = None
     by: Optional[StrictStr] = None
     value: Optional[StrictStr] = None
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     types: Optional[List[StrictInt]] = None
+    auth: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["index", "limit", "by", "value", "auth", "types"]
+    __properties: ClassVar[List[str]] = ["index", "limit", "by", "value", "types", "auth"]
 
     @field_validator('by')
     def by_validate_enum(cls, value):
@@ -47,7 +48,8 @@ class ReqGetAccountTxs(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -59,8 +61,7 @@ class ReqGetAccountTxs(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -103,13 +104,13 @@ class ReqGetAccountTxs(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "index": obj.get("index"),
             "limit": obj.get("limit"),
             "by": obj.get("by"),
             "value": obj.get("value"),
-            "auth": obj.get("auth"),
-            "types": obj.get("types")
+            "types": obj.get("types"),
+            "auth": obj.get("auth")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

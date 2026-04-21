@@ -10,8 +10,8 @@ Name | Type | Description | Notes
 **description** | **str** |  | 
 **can_invite** | **bool** |  Remove After FE uses L1 meta endpoint | 
 **referral_points_percentage** | **str** |  Remove After FE uses L1 meta endpoint | 
-**can_rfq** | **bool** |  | 
 **created_at** | **int** |  | 
+**can_rfq** | **bool** |  | 
 
 ## Example
 

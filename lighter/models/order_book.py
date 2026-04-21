@@ -17,10 +17,11 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class OrderBook(BaseModel):
     """
@@ -37,12 +38,14 @@ class OrderBook(BaseModel):
     liquidation_fee: StrictStr
     min_base_amount: StrictStr
     min_quote_amount: StrictStr
-    order_quote_limit: StrictStr
     supported_size_decimals: StrictInt
     supported_price_decimals: StrictInt
     supported_quote_decimals: StrictInt
+    order_quote_limit: StrictStr
+    is_maker_fee_enabled: Optional[StrictBool] = None
+    is_taker_fee_enabled: Optional[StrictBool] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "is_maker_fee_enabled", "is_taker_fee_enabled"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
@@ -59,7 +62,8 @@ class OrderBook(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -71,8 +75,7 @@ class OrderBook(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -115,7 +118,7 @@ class OrderBook(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "symbol": obj.get("symbol"),
             "market_id": obj.get("market_id"),
             "market_type": obj.get("market_type"),
@@ -127,10 +130,12 @@ class OrderBook(BaseModel):
             "liquidation_fee": obj.get("liquidation_fee"),
             "min_base_amount": obj.get("min_base_amount"),
             "min_quote_amount": obj.get("min_quote_amount"),
-            "order_quote_limit": obj.get("order_quote_limit"),
             "supported_size_decimals": obj.get("supported_size_decimals"),
             "supported_price_decimals": obj.get("supported_price_decimals"),
-            "supported_quote_decimals": obj.get("supported_quote_decimals")
+            "supported_quote_decimals": obj.get("supported_quote_decimals"),
+            "order_quote_limit": obj.get("order_quote_limit"),
+            "is_maker_fee_enabled": obj.get("is_maker_fee_enabled"),
+            "is_taker_fee_enabled": obj.get("is_taker_fee_enabled")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

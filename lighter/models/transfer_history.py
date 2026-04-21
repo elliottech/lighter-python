@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.transfer_history_item import TransferHistoryItem
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class TransferHistory(BaseModel):
     """
@@ -35,7 +36,8 @@ class TransferHistory(BaseModel):
     __properties: ClassVar[List[str]] = ["code", "message", "transfers", "cursor"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +49,7 @@ class TransferHistory(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -78,9 +79,9 @@ class TransferHistory(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in transfers (list)
         _items = []
         if self.transfers:
-            for _item in self.transfers:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_transfers in self.transfers:
+                if _item_transfers:
+                    _items.append(_item_transfers.to_dict())
             _dict['transfers'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -98,7 +99,7 @@ class TransferHistory(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "transfers": [TransferHistoryItem.from_dict(_item) for _item in obj["transfers"]] if obj.get("transfers") is not None else None,

@@ -22,12 +22,13 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqGetPublicPoolsMetadata(BaseModel):
     """
     ReqGetPublicPoolsMetadata
     """ # noqa: E501
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
+    auth: Optional[StrictStr] = None
     filter: Optional[StrictStr] = None
     index: StrictInt
     limit: Annotated[int, Field(le=100, strict=True, ge=1)]
@@ -41,12 +42,13 @@ class ReqGetPublicPoolsMetadata(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['all', 'user', 'protocol', 'account_index', 'stake']):
-            raise ValueError("must be one of enum values ('all', 'user', 'protocol', 'account_index', 'stake')")
+        if value not in set(['all', 'user', 'protocol', 'account_index']):
+            raise ValueError("must be one of enum values ('all', 'user', 'protocol', 'account_index')")
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -58,8 +60,7 @@ class ReqGetPublicPoolsMetadata(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -102,7 +103,7 @@ class ReqGetPublicPoolsMetadata(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "auth": obj.get("auth"),
             "filter": obj.get("filter"),
             "index": obj.get("index"),

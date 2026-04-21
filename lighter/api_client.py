@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     
 
@@ -12,14 +10,17 @@
 """  # noqa: E501
 
 
+
 import datetime
 from dateutil.parser import parse
 from enum import Enum
+import decimal
 import json
 import mimetypes
 import os
 import re
 import tempfile
+import uuid
 
 from urllib.parse import quote
 from typing import Tuple, Optional, List, Dict, Union
@@ -66,6 +67,8 @@ class ApiClient:
         'bool': bool,
         'date': datetime.date,
         'datetime': datetime.datetime,
+        'decimal': decimal.Decimal,
+        'UUID': uuid.UUID,
         'object': object,
     }
     _pool = None
@@ -306,13 +309,13 @@ class ApiClient:
         response_text = None
         return_data = None
         try:
-            if response_type == "bytearray":
+            if response_type in ("bytearray", "bytes"):
                 return_data = response_data.data
             elif response_type == "file":
                 return_data = self.__deserialize_file(response_data)
             elif response_type is not None:
                 match = None
-                content_type = response_data.getheader('content-type')
+                content_type = response_data.headers.get('content-type')
                 if content_type is not None:
                     match = re.search(r"charset=([a-zA-Z\-\d]+)[\s;]?", content_type)
                 encoding = match.group(1) if match else "utf-8"
@@ -329,7 +332,7 @@ class ApiClient:
         return ApiResponse(
             status_code = response_data.status,
             data = return_data,
-            headers = response_data.getheaders(),
+            headers = response_data.headers,
             raw_data = response_data.data
         )
 
@@ -341,6 +344,7 @@ class ApiClient:
         If obj is str, int, long, float, bool, return directly.
         If obj is datetime.datetime, datetime.date
             convert to string in iso8601 format.
+        If obj is decimal.Decimal return string representation.
         If obj is list, sanitize each element in the list.
         If obj is dict, return the dict.
         If obj is OpenAPI model, return the properties dict.
@@ -356,6 +360,8 @@ class ApiClient:
             return obj.get_secret_value()
         elif isinstance(obj, self.PRIMITIVE_TYPES):
             return obj
+        elif isinstance(obj, uuid.UUID):
+            return str(obj)
         elif isinstance(obj, list):
             return [
                 self.sanitize_for_serialization(sub_obj) for sub_obj in obj
@@ -366,6 +372,8 @@ class ApiClient:
             )
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
+        elif isinstance(obj, decimal.Decimal):
+            return str(obj)
 
         elif isinstance(obj, dict):
             obj_dict = obj
@@ -379,6 +387,10 @@ class ApiClient:
                 obj_dict = obj.to_dict()
             else:
                 obj_dict = obj.__dict__
+
+        if isinstance(obj_dict, list):
+            # here we handle instances that can either be a list or something else, and only became a real list by calling to_dict()
+            return self.sanitize_for_serialization(obj_dict)
 
         return {
             key: self.sanitize_for_serialization(val)
@@ -402,12 +414,12 @@ class ApiClient:
                 data = json.loads(response_text)
             except ValueError:
                 data = response_text
-        elif content_type.startswith("application/json"):
+        elif re.match(r'^application/(json|[\w!#$&.+\-^_]+\+json)\s*(;|$)', content_type, re.IGNORECASE):
             if response_text == "":
                 data = ""
             else:
                 data = json.loads(response_text)
-        elif content_type.startswith("text/plain"):
+        elif re.match(r'^text\/[a-z.+-]+\s*(;|$)', content_type, re.IGNORECASE):
             data = response_text
         else:
             raise ApiException(
@@ -451,12 +463,16 @@ class ApiClient:
 
         if klass in self.PRIMITIVE_TYPES:
             return self.__deserialize_primitive(data, klass)
-        elif klass == object:
+        elif klass is object:
             return self.__deserialize_object(data)
-        elif klass == datetime.date:
+        elif klass is datetime.date:
             return self.__deserialize_date(data)
-        elif klass == datetime.datetime:
+        elif klass is datetime.datetime:
             return self.__deserialize_datetime(data)
+        elif klass is decimal.Decimal:
+            return decimal.Decimal(data)
+        elif klass is uuid.UUID:
+            return uuid.UUID(data)
         elif issubclass(klass, Enum):
             return self.__deserialize_enum(data, klass)
         else:
@@ -513,7 +529,7 @@ class ApiClient:
             if k in collection_formats:
                 collection_format = collection_formats[k]
                 if collection_format == 'multi':
-                    new_params.extend((k, str(value)) for value in v)
+                    new_params.extend((k, quote(str(value))) for value in v)
                 else:
                     if collection_format == 'ssv':
                         delimiter = ' '
@@ -531,7 +547,10 @@ class ApiClient:
 
         return "&".join(["=".join(map(str, item)) for item in new_params])
 
-    def files_parameters(self, files: Dict[str, Union[str, bytes]]):
+    def files_parameters(
+        self,
+        files: Dict[str, Union[str, bytes, List[str], List[bytes], Tuple[str, bytes]]],
+    ):
         """Builds form parameters.
 
         :param files: File parameters.
@@ -546,6 +565,12 @@ class ApiClient:
             elif isinstance(v, bytes):
                 filename = k
                 filedata = v
+            elif isinstance(v, tuple):
+                filename, filedata = v
+            elif isinstance(v, list):
+                for file_param in v:
+                    params.extend(self.files_parameters({k: file_param}))
+                continue
             else:
                 raise ValueError("Unsupported file value")
             mimetype = (
@@ -681,14 +706,16 @@ class ApiClient:
         os.close(fd)
         os.remove(path)
 
-        content_disposition = response.getheader("Content-Disposition")
+        content_disposition = response.headers.get("Content-Disposition")
         if content_disposition:
             m = re.search(
                 r'filename=[\'"]?([^\'"\s]+)[\'"]?',
                 content_disposition
             )
             assert m is not None, "Unexpected 'content-disposition' header value"
-            filename = m.group(1)
+            filename = os.path.basename(m.group(1))  # Strip any directory traversal
+            if filename in ("", ".", ".."):  # fall back to tmp filename
+                filename = os.path.basename(path)
             path = os.path.join(os.path.dirname(path), filename)
 
         with open(path, "wb") as f:

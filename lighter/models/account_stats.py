@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List
 from lighter.models.account_margin_stats import AccountMarginStats
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class AccountStats(BaseModel):
     """
@@ -33,14 +34,15 @@ class AccountStats(BaseModel):
     available_balance: StrictStr
     margin_usage: StrictStr
     buying_power: StrictStr
-    account_trading_mode: StrictInt
     cross_stats: AccountMarginStats
     total_stats: AccountMarginStats
+    account_trading_mode: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["collateral", "portfolio_value", "leverage", "available_balance", "margin_usage", "buying_power", "account_trading_mode", "cross_stats", "total_stats"]
+    __properties: ClassVar[List[str]] = ["collateral", "portfolio_value", "leverage", "available_balance", "margin_usage", "buying_power", "cross_stats", "total_stats", "account_trading_mode"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -52,8 +54,7 @@ class AccountStats(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -102,16 +103,16 @@ class AccountStats(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "collateral": obj.get("collateral"),
             "portfolio_value": obj.get("portfolio_value"),
             "leverage": obj.get("leverage"),
             "available_balance": obj.get("available_balance"),
             "margin_usage": obj.get("margin_usage"),
             "buying_power": obj.get("buying_power"),
-            "account_trading_mode": obj.get("account_trading_mode"),
             "cross_stats": AccountMarginStats.from_dict(obj["cross_stats"]) if obj.get("cross_stats") is not None else None,
-            "total_stats": AccountMarginStats.from_dict(obj["total_stats"]) if obj.get("total_stats") is not None else None
+            "total_stats": AccountMarginStats.from_dict(obj["total_stats"]) if obj.get("total_stats") is not None else None,
+            "account_trading_mode": obj.get("account_trading_mode")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

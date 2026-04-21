@@ -5,7 +5,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**auth** | **str** |  | [optional] 
 **account_index** | **int** |  | 
 
 ## Example

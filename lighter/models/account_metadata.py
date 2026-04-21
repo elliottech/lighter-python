@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, Strict
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class AccountMetadata(BaseModel):
     """
@@ -31,13 +32,14 @@ class AccountMetadata(BaseModel):
     description: StrictStr
     can_invite: StrictBool = Field(description=" Remove After FE uses L1 meta endpoint")
     referral_points_percentage: StrictStr = Field(description=" Remove After FE uses L1 meta endpoint")
-    can_rfq: StrictBool
     created_at: StrictInt
+    can_rfq: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "can_rfq", "created_at"]
+    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "can_rfq"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -49,8 +51,7 @@ class AccountMetadata(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -93,14 +94,14 @@ class AccountMetadata(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "account_index": obj.get("account_index"),
             "name": obj.get("name"),
             "description": obj.get("description"),
             "can_invite": obj.get("can_invite"),
             "referral_points_percentage": obj.get("referral_points_percentage"),
-            "can_rfq": obj.get("can_rfq"),
-            "created_at": obj.get("created_at")
+            "created_at": obj.get("created_at"),
+            "can_rfq": obj.get("can_rfq")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

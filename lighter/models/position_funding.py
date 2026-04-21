@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validato
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class PositionFunding(BaseModel):
     """
@@ -30,12 +31,12 @@ class PositionFunding(BaseModel):
     market_id: StrictInt
     funding_id: StrictInt
     change: StrictStr
+    discount: StrictStr
     rate: StrictStr
     position_size: StrictStr
     position_side: StrictStr
-    discount: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["timestamp", "market_id", "funding_id", "change", "rate", "position_size", "position_side", "discount"]
+    __properties: ClassVar[List[str]] = ["timestamp", "market_id", "funding_id", "change", "discount", "rate", "position_size", "position_side"]
 
     @field_validator('position_side')
     def position_side_validate_enum(cls, value):
@@ -45,7 +46,8 @@ class PositionFunding(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -57,8 +59,7 @@ class PositionFunding(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -101,15 +102,15 @@ class PositionFunding(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "timestamp": obj.get("timestamp"),
             "market_id": obj.get("market_id"),
             "funding_id": obj.get("funding_id"),
             "change": obj.get("change"),
+            "discount": obj.get("discount"),
             "rate": obj.get("rate"),
             "position_size": obj.get("position_size"),
-            "position_side": obj.get("position_side"),
-            "discount": obj.get("discount")
+            "position_side": obj.get("position_side")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, Strict
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Order(BaseModel):
     """
@@ -55,16 +56,16 @@ class Order(BaseModel):
     to_trigger_order_id_0: StrictStr
     to_trigger_order_id_1: StrictStr
     to_cancel_order_id_0: StrictStr
-    integrator_fee_collector_index: StrictStr
-    integrator_taker_fee: StrictStr
-    integrator_maker_fee: StrictStr
     block_height: StrictInt
     timestamp: StrictInt
     created_at: StrictInt
     updated_at: StrictInt
     transaction_time: StrictInt
+    integrator_fee_collector_index: StrictStr
+    integrator_maker_fee: StrictStr
+    integrator_taker_fee: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "integrator_fee_collector_index", "integrator_taker_fee", "integrator_maker_fee", "block_height", "timestamp", "created_at", "updated_at", "transaction_time"]
+    __properties: ClassVar[List[str]] = ["order_index", "client_order_index", "order_id", "client_order_id", "market_index", "owner_account_index", "initial_base_amount", "price", "nonce", "remaining_base_amount", "is_ask", "base_size", "base_price", "filled_base_amount", "filled_quote_amount", "side", "type", "time_in_force", "reduce_only", "trigger_price", "order_expiry", "status", "trigger_status", "trigger_time", "parent_order_index", "parent_order_id", "to_trigger_order_id_0", "to_trigger_order_id_1", "to_cancel_order_id_0", "block_height", "timestamp", "created_at", "updated_at", "transaction_time", "integrator_fee_collector_index", "integrator_maker_fee", "integrator_taker_fee"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
@@ -95,7 +96,8 @@ class Order(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -107,8 +109,7 @@ class Order(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -151,7 +152,7 @@ class Order(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "order_index": obj.get("order_index"),
             "client_order_index": obj.get("client_order_index"),
             "order_id": obj.get("order_id"),
@@ -181,14 +182,14 @@ class Order(BaseModel):
             "to_trigger_order_id_0": obj.get("to_trigger_order_id_0"),
             "to_trigger_order_id_1": obj.get("to_trigger_order_id_1"),
             "to_cancel_order_id_0": obj.get("to_cancel_order_id_0"),
-            "integrator_fee_collector_index": obj.get("integrator_fee_collector_index"),
-            "integrator_taker_fee": obj.get("integrator_taker_fee"),
-            "integrator_maker_fee": obj.get("integrator_maker_fee"),
             "block_height": obj.get("block_height"),
             "timestamp": obj.get("timestamp"),
             "created_at": obj.get("created_at"),
             "updated_at": obj.get("updated_at"),
-            "transaction_time": obj.get("transaction_time")
+            "transaction_time": obj.get("transaction_time"),
+            "integrator_fee_collector_index": obj.get("integrator_fee_collector_index"),
+            "integrator_maker_fee": obj.get("integrator_maker_fee"),
+            "integrator_taker_fee": obj.get("integrator_taker_fee")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

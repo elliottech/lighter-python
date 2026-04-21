@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ApprovedIntegrator(BaseModel):
     """
@@ -37,7 +38,8 @@ class ApprovedIntegrator(BaseModel):
     __properties: ClassVar[List[str]] = ["account_index", "name", "max_perps_taker_fee", "max_perps_maker_fee", "max_spot_taker_fee", "max_spot_maker_fee", "approval_expiry"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -49,8 +51,7 @@ class ApprovedIntegrator(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -93,7 +94,7 @@ class ApprovedIntegrator(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "account_index": obj.get("account_index"),
             "name": obj.get("name"),
             "max_perps_taker_fee": obj.get("max_perps_taker_fee"),

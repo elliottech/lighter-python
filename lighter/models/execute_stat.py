@@ -18,22 +18,24 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.slippage_result import SlippageResult
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ExecuteStat(BaseModel):
     """
     ExecuteStat
     """ # noqa: E501
-    timestamp: StrictInt
-    slippage: List[SlippageResult]
+    timestamp: Optional[StrictInt] = None
+    slippage: Optional[List[SlippageResult]] = None
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["timestamp", "slippage"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +47,7 @@ class ExecuteStat(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -76,9 +77,9 @@ class ExecuteStat(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in slippage (list)
         _items = []
         if self.slippage:
-            for _item in self.slippage:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_slippage in self.slippage:
+                if _item_slippage:
+                    _items.append(_item_slippage.to_dict())
             _dict['slippage'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -96,7 +97,7 @@ class ExecuteStat(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "timestamp": obj.get("timestamp"),
             "slippage": [SlippageResult.from_dict(_item) for _item in obj["slippage"]] if obj.get("slippage") is not None else None
         })

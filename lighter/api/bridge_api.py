@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     
 
@@ -11,18 +9,20 @@
     Do not edit the class manually.
 """  # noqa: E501
 
+
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from pydantic import Field, StrictInt, StrictStr
+from pydantic import Field, StrictBool, StrictInt, StrictStr
 from typing import Optional
 from typing_extensions import Annotated
-from lighter.models.resp_get_bridges_by_l1_addr import RespGetBridgesByL1Addr
+from lighter.models.bridge_supported_networks import BridgeSupportedNetworks
+from lighter.models.create_intent_address_resp import CreateIntentAddressResp
+from lighter.models.deposit import Deposit
 from lighter.models.resp_get_fast_bridge_info import RespGetFastBridgeInfo
 from lighter.models.resp_get_fastwithdrawal_info import RespGetFastwithdrawalInfo
-from lighter.models.resp_get_is_next_bridge_fast import RespGetIsNextBridgeFast
 from lighter.models.result_code import ResultCode
 
 from lighter.api_client import ApiClient, RequestSerialized
@@ -43,9 +43,13 @@ class BridgeApi:
         self.api_client = api_client
 
 
-    async def bridges(
+    @validate_call
+    async def create_intent_address(
         self,
-        l1_address: StrictStr,
+        chain_id: StrictStr,
+        from_addr: StrictStr,
+        amount: StrictStr,
+        is_external_deposit: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -58,13 +62,19 @@ class BridgeApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RespGetBridgesByL1Addr:
-        """bridges
+    ) -> CreateIntentAddressResp:
+        """createIntentAddress
 
-        Get bridges for given l1 address
+        Create a bridge intent address for CCTP bridge
 
-        :param l1_address: (required)
-        :type l1_address: str
+        :param chain_id: (required)
+        :type chain_id: str
+        :param from_addr: (required)
+        :type from_addr: str
+        :param amount: (required)
+        :type amount: str
+        :param is_external_deposit:
+        :type is_external_deposit: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -87,8 +97,11 @@ class BridgeApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bridges_serialize(
-            l1_address=l1_address,
+        _param = self._create_intent_address_serialize(
+            chain_id=chain_id,
+            from_addr=from_addr,
+            amount=amount,
+            is_external_deposit=is_external_deposit,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -96,7 +109,7 @@ class BridgeApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RespGetBridgesByL1Addr",
+            '200': "CreateIntentAddressResp",
             '400': "ResultCode",
         }
         response_data = await self.api_client.call_api(
@@ -110,7 +123,249 @@ class BridgeApi:
         ).data
 
 
-    async def bridges_with_http_info(
+    @validate_call
+    async def create_intent_address_with_http_info(
+        self,
+        chain_id: StrictStr,
+        from_addr: StrictStr,
+        amount: StrictStr,
+        is_external_deposit: Optional[StrictBool] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[CreateIntentAddressResp]:
+        """createIntentAddress
+
+        Create a bridge intent address for CCTP bridge
+
+        :param chain_id: (required)
+        :type chain_id: str
+        :param from_addr: (required)
+        :type from_addr: str
+        :param amount: (required)
+        :type amount: str
+        :param is_external_deposit:
+        :type is_external_deposit: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._create_intent_address_serialize(
+            chain_id=chain_id,
+            from_addr=from_addr,
+            amount=amount,
+            is_external_deposit=is_external_deposit,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "CreateIntentAddressResp",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    async def create_intent_address_without_preload_content(
+        self,
+        chain_id: StrictStr,
+        from_addr: StrictStr,
+        amount: StrictStr,
+        is_external_deposit: Optional[StrictBool] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """createIntentAddress
+
+        Create a bridge intent address for CCTP bridge
+
+        :param chain_id: (required)
+        :type chain_id: str
+        :param from_addr: (required)
+        :type from_addr: str
+        :param amount: (required)
+        :type amount: str
+        :param is_external_deposit:
+        :type is_external_deposit: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._create_intent_address_serialize(
+            chain_id=chain_id,
+            from_addr=from_addr,
+            amount=amount,
+            is_external_deposit=is_external_deposit,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "CreateIntentAddressResp",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _create_intent_address_serialize(
+        self,
+        chain_id,
+        from_addr,
+        amount,
+        is_external_deposit,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        if chain_id is not None:
+            _form_params.append(('chain_id', chain_id))
+        if from_addr is not None:
+            _form_params.append(('from_addr', from_addr))
+        if amount is not None:
+            _form_params.append(('amount', amount))
+        if is_external_deposit is not None:
+            _form_params.append(('is_external_deposit', is_external_deposit))
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/x-www-form-urlencoded'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/api/v1/createIntentAddress',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    async def deposit_latest(
         self,
         l1_address: StrictStr,
         _request_timeout: Union[
@@ -125,10 +380,10 @@ class BridgeApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[RespGetBridgesByL1Addr]:
-        """bridges
+    ) -> Deposit:
+        """deposit_latest
 
-        Get bridges for given l1 address
+        Get most recent deposit for given l1 address
 
         :param l1_address: (required)
         :type l1_address: str
@@ -154,7 +409,7 @@ class BridgeApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bridges_serialize(
+        _param = self._deposit_latest_serialize(
             l1_address=l1_address,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -163,7 +418,75 @@ class BridgeApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RespGetBridgesByL1Addr",
+            '200': "Deposit",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    async def deposit_latest_with_http_info(
+        self,
+        l1_address: StrictStr,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[Deposit]:
+        """deposit_latest
+
+        Get most recent deposit for given l1 address
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._deposit_latest_serialize(
+            l1_address=l1_address,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Deposit",
             '400': "ResultCode",
         }
         response_data = await self.api_client.call_api(
@@ -177,7 +500,8 @@ class BridgeApi:
         )
 
 
-    async def bridges_without_preload_content(
+    @validate_call
+    async def deposit_latest_without_preload_content(
         self,
         l1_address: StrictStr,
         _request_timeout: Union[
@@ -193,9 +517,9 @@ class BridgeApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """bridges
+        """deposit_latest
 
-        Get bridges for given l1 address
+        Get most recent deposit for given l1 address
 
         :param l1_address: (required)
         :type l1_address: str
@@ -221,7 +545,7 @@ class BridgeApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bridges_serialize(
+        _param = self._deposit_latest_serialize(
             l1_address=l1_address,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -230,7 +554,7 @@ class BridgeApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RespGetBridgesByL1Addr",
+            '200': "Deposit",
             '400': "ResultCode",
         }
         response_data = await self.api_client.call_api(
@@ -240,7 +564,7 @@ class BridgeApi:
         return response_data.response
 
 
-    def _bridges_serialize(
+    def _deposit_latest_serialize(
         self,
         l1_address,
         _request_auth,
@@ -258,7 +582,9 @@ class BridgeApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -287,7 +613,7 @@ class BridgeApi:
 
         return self.api_client.param_serialize(
             method='GET',
-            resource_path='/api/v1/bridges',
+            resource_path='/api/v1/deposit/latest',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -303,9 +629,9 @@ class BridgeApi:
 
 
 
-    async def bridges_is_next_bridge_fast(
+    @validate_call
+    async def deposit_networks(
         self,
-        l1_address: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -318,13 +644,11 @@ class BridgeApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RespGetIsNextBridgeFast:
-        """bridges_isNextBridgeFast
+    ) -> BridgeSupportedNetworks:
+        """deposit_networks
 
-        Get if next bridge is fast
+        Get networks that support deposits via intent address
 
-        :param l1_address: (required)
-        :type l1_address: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -347,8 +671,7 @@ class BridgeApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bridges_is_next_bridge_fast_serialize(
-            l1_address=l1_address,
+        _param = self._deposit_networks_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -356,7 +679,7 @@ class BridgeApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RespGetIsNextBridgeFast",
+            '200': "BridgeSupportedNetworks",
             '400': "ResultCode",
         }
         response_data = await self.api_client.call_api(
@@ -370,9 +693,9 @@ class BridgeApi:
         ).data
 
 
-    async def bridges_is_next_bridge_fast_with_http_info(
+    @validate_call
+    async def deposit_networks_with_http_info(
         self,
-        l1_address: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -385,13 +708,11 @@ class BridgeApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[RespGetIsNextBridgeFast]:
-        """bridges_isNextBridgeFast
+    ) -> ApiResponse[BridgeSupportedNetworks]:
+        """deposit_networks
 
-        Get if next bridge is fast
+        Get networks that support deposits via intent address
 
-        :param l1_address: (required)
-        :type l1_address: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -414,8 +735,7 @@ class BridgeApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bridges_is_next_bridge_fast_serialize(
-            l1_address=l1_address,
+        _param = self._deposit_networks_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -423,7 +743,7 @@ class BridgeApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RespGetIsNextBridgeFast",
+            '200': "BridgeSupportedNetworks",
             '400': "ResultCode",
         }
         response_data = await self.api_client.call_api(
@@ -437,9 +757,9 @@ class BridgeApi:
         )
 
 
-    async def bridges_is_next_bridge_fast_without_preload_content(
+    @validate_call
+    async def deposit_networks_without_preload_content(
         self,
-        l1_address: StrictStr,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -453,12 +773,10 @@ class BridgeApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """bridges_isNextBridgeFast
+        """deposit_networks
 
-        Get if next bridge is fast
+        Get networks that support deposits via intent address
 
-        :param l1_address: (required)
-        :type l1_address: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -481,8 +799,7 @@ class BridgeApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bridges_is_next_bridge_fast_serialize(
-            l1_address=l1_address,
+        _param = self._deposit_networks_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -490,7 +807,7 @@ class BridgeApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RespGetIsNextBridgeFast",
+            '200': "BridgeSupportedNetworks",
             '400': "ResultCode",
         }
         response_data = await self.api_client.call_api(
@@ -500,9 +817,8 @@ class BridgeApi:
         return response_data.response
 
 
-    def _bridges_is_next_bridge_fast_serialize(
+    def _deposit_networks_serialize(
         self,
-        l1_address,
         _request_auth,
         _content_type,
         _headers,
@@ -518,15 +834,13 @@ class BridgeApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
         # process the query parameters
-        if l1_address is not None:
-            
-            _query_params.append(('l1_address', l1_address))
-            
         # process the header parameters
         # process the form parameters
         # process the body parameter
@@ -547,7 +861,7 @@ class BridgeApi:
 
         return self.api_client.param_serialize(
             method='GET',
-            resource_path='/api/v1/bridges/isNextBridgeFast',
+            resource_path='/api/v1/deposit/networks',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -563,6 +877,7 @@ class BridgeApi:
 
 
 
+    @validate_call
     async def fastbridge_info(
         self,
         _request_timeout: Union[
@@ -626,6 +941,7 @@ class BridgeApi:
         ).data
 
 
+    @validate_call
     async def fastbridge_info_with_http_info(
         self,
         _request_timeout: Union[
@@ -689,6 +1005,7 @@ class BridgeApi:
         )
 
 
+    @validate_call
     async def fastbridge_info_without_preload_content(
         self,
         _request_timeout: Union[
@@ -765,7 +1082,9 @@ class BridgeApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -806,6 +1125,7 @@ class BridgeApi:
 
 
 
+    @validate_call
     async def fastwithdraw(
         self,
         tx_info: StrictStr,
@@ -885,6 +1205,7 @@ class BridgeApi:
         ).data
 
 
+    @validate_call
     async def fastwithdraw_with_http_info(
         self,
         tx_info: StrictStr,
@@ -964,6 +1285,7 @@ class BridgeApi:
         )
 
 
+    @validate_call
     async def fastwithdraw_without_preload_content(
         self,
         tx_info: StrictStr,
@@ -1060,7 +1382,9 @@ class BridgeApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -1093,7 +1417,7 @@ class BridgeApi:
             _default_content_type = (
                 self.api_client.select_header_content_type(
                     [
-                        'multipart/form-data'
+                        'application/x-www-form-urlencoded'
                     ]
                 )
             )
@@ -1122,11 +1446,11 @@ class BridgeApi:
 
 
 
+    @validate_call
     async def fastwithdraw_info(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1144,12 +1468,10 @@ class BridgeApi:
 
         Get fast withdraw info
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1173,9 +1495,8 @@ class BridgeApi:
         """ # noqa: E501
 
         _param = self._fastwithdraw_info_serialize(
-            account_index=account_index,
             authorization=authorization,
-            auth=auth,
+            account_index=account_index,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1197,11 +1518,11 @@ class BridgeApi:
         ).data
 
 
+    @validate_call
     async def fastwithdraw_info_with_http_info(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1219,12 +1540,10 @@ class BridgeApi:
 
         Get fast withdraw info
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1248,9 +1567,8 @@ class BridgeApi:
         """ # noqa: E501
 
         _param = self._fastwithdraw_info_serialize(
-            account_index=account_index,
             authorization=authorization,
-            auth=auth,
+            account_index=account_index,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1272,11 +1590,11 @@ class BridgeApi:
         )
 
 
+    @validate_call
     async def fastwithdraw_info_without_preload_content(
         self,
+        authorization: StrictStr,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1294,12 +1612,10 @@ class BridgeApi:
 
         Get fast withdraw info
 
+        :param authorization: (required)
+        :type authorization: str
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
-        :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1323,9 +1639,8 @@ class BridgeApi:
         """ # noqa: E501
 
         _param = self._fastwithdraw_info_serialize(
-            account_index=account_index,
             authorization=authorization,
-            auth=auth,
+            account_index=account_index,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1345,9 +1660,8 @@ class BridgeApi:
 
     def _fastwithdraw_info_serialize(
         self,
-        account_index,
         authorization,
-        auth,
+        account_index,
         _request_auth,
         _content_type,
         _headers,
@@ -1363,24 +1677,20 @@ class BridgeApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
         # process the query parameters
-        if authorization is not None:
-            
-            _query_params.append(('authorization', authorization))
-            
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
-            
         if account_index is not None:
             
             _query_params.append(('account_index', account_index))
             
         # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
         # process the form parameters
         # process the body parameter
 

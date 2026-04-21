@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **by** | **str** |  | 
 **value** | **str** |  | 
 **active_only** | **bool** |  | [optional] [default to False]
-**cursor** | **str** |  | [optional] 
 
 ## Example
 

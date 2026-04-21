@@ -9,8 +9,8 @@ Name | Type | Description | Notes
 **limit** | **int** |  | [optional] 
 **by** | **str** |  | [optional] 
 **value** | **str** |  | [optional] 
-**auth** | **str** |  made optional to support header auth clients | [optional] 
 **types** | **List[int]** |  | [optional] 
+**auth** | **str** |  | [optional] 
 
 ## Example
 

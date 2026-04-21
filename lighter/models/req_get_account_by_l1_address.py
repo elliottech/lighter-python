@@ -18,21 +18,22 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqGetAccountByL1Address(BaseModel):
     """
     ReqGetAccountByL1Address
     """ # noqa: E501
     l1_address: StrictStr
-    cursor: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "cursor"]
+    __properties: ClassVar[List[str]] = ["l1_address"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -44,8 +45,7 @@ class ReqGetAccountByL1Address(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -88,9 +88,8 @@ class ReqGetAccountByL1Address(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
-            "l1_address": obj.get("l1_address"),
-            "cursor": obj.get("cursor")
+        _obj = cls.model_validate({
+            "l1_address": obj.get("l1_address")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

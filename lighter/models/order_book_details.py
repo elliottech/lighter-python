@@ -23,6 +23,7 @@ from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
 from lighter.models.spot_order_book_detail import SpotOrderBookDetail
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class OrderBookDetails(BaseModel):
     """
@@ -36,7 +37,8 @@ class OrderBookDetails(BaseModel):
     __properties: ClassVar[List[str]] = ["code", "message", "order_book_details", "spot_order_book_details"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -48,8 +50,7 @@ class OrderBookDetails(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -79,16 +80,16 @@ class OrderBookDetails(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in order_book_details (list)
         _items = []
         if self.order_book_details:
-            for _item in self.order_book_details:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_order_book_details in self.order_book_details:
+                if _item_order_book_details:
+                    _items.append(_item_order_book_details.to_dict())
             _dict['order_book_details'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in spot_order_book_details (list)
         _items = []
         if self.spot_order_book_details:
-            for _item in self.spot_order_book_details:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_spot_order_book_details in self.spot_order_book_details:
+                if _item_spot_order_book_details:
+                    _items.append(_item_spot_order_book_details.to_dict())
             _dict['spot_order_book_details'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -106,7 +107,7 @@ class OrderBookDetails(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "order_book_details": [PerpsOrderBookDetail.from_dict(_item) for _item in obj["order_book_details"]] if obj.get("order_book_details") is not None else None,

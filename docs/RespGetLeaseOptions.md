@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **int** |  | 
+**code** | **int** |  | [optional] 
 **message** | **str** |  | [optional] 
-**options** | [**List[LeaseOptionEntry]**](LeaseOptionEntry.md) |  | 
-**lit_incentives_account_index** | **int** |  | 
+**options** | [**List[LeaseOptionEntry]**](LeaseOptionEntry.md) |  | [optional] 
+**lit_incentives_account_index** | **int** | Account index that receives the leasing fee | [optional] 
 
 ## Example
 

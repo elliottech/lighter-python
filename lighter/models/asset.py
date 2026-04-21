@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validato
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Asset(BaseModel):
     """
@@ -35,8 +36,15 @@ class Asset(BaseModel):
     margin_mode: StrictStr
     index_price: StrictStr
     l1_address: StrictStr
+    global_supply_cap: StrictStr
+    liquidation_fee: StrictStr
+    liquidation_threshold: StrictStr
+    loan_to_value: StrictStr
+    price_decimals: StrictInt
+    total_supplied: StrictStr
+    user_supply_cap: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address"]
+    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap"]
 
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
@@ -46,7 +54,8 @@ class Asset(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -58,8 +67,7 @@ class Asset(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -102,7 +110,7 @@ class Asset(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "asset_id": obj.get("asset_id"),
             "symbol": obj.get("symbol"),
             "l1_decimals": obj.get("l1_decimals"),
@@ -111,7 +119,14 @@ class Asset(BaseModel):
             "min_withdrawal_amount": obj.get("min_withdrawal_amount"),
             "margin_mode": obj.get("margin_mode"),
             "index_price": obj.get("index_price"),
-            "l1_address": obj.get("l1_address")
+            "l1_address": obj.get("l1_address"),
+            "global_supply_cap": obj.get("global_supply_cap"),
+            "liquidation_fee": obj.get("liquidation_fee"),
+            "liquidation_threshold": obj.get("liquidation_threshold"),
+            "loan_to_value": obj.get("loan_to_value"),
+            "price_decimals": obj.get("price_decimals"),
+            "total_supplied": obj.get("total_supplied"),
+            "user_supply_cap": obj.get("user_supply_cap")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

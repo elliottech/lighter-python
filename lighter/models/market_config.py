@@ -18,9 +18,10 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class MarketConfig(BaseModel):
     """
@@ -30,14 +31,15 @@ class MarketConfig(BaseModel):
     insurance_fund_account_index: StrictInt
     liquidation_mode: StrictInt
     force_reduce_only: StrictBool
+    funding_fee_discounts_enabled: Optional[StrictBool] = None
     trading_hours: StrictStr
-    funding_fee_discounts_enabled: StrictBool
     hidden: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["market_margin_mode", "insurance_fund_account_index", "liquidation_mode", "force_reduce_only", "trading_hours", "funding_fee_discounts_enabled", "hidden"]
+    __properties: ClassVar[List[str]] = ["market_margin_mode", "insurance_fund_account_index", "liquidation_mode", "force_reduce_only", "funding_fee_discounts_enabled", "trading_hours", "hidden"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -49,8 +51,7 @@ class MarketConfig(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -93,13 +94,13 @@ class MarketConfig(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "market_margin_mode": obj.get("market_margin_mode"),
             "insurance_fund_account_index": obj.get("insurance_fund_account_index"),
             "liquidation_mode": obj.get("liquidation_mode"),
             "force_reduce_only": obj.get("force_reduce_only"),
-            "trading_hours": obj.get("trading_hours"),
             "funding_fee_discounts_enabled": obj.get("funding_fee_discounts_enabled"),
+            "trading_hours": obj.get("trading_hours"),
             "hidden": obj.get("hidden")
         })
         # store additional fields in additional_properties

@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -40,6 +39,7 @@ class CandlestickApi:
         self.api_client = api_client
 
 
+    @validate_call
     async def candles(
         self,
         market_id: StrictInt,
@@ -63,7 +63,7 @@ class CandlestickApi:
     ) -> Candles:
         """candles
 
-        Get candles (optimized with shortened fields and smaller response size)
+        Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
         :param market_id: (required)
         :type market_id: int
@@ -127,6 +127,7 @@ class CandlestickApi:
         ).data
 
 
+    @validate_call
     async def candles_with_http_info(
         self,
         market_id: StrictInt,
@@ -150,7 +151,7 @@ class CandlestickApi:
     ) -> ApiResponse[Candles]:
         """candles
 
-        Get candles (optimized with shortened fields and smaller response size)
+        Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
         :param market_id: (required)
         :type market_id: int
@@ -214,6 +215,7 @@ class CandlestickApi:
         )
 
 
+    @validate_call
     async def candles_without_preload_content(
         self,
         market_id: StrictInt,
@@ -237,7 +239,7 @@ class CandlestickApi:
     ) -> RESTResponseType:
         """candles
 
-        Get candles (optimized with shortened fields and smaller response size)
+        Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
         :param market_id: (required)
         :type market_id: int
@@ -320,7 +322,9 @@ class CandlestickApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -385,6 +389,7 @@ class CandlestickApi:
 
 
 
+    @validate_call
     async def fundings(
         self,
         market_id: StrictInt,
@@ -468,6 +473,7 @@ class CandlestickApi:
         ).data
 
 
+    @validate_call
     async def fundings_with_http_info(
         self,
         market_id: StrictInt,
@@ -551,6 +557,7 @@ class CandlestickApi:
         )
 
 
+    @validate_call
     async def fundings_without_preload_content(
         self,
         market_id: StrictInt,
@@ -652,7 +659,9 @@ class CandlestickApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters

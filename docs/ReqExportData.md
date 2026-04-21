@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**auth** | **str** |  made optional to support header auth clients | [optional] 
-**account_index** | **int** |  | [optional] [default to -1]
+**auth** | **str** |  | [optional] 
+**account_index** | **int** |  | [optional] 
 **market_id** | **int** |  | [optional] 
 **type** | **str** |  | 
 **start_timestamp** | **int** |  | [optional] 

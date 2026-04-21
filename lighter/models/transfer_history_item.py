@@ -21,26 +21,27 @@ from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validato
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class TransferHistoryItem(BaseModel):
     """
     TransferHistoryItem
     """ # noqa: E501
     id: StrictStr
-    asset_id: StrictInt
     amount: StrictStr
-    fee: StrictStr
     timestamp: StrictInt
     type: StrictStr
     from_l1_address: StrictStr
     to_l1_address: StrictStr
     from_account_index: StrictInt
     to_account_index: StrictInt
+    tx_hash: StrictStr
+    asset_id: StrictInt
+    fee: StrictStr
     from_route: StrictStr
     to_route: StrictStr
-    tx_hash: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["id", "asset_id", "amount", "fee", "timestamp", "type", "from_l1_address", "to_l1_address", "from_account_index", "to_account_index", "from_route", "to_route", "tx_hash"]
+    __properties: ClassVar[List[str]] = ["id", "amount", "timestamp", "type", "from_l1_address", "to_l1_address", "from_account_index", "to_account_index", "tx_hash", "asset_id", "fee", "from_route", "to_route"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
@@ -64,7 +65,8 @@ class TransferHistoryItem(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -76,8 +78,7 @@ class TransferHistoryItem(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -120,20 +121,20 @@ class TransferHistoryItem(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "id": obj.get("id"),
-            "asset_id": obj.get("asset_id"),
             "amount": obj.get("amount"),
-            "fee": obj.get("fee"),
             "timestamp": obj.get("timestamp"),
             "type": obj.get("type"),
             "from_l1_address": obj.get("from_l1_address"),
             "to_l1_address": obj.get("to_l1_address"),
             "from_account_index": obj.get("from_account_index"),
             "to_account_index": obj.get("to_account_index"),
+            "tx_hash": obj.get("tx_hash"),
+            "asset_id": obj.get("asset_id"),
+            "fee": obj.get("fee"),
             "from_route": obj.get("from_route"),
-            "to_route": obj.get("to_route"),
-            "tx_hash": obj.get("tx_hash")
+            "to_route": obj.get("to_route")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

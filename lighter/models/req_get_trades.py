@@ -22,26 +22,27 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqGetTrades(BaseModel):
     """
     ReqGetTrades
     """ # noqa: E501
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
+    auth: Optional[StrictStr] = None
     market_id: Optional[StrictInt] = None
-    account_index: Optional[StrictInt] = -1
+    account_index: Optional[StrictInt] = None
     order_index: Optional[StrictInt] = None
     sort_by: StrictStr
     sort_dir: Optional[StrictStr] = 'desc'
     cursor: Optional[StrictStr] = None
-    var_from: Optional[StrictInt] = Field(default=-1, alias="from")
+    var_from: Optional[StrictInt] = Field(default=None, alias="from")
     ask_filter: Optional[StrictInt] = None
+    limit: Annotated[int, Field(le=100, strict=True, ge=1)]
     role: Optional[StrictStr] = 'all'
     type: Optional[StrictStr] = 'all'
-    limit: Annotated[int, Field(le=100, strict=True, ge=1)]
     aggregate: Optional[StrictBool] = False
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["auth", "market_id", "account_index", "order_index", "sort_by", "sort_dir", "cursor", "from", "ask_filter", "role", "type", "limit", "aggregate"]
+    __properties: ClassVar[List[str]] = ["auth", "market_id", "account_index", "order_index", "sort_by", "sort_dir", "cursor", "from", "ask_filter", "limit", "role", "type", "aggregate"]
 
     @field_validator('sort_by')
     def sort_by_validate_enum(cls, value):
@@ -81,7 +82,8 @@ class ReqGetTrades(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -93,8 +95,7 @@ class ReqGetTrades(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -137,19 +138,19 @@ class ReqGetTrades(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "auth": obj.get("auth"),
             "market_id": obj.get("market_id"),
-            "account_index": obj.get("account_index") if obj.get("account_index") is not None else -1,
+            "account_index": obj.get("account_index"),
             "order_index": obj.get("order_index"),
             "sort_by": obj.get("sort_by"),
             "sort_dir": obj.get("sort_dir") if obj.get("sort_dir") is not None else 'desc',
             "cursor": obj.get("cursor"),
-            "from": obj.get("from") if obj.get("from") is not None else -1,
+            "from": obj.get("from"),
             "ask_filter": obj.get("ask_filter"),
+            "limit": obj.get("limit"),
             "role": obj.get("role") if obj.get("role") is not None else 'all',
             "type": obj.get("type") if obj.get("type") is not None else 'all',
-            "limit": obj.get("limit"),
             "aggregate": obj.get("aggregate") if obj.get("aggregate") is not None else False
         })
         # store additional fields in additional_properties

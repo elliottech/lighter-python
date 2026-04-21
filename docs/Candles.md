@@ -6,9 +6,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **int** |  | 
+**r** | **str** | Resolution | 
+**c** | [**List[Candle]**](Candle.md) | Array of candles (max 500 per call) | 
 **message** | **str** |  | [optional] 
-**r** | **str** |  resolution | 
-**c** | [**List[Candle]**](Candle.md) |  candles | 
 
 ## Example
 

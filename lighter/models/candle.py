@@ -18,31 +18,33 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
-from typing import Any, ClassVar, Dict, List, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Candle(BaseModel):
     """
-    Candle
+    Abbreviated candle format. Zero values are omitted.
     """ # noqa: E501
-    t: StrictInt = Field(description=" timestamp")
-    o: Union[StrictFloat, StrictInt] = Field(description=" open")
-    h: Union[StrictFloat, StrictInt] = Field(description=" high")
-    l: Union[StrictFloat, StrictInt] = Field(description=" low")
-    c: Union[StrictFloat, StrictInt] = Field(description=" close")
-    O: Union[StrictFloat, StrictInt] = Field(description=" open_raw", alias="O")
-    H: Union[StrictFloat, StrictInt] = Field(description=" high_raw", alias="H")
-    L: Union[StrictFloat, StrictInt] = Field(description=" low_raw", alias="L")
-    C: Union[StrictFloat, StrictInt] = Field(description=" close_raw", alias="C")
-    v: Union[StrictFloat, StrictInt] = Field(description=" volume0")
-    V: Union[StrictFloat, StrictInt] = Field(description=" volume1", alias="V")
-    i: StrictInt = Field(description=" last_trade_id")
+    t: Optional[StrictInt] = Field(default=None, description="Timestamp")
+    o: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Open price")
+    h: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="High price")
+    l: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Low price")
+    c: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Close price")
+    v: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Base token volume (volume0)")
+    v: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Quote token volume (volume1)", alias="V")
+    i: Optional[StrictInt] = Field(default=None, description="Last trade ID")
+    c: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" close_raw", alias="C")
+    h: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" high_raw", alias="H")
+    l: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" low_raw", alias="L")
+    o: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" open_raw", alias="O")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["t", "o", "h", "l", "c", "O", "H", "L", "C", "v", "V", "i"]
+    __properties: ClassVar[List[str]] = ["t", "o", "h", "l", "c", "v", "V", "i", "C", "H", "L", "O"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -54,8 +56,7 @@ class Candle(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -98,19 +99,19 @@ class Candle(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "t": obj.get("t"),
             "o": obj.get("o"),
             "h": obj.get("h"),
             "l": obj.get("l"),
             "c": obj.get("c"),
-            "O": obj.get("O"),
-            "H": obj.get("H"),
-            "L": obj.get("L"),
-            "C": obj.get("C"),
             "v": obj.get("v"),
             "V": obj.get("V"),
-            "i": obj.get("i")
+            "i": obj.get("i"),
+            "C": obj.get("C"),
+            "H": obj.get("H"),
+            "L": obj.get("L"),
+            "O": obj.get("O")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

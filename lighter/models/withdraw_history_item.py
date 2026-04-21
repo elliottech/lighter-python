@@ -21,20 +21,21 @@ from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validato
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class WithdrawHistoryItem(BaseModel):
     """
     WithdrawHistoryItem
     """ # noqa: E501
     id: StrictStr
-    asset_id: StrictInt
     amount: StrictStr
     timestamp: StrictInt
     status: StrictStr
     type: StrictStr
     l1_tx_hash: StrictStr
+    asset_id: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["id", "asset_id", "amount", "timestamp", "status", "type", "l1_tx_hash"]
+    __properties: ClassVar[List[str]] = ["id", "amount", "timestamp", "status", "type", "l1_tx_hash", "asset_id"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -51,7 +52,8 @@ class WithdrawHistoryItem(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -63,8 +65,7 @@ class WithdrawHistoryItem(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -107,14 +108,14 @@ class WithdrawHistoryItem(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "id": obj.get("id"),
-            "asset_id": obj.get("asset_id"),
             "amount": obj.get("amount"),
             "timestamp": obj.get("timestamp"),
             "status": obj.get("status"),
             "type": obj.get("type"),
-            "l1_tx_hash": obj.get("l1_tx_hash")
+            "l1_tx_hash": obj.get("l1_tx_hash"),
+            "asset_id": obj.get("asset_id")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

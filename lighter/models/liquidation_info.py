@@ -23,6 +23,7 @@ from lighter.models.account_position import AccountPosition
 from lighter.models.risk_info import RiskInfo
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class LiquidationInfo(BaseModel):
     """
@@ -36,7 +37,8 @@ class LiquidationInfo(BaseModel):
     __properties: ClassVar[List[str]] = ["positions", "risk_info_before", "risk_info_after", "mark_prices"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -48,8 +50,7 @@ class LiquidationInfo(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -79,9 +80,9 @@ class LiquidationInfo(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in positions (list)
         _items = []
         if self.positions:
-            for _item in self.positions:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_positions in self.positions:
+                if _item_positions:
+                    _items.append(_item_positions.to_dict())
             _dict['positions'] = _items
         # override the default output from pydantic by calling `to_dict()` of risk_info_before
         if self.risk_info_before:
@@ -105,7 +106,7 @@ class LiquidationInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "positions": [AccountPosition.from_dict(_item) for _item in obj["positions"]] if obj.get("positions") is not None else None,
             "risk_info_before": RiskInfo.from_dict(obj["risk_info_before"]) if obj.get("risk_info_before") is not None else None,
             "risk_info_after": RiskInfo.from_dict(obj["risk_info_after"]) if obj.get("risk_info_after") is not None else None,

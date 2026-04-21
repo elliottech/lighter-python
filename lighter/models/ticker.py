@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List
 from lighter.models.price_level import PriceLevel
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Ticker(BaseModel):
     """
@@ -34,7 +35,8 @@ class Ticker(BaseModel):
     __properties: ClassVar[List[str]] = ["s", "a", "b"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -46,8 +48,7 @@ class Ticker(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -96,7 +97,7 @@ class Ticker(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "s": obj.get("s"),
             "a": PriceLevel.from_dict(obj["a"]) if obj.get("a") is not None else None,
             "b": PriceLevel.from_dict(obj["b"]) if obj.get("b") is not None else None

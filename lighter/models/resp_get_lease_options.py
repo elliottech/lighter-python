@@ -17,25 +17,27 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.lease_option_entry import LeaseOptionEntry
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class RespGetLeaseOptions(BaseModel):
     """
     RespGetLeaseOptions
     """ # noqa: E501
-    code: StrictInt
+    code: Optional[StrictInt] = None
     message: Optional[StrictStr] = None
-    options: List[LeaseOptionEntry]
-    lit_incentives_account_index: StrictInt
+    options: Optional[List[LeaseOptionEntry]] = None
+    lit_incentives_account_index: Optional[StrictInt] = Field(default=None, description="Account index that receives the leasing fee")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "options", "lit_incentives_account_index"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +49,7 @@ class RespGetLeaseOptions(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -78,9 +79,9 @@ class RespGetLeaseOptions(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in options (list)
         _items = []
         if self.options:
-            for _item in self.options:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_options in self.options:
+                if _item_options:
+                    _items.append(_item_options.to_dict())
             _dict['options'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -98,7 +99,7 @@ class RespGetLeaseOptions(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "options": [LeaseOptionEntry.from_dict(_item) for _item in obj["options"]] if obj.get("options") is not None else None,

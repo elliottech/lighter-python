@@ -12,7 +12,7 @@ async def main():
     tx, tx_hash, err = await client.create_market_order(
         market_index=market_index,
         client_order_index=0,
-        base_amount=1000,  # 0.1 ETH
+        base_amount=100,  # 0.1 ETH
         avg_execution_price=4000_00,  # $4000 -- worst acceptable price for the order
         is_ask=False,
         skip_nonce=1,

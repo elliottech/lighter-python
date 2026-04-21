@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt
 from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class AccountMarketStats(BaseModel):
     """
@@ -43,7 +44,8 @@ class AccountMarketStats(BaseModel):
     __properties: ClassVar[List[str]] = ["market_id", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "weekly_trades_count", "weekly_base_token_volume", "weekly_quote_token_volume", "monthly_trades_count", "monthly_base_token_volume", "monthly_quote_token_volume", "total_trades_count", "total_base_token_volume", "total_quote_token_volume"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -55,8 +57,7 @@ class AccountMarketStats(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -99,7 +100,7 @@ class AccountMarketStats(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "market_id": obj.get("market_id"),
             "daily_trades_count": obj.get("daily_trades_count"),
             "daily_base_token_volume": obj.get("daily_base_token_volume"),

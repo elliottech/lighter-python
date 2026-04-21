@@ -6,11 +6,11 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **str** |  | 
-**asset_id** | **int** |  | 
 **amount** | **str** |  | 
 **timestamp** | **int** |  | 
 **status** | **str** |  | 
 **l1_tx_hash** | **str** |  | 
+**asset_id** | **int** |  | 
 
 ## Example
 

@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr, field_validat
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqGetAccount(BaseModel):
     """
@@ -29,9 +30,8 @@ class ReqGetAccount(BaseModel):
     by: StrictStr
     value: StrictStr
     active_only: Optional[StrictBool] = False
-    cursor: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["by", "value", "active_only", "cursor"]
+    __properties: ClassVar[List[str]] = ["by", "value", "active_only"]
 
     @field_validator('by')
     def by_validate_enum(cls, value):
@@ -41,7 +41,8 @@ class ReqGetAccount(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -53,8 +54,7 @@ class ReqGetAccount(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -97,11 +97,10 @@ class ReqGetAccount(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "by": obj.get("by"),
             "value": obj.get("value"),
-            "active_only": obj.get("active_only") if obj.get("active_only") is not None else False,
-            "cursor": obj.get("cursor")
+            "active_only": obj.get("active_only") if obj.get("active_only") is not None else False
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

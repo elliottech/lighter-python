@@ -17,24 +17,37 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqGetTransferHistory(BaseModel):
     """
     ReqGetTransferHistory
     """ # noqa: E501
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     account_index: StrictInt
+    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     cursor: Optional[StrictStr] = None
     type: Optional[List[StrictStr]] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["auth", "account_index", "cursor", "type"]
+    __properties: ClassVar[List[str]] = ["account_index", "auth", "cursor", "type"]
+
+    @field_validator('type')
+    def type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        for i in value:
+            if i not in set(['all', 'L2Transfer', 'L2MintShares', 'L2BurnShares', 'L2StakeAssets', 'L2UnstakeAssets']):
+                raise ValueError("each list item must be one of ('all', 'L2Transfer', 'L2MintShares', 'L2BurnShares', 'L2StakeAssets', 'L2UnstakeAssets')")
+        return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -46,8 +59,7 @@ class ReqGetTransferHistory(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -90,9 +102,9 @@ class ReqGetTransferHistory(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
-            "auth": obj.get("auth"),
+        _obj = cls.model_validate({
             "account_index": obj.get("account_index"),
+            "auth": obj.get("auth"),
             "cursor": obj.get("cursor"),
             "type": obj.get("type")
         })

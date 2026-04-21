@@ -8,21 +8,21 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_index** | **int** |  | 
-**created_at** | **int** |  | 
-**master_account_index** | **int** |  | 
 **account_type** | **int** |  | 
 **name** | **str** |  | 
 **l1_address** | **str** |  | 
 **annual_percentage_yield** | **float** |  | 
-**sharpe_ratio** | **float** |  | 
 **status** | **int** |  | 
 **operator_fee** | **str** |  | 
 **total_asset_value** | **str** |  | 
-**total_spot_value** | **str** |  | 
-**total_perps_value** | **str** |  | 
 **total_shares** | **int** |  | 
 **account_share** | [**PublicPoolShare**](PublicPoolShare.md) |  | [optional] 
 **assets** | [**List[AccountAsset]**](AccountAsset.md) |  | 
+**created_at** | **int** |  | 
+**master_account_index** | **int** |  | 
+**sharpe_ratio** | **float** |  | 
+**total_perps_value** | **str** |  | 
+**total_spot_value** | **str** |  | 
 
 ## Example
 

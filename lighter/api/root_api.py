@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -37,6 +36,7 @@ class RootApi:
         self.api_client = api_client
 
 
+    @validate_call
     async def info(
         self,
         _request_timeout: Union[
@@ -100,6 +100,7 @@ class RootApi:
         ).data
 
 
+    @validate_call
     async def info_with_http_info(
         self,
         _request_timeout: Union[
@@ -163,6 +164,7 @@ class RootApi:
         )
 
 
+    @validate_call
     async def info_without_preload_content(
         self,
         _request_timeout: Union[
@@ -239,7 +241,9 @@ class RootApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -280,6 +284,7 @@ class RootApi:
 
 
 
+    @validate_call
     async def status(
         self,
         _request_timeout: Union[
@@ -343,6 +348,7 @@ class RootApi:
         ).data
 
 
+    @validate_call
     async def status_with_http_info(
         self,
         _request_timeout: Union[
@@ -406,6 +412,7 @@ class RootApi:
         )
 
 
+    @validate_call
     async def status_without_preload_content(
         self,
         _request_timeout: Union[
@@ -482,7 +489,9 @@ class RootApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters

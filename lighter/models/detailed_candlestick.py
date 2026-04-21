@@ -17,10 +17,11 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt
-from typing import Any, ClassVar, Dict, List, Union
+from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class DetailedCandlestick(BaseModel):
     """
@@ -31,19 +32,20 @@ class DetailedCandlestick(BaseModel):
     high: Union[StrictFloat, StrictInt]
     low: Union[StrictFloat, StrictInt]
     close: Union[StrictFloat, StrictInt]
-    open_raw: Union[StrictFloat, StrictInt]
-    high_raw: Union[StrictFloat, StrictInt]
-    low_raw: Union[StrictFloat, StrictInt]
-    close_raw: Union[StrictFloat, StrictInt]
     volume0: Union[StrictFloat, StrictInt]
     volume1: Union[StrictFloat, StrictInt]
     last_trade_id: StrictInt
     trade_count: StrictInt
+    close_raw: Optional[StrictStr] = None
+    high_raw: Optional[StrictStr] = None
+    low_raw: Optional[StrictStr] = None
+    open_raw: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["timestamp", "open", "high", "low", "close", "open_raw", "high_raw", "low_raw", "close_raw", "volume0", "volume1", "last_trade_id", "trade_count"]
+    __properties: ClassVar[List[str]] = ["timestamp", "open", "high", "low", "close", "volume0", "volume1", "last_trade_id", "trade_count", "close_raw", "high_raw", "low_raw", "open_raw"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -55,8 +57,7 @@ class DetailedCandlestick(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -99,20 +100,20 @@ class DetailedCandlestick(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "timestamp": obj.get("timestamp"),
             "open": obj.get("open"),
             "high": obj.get("high"),
             "low": obj.get("low"),
             "close": obj.get("close"),
-            "open_raw": obj.get("open_raw"),
-            "high_raw": obj.get("high_raw"),
-            "low_raw": obj.get("low_raw"),
-            "close_raw": obj.get("close_raw"),
             "volume0": obj.get("volume0"),
             "volume1": obj.get("volume1"),
             "last_trade_id": obj.get("last_trade_id"),
-            "trade_count": obj.get("trade_count")
+            "trade_count": obj.get("trade_count"),
+            "close_raw": obj.get("close_raw"),
+            "high_raw": obj.get("high_raw"),
+            "low_raw": obj.get("low_raw"),
+            "open_raw": obj.get("open_raw")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

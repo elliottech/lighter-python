@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**timestamp** | **int** |  | 
-**slippage** | [**List[SlippageResult]**](SlippageResult.md) |  | 
+**timestamp** | **int** |  | [optional] 
+**slippage** | [**List[SlippageResult]**](SlippageResult.md) |  | [optional] 
 
 ## Example
 

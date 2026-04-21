@@ -22,13 +22,14 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ReqExportData(BaseModel):
     """
     ReqExportData
     """ # noqa: E501
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
-    account_index: Optional[StrictInt] = -1
+    auth: Optional[StrictStr] = None
+    account_index: Optional[StrictInt] = None
     market_id: Optional[StrictInt] = None
     type: StrictStr
     start_timestamp: Optional[Annotated[int, Field(le=1830297600000, strict=True, ge=1735689600000)]] = None
@@ -77,7 +78,8 @@ class ReqExportData(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -89,8 +91,7 @@ class ReqExportData(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -133,9 +134,9 @@ class ReqExportData(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "auth": obj.get("auth"),
-            "account_index": obj.get("account_index") if obj.get("account_index") is not None else -1,
+            "account_index": obj.get("account_index"),
             "market_id": obj.get("market_id"),
             "type": obj.get("type"),
             "start_timestamp": obj.get("start_timestamp"),

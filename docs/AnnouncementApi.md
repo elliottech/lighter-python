@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 announcement
 
-Get announcement
+Get announcements
 
 ### Example
 

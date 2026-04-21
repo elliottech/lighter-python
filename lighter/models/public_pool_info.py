@@ -24,6 +24,7 @@ from lighter.models.share_price import SharePrice
 from lighter.models.strategy import Strategy
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class PublicPoolInfo(BaseModel):
     """
@@ -35,15 +36,16 @@ class PublicPoolInfo(BaseModel):
     total_shares: StrictInt
     operator_shares: StrictInt
     annual_percentage_yield: Union[StrictFloat, StrictInt]
-    sharpe_ratio: Union[StrictFloat, StrictInt]
     daily_returns: List[DailyReturn]
     share_prices: List[SharePrice]
+    sharpe_ratio: Union[StrictFloat, StrictInt]
     strategies: List[Strategy]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "sharpe_ratio", "daily_returns", "share_prices", "strategies"]
+    __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "daily_returns", "share_prices", "sharpe_ratio", "strategies"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -55,8 +57,7 @@ class PublicPoolInfo(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -86,23 +87,23 @@ class PublicPoolInfo(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in daily_returns (list)
         _items = []
         if self.daily_returns:
-            for _item in self.daily_returns:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_daily_returns in self.daily_returns:
+                if _item_daily_returns:
+                    _items.append(_item_daily_returns.to_dict())
             _dict['daily_returns'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in share_prices (list)
         _items = []
         if self.share_prices:
-            for _item in self.share_prices:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_share_prices in self.share_prices:
+                if _item_share_prices:
+                    _items.append(_item_share_prices.to_dict())
             _dict['share_prices'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in strategies (list)
         _items = []
         if self.strategies:
-            for _item in self.strategies:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_strategies in self.strategies:
+                if _item_strategies:
+                    _items.append(_item_strategies.to_dict())
             _dict['strategies'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -120,16 +121,16 @@ class PublicPoolInfo(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "status": obj.get("status"),
             "operator_fee": obj.get("operator_fee"),
             "min_operator_share_rate": obj.get("min_operator_share_rate"),
             "total_shares": obj.get("total_shares"),
             "operator_shares": obj.get("operator_shares"),
             "annual_percentage_yield": obj.get("annual_percentage_yield"),
-            "sharpe_ratio": obj.get("sharpe_ratio"),
             "daily_returns": [DailyReturn.from_dict(_item) for _item in obj["daily_returns"]] if obj.get("daily_returns") is not None else None,
             "share_prices": [SharePrice.from_dict(_item) for _item in obj["share_prices"]] if obj.get("share_prices") is not None else None,
+            "sharpe_ratio": obj.get("sharpe_ratio"),
             "strategies": [Strategy.from_dict(_item) for _item in obj["strategies"]] if obj.get("strategies") is not None else None
         })
         # store additional fields in additional_properties

@@ -3,10 +3,10 @@
 
 ## Properties
 
-Name | Type          | Description | Notes
------------- |---------------| ------------- | -------------
-**code** | **int**       |  | 
-**message** | **str**       |  | [optional] 
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**code** | **int** |  | 
+**message** | **str** |  | [optional] 
 **api_key_indexes** | **List[int]** |  | 
 
 ## Example

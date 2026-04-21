@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.public_pool_metadata import PublicPoolMetadata
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class RespPublicPoolsMetadata(BaseModel):
     """
@@ -34,7 +35,8 @@ class RespPublicPoolsMetadata(BaseModel):
     __properties: ClassVar[List[str]] = ["code", "message", "public_pools"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -46,8 +48,7 @@ class RespPublicPoolsMetadata(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -77,9 +78,9 @@ class RespPublicPoolsMetadata(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in public_pools (list)
         _items = []
         if self.public_pools:
-            for _item in self.public_pools:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_public_pools in self.public_pools:
+                if _item_public_pools:
+                    _items.append(_item_public_pools.to_dict())
             _dict['public_pools'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -97,7 +98,7 @@ class RespPublicPoolsMetadata(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "public_pools": [PublicPoolMetadata.from_dict(_item) for _item in obj["public_pools"]] if obj.get("public_pools") is not None else None

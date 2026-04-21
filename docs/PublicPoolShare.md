@@ -7,9 +7,9 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **public_pool_index** | **int** |  | 
 **shares_amount** | **int** |  | 
-**entry_usdc** | **str** |  For public pools and insurance fund | 
-**principal_amount** | **str** |  | 
+**entry_usdc** | **str** |  | 
 **entry_timestamp** | **int** |  | 
+**principal_amount** | **str** |  | 
 
 ## Example
 

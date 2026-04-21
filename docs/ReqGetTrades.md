@@ -5,18 +5,18 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**auth** | **str** |  made optional to support header auth clients | [optional] 
+**auth** | **str** |  | [optional] 
 **market_id** | **int** |  | [optional] 
-**account_index** | **int** |  | [optional] [default to -1]
+**account_index** | **int** |  | [optional] 
 **order_index** | **int** |  | [optional] 
 **sort_by** | **str** |  | 
 **sort_dir** | **str** |  | [optional] [default to 'desc']
 **cursor** | **str** |  | [optional] 
-**var_from** | **int** |  | [optional] [default to -1]
+**var_from** | **int** |  | [optional] 
 **ask_filter** | **int** |  | [optional] 
+**limit** | **int** |  | 
 **role** | **str** |  | [optional] [default to 'all']
 **type** | **str** |  | [optional] [default to 'all']
-**limit** | **int** |  | 
 **aggregate** | **bool** |  | [optional] [default to False]
 
 ## Example

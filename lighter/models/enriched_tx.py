@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class EnrichedTx(BaseModel):
     """
@@ -52,7 +53,8 @@ class EnrichedTx(BaseModel):
     __properties: ClassVar[List[str]] = ["code", "message", "hash", "type", "info", "event_info", "status", "transaction_index", "l1_address", "account_index", "nonce", "expire_at", "block_height", "queued_at", "executed_at", "sequence_index", "parent_hash", "api_key_index", "transaction_time", "committed_at", "verified_at"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -64,8 +66,7 @@ class EnrichedTx(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -108,7 +109,7 @@ class EnrichedTx(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "hash": obj.get("hash"),

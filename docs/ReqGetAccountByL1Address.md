@@ -6,7 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **l1_address** | **str** |  | 
-**cursor** | **str** |  | [optional] 
 
 ## Example
 

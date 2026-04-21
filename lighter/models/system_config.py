@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class SystemConfig(BaseModel):
     """
@@ -33,15 +34,16 @@ class SystemConfig(BaseModel):
     funding_fee_rebate_account_index: StrictInt
     liquidity_pool_cooldown_period: StrictInt
     staking_pool_lockup_period: StrictInt
-    max_integrator_spot_taker_fee: StrictInt
-    max_integrator_spot_maker_fee: StrictInt
-    max_integrator_perps_taker_fee: StrictInt
     max_integrator_perps_maker_fee: StrictInt
+    max_integrator_perps_taker_fee: StrictInt
+    max_integrator_spot_maker_fee: StrictInt
+    max_integrator_spot_taker_fee: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "liquidity_pool_index", "staking_pool_index", "funding_fee_rebate_account_index", "liquidity_pool_cooldown_period", "staking_pool_lockup_period", "max_integrator_spot_taker_fee", "max_integrator_spot_maker_fee", "max_integrator_perps_taker_fee", "max_integrator_perps_maker_fee"]
+    __properties: ClassVar[List[str]] = ["code", "message", "liquidity_pool_index", "staking_pool_index", "funding_fee_rebate_account_index", "liquidity_pool_cooldown_period", "staking_pool_lockup_period", "max_integrator_perps_maker_fee", "max_integrator_perps_taker_fee", "max_integrator_spot_maker_fee", "max_integrator_spot_taker_fee"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -53,8 +55,7 @@ class SystemConfig(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -97,7 +98,7 @@ class SystemConfig(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "liquidity_pool_index": obj.get("liquidity_pool_index"),
@@ -105,10 +106,10 @@ class SystemConfig(BaseModel):
             "funding_fee_rebate_account_index": obj.get("funding_fee_rebate_account_index"),
             "liquidity_pool_cooldown_period": obj.get("liquidity_pool_cooldown_period"),
             "staking_pool_lockup_period": obj.get("staking_pool_lockup_period"),
-            "max_integrator_spot_taker_fee": obj.get("max_integrator_spot_taker_fee"),
-            "max_integrator_spot_maker_fee": obj.get("max_integrator_spot_maker_fee"),
+            "max_integrator_perps_maker_fee": obj.get("max_integrator_perps_maker_fee"),
             "max_integrator_perps_taker_fee": obj.get("max_integrator_perps_taker_fee"),
-            "max_integrator_perps_maker_fee": obj.get("max_integrator_perps_maker_fee")
+            "max_integrator_spot_maker_fee": obj.get("max_integrator_spot_maker_fee"),
+            "max_integrator_spot_taker_fee": obj.get("max_integrator_spot_taker_fee")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

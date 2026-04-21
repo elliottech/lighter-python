@@ -23,6 +23,7 @@ from lighter.models.account_asset import AccountAsset
 from lighter.models.public_pool_share import PublicPoolShare
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class PublicPoolMetadata(BaseModel):
     """
@@ -31,26 +32,27 @@ class PublicPoolMetadata(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     account_index: StrictInt
-    created_at: StrictInt
-    master_account_index: StrictInt
     account_type: StrictInt
     name: StrictStr
     l1_address: StrictStr
     annual_percentage_yield: Union[StrictFloat, StrictInt]
-    sharpe_ratio: Union[StrictFloat, StrictInt]
     status: StrictInt
     operator_fee: StrictStr
     total_asset_value: StrictStr
-    total_spot_value: StrictStr
-    total_perps_value: StrictStr
     total_shares: StrictInt
     account_share: Optional[PublicPoolShare] = None
     assets: List[AccountAsset]
+    created_at: StrictInt
+    master_account_index: StrictInt
+    sharpe_ratio: Union[StrictFloat, StrictInt]
+    total_perps_value: StrictStr
+    total_spot_value: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_index", "created_at", "master_account_index", "account_type", "name", "l1_address", "annual_percentage_yield", "sharpe_ratio", "status", "operator_fee", "total_asset_value", "total_spot_value", "total_perps_value", "total_shares", "account_share", "assets"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_index", "account_type", "name", "l1_address", "annual_percentage_yield", "status", "operator_fee", "total_asset_value", "total_shares", "account_share", "assets", "created_at", "master_account_index", "sharpe_ratio", "total_perps_value", "total_spot_value"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -62,8 +64,7 @@ class PublicPoolMetadata(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -96,9 +97,9 @@ class PublicPoolMetadata(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in assets (list)
         _items = []
         if self.assets:
-            for _item in self.assets:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_assets in self.assets:
+                if _item_assets:
+                    _items.append(_item_assets.to_dict())
             _dict['assets'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
@@ -116,25 +117,25 @@ class PublicPoolMetadata(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "code": obj.get("code"),
             "message": obj.get("message"),
             "account_index": obj.get("account_index"),
-            "created_at": obj.get("created_at"),
-            "master_account_index": obj.get("master_account_index"),
             "account_type": obj.get("account_type"),
             "name": obj.get("name"),
             "l1_address": obj.get("l1_address"),
             "annual_percentage_yield": obj.get("annual_percentage_yield"),
-            "sharpe_ratio": obj.get("sharpe_ratio"),
             "status": obj.get("status"),
             "operator_fee": obj.get("operator_fee"),
             "total_asset_value": obj.get("total_asset_value"),
-            "total_spot_value": obj.get("total_spot_value"),
-            "total_perps_value": obj.get("total_perps_value"),
             "total_shares": obj.get("total_shares"),
             "account_share": PublicPoolShare.from_dict(obj["account_share"]) if obj.get("account_share") is not None else None,
-            "assets": [AccountAsset.from_dict(_item) for _item in obj["assets"]] if obj.get("assets") is not None else None
+            "assets": [AccountAsset.from_dict(_item) for _item in obj["assets"]] if obj.get("assets") is not None else None,
+            "created_at": obj.get("created_at"),
+            "master_account_index": obj.get("master_account_index"),
+            "sharpe_ratio": obj.get("sharpe_ratio"),
+            "total_perps_value": obj.get("total_perps_value"),
+            "total_spot_value": obj.get("total_spot_value")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

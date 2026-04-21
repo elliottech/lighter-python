@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **int** |  | 
+**code** | **int** |  | [optional] 
 **message** | **str** |  | [optional] 
-**leases** | [**List[LeaseEntry]**](LeaseEntry.md) |  | 
-**next_cursor** | **str** |  | [optional] 
+**leases** | [**List[LeaseEntry]**](LeaseEntry.md) |  | [optional] 
+**next_cursor** | **str** | Cursor to pass as the cursor param to fetch the next page. Absent if no more pages. | [optional] 
 
 ## Example
 

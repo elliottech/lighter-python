@@ -5,14 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**symbol** | **str** |  | 
 **market_id** | **int** |  | 
 **index_price** | **str** |  | 
 **mark_price** | **str** |  | 
 **open_interest** | **str** |  | 
-**open_interest_limit** | **str** |  | 
-**funding_clamp_small** | **str** |  | 
-**funding_clamp_big** | **str** |  | 
 **last_trade_price** | **str** |  | 
 **current_funding_rate** | **str** |  | 
 **funding_rate** | **str** |  | 
@@ -22,6 +18,10 @@ Name | Type | Description | Notes
 **daily_price_low** | **float** |  | 
 **daily_price_high** | **float** |  | 
 **daily_price_change** | **float** |  | 
+**symbol** | **str** |  | 
+**funding_clamp_small** | **str** |  | 
+**funding_clamp_big** | **str** |  | 
+**open_interest_limit** | **str** |  | 
 
 ## Example
 

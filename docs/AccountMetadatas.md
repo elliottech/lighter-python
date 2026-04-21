@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_metadatas** | [**List[AccountMetadata]**](AccountMetadata.md) |  | 
-**next_cursor** | **str** |  | [optional] 
 
 ## Example
 

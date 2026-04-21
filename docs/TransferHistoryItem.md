@@ -6,18 +6,18 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **str** |  | 
-**asset_id** | **int** |  | 
 **amount** | **str** |  | 
-**fee** | **str** |  | 
 **timestamp** | **int** |  | 
 **type** | **str** |  | 
 **from_l1_address** | **str** |  | 
 **to_l1_address** | **str** |  | 
 **from_account_index** | **int** |  | 
 **to_account_index** | **int** |  | 
+**tx_hash** | **str** |  | 
+**asset_id** | **int** |  | 
+**fee** | **str** |  | 
 **from_route** | **str** |  | 
 **to_route** | **str** |  | 
-**tx_hash** | **str** |  | 
 
 ## Example
 

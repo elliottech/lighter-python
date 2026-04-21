@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **referral_code** | **str** |  | 
 **used_at** | **int** |  | 
 **trade_stats** | [**TradeStats**](TradeStats.md) |  | 
+**tier** | **str** |  | 
 
 ## Example
 

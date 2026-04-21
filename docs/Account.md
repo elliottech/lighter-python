@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_type** | **int** |  | 
+**account_trading_mode** | **int** | Classic&#x3D;0 and Unified&#x3D;1 | 
 **index** | **int** |  | 
 **l1_address** | **str** |  | 
 **cancel_all_time** | **int** |  | 
@@ -18,7 +19,6 @@ Name | Type | Description | Notes
 **status** | **int** |  | 
 **collateral** | **str** |  | 
 **transaction_time** | **int** |  | 
-**account_trading_mode** | **int** |  | 
 
 ## Example
 

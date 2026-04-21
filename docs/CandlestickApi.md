@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 candles
 
-Get candles (optimized with shortened fields and smaller response size)
+Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
 ### Example
 

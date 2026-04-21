@@ -21,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class SimpleOrder(BaseModel):
     """
@@ -38,7 +39,8 @@ class SimpleOrder(BaseModel):
     __properties: ClassVar[List[str]] = ["order_index", "order_id", "owner_account_index", "initial_base_amount", "remaining_base_amount", "price", "order_expiry", "transaction_time"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -50,8 +52,7 @@ class SimpleOrder(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -94,7 +95,7 @@ class SimpleOrder(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "order_index": obj.get("order_index"),
             "order_id": obj.get("order_id"),
             "owner_account_index": obj.get("owner_account_index"),

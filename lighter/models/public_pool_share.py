@@ -17,10 +17,11 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class PublicPoolShare(BaseModel):
     """
@@ -28,14 +29,15 @@ class PublicPoolShare(BaseModel):
     """ # noqa: E501
     public_pool_index: StrictInt
     shares_amount: StrictInt
-    entry_usdc: StrictStr = Field(description=" For public pools and insurance fund")
-    principal_amount: StrictStr
+    entry_usdc: StrictStr
     entry_timestamp: StrictInt
+    principal_amount: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["public_pool_index", "shares_amount", "entry_usdc", "principal_amount", "entry_timestamp"]
+    __properties: ClassVar[List[str]] = ["public_pool_index", "shares_amount", "entry_usdc", "entry_timestamp", "principal_amount"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +49,7 @@ class PublicPoolShare(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -91,12 +92,12 @@ class PublicPoolShare(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "public_pool_index": obj.get("public_pool_index"),
             "shares_amount": obj.get("shares_amount"),
             "entry_usdc": obj.get("entry_usdc"),
-            "principal_amount": obj.get("principal_amount"),
-            "entry_timestamp": obj.get("entry_timestamp")
+            "entry_timestamp": obj.get("entry_timestamp"),
+            "principal_amount": obj.get("principal_amount")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -36,6 +35,7 @@ class AnnouncementApi:
         self.api_client = api_client
 
 
+    @validate_call
     async def announcement(
         self,
         _request_timeout: Union[
@@ -53,7 +53,7 @@ class AnnouncementApi:
     ) -> Announcements:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -99,6 +99,7 @@ class AnnouncementApi:
         ).data
 
 
+    @validate_call
     async def announcement_with_http_info(
         self,
         _request_timeout: Union[
@@ -116,7 +117,7 @@ class AnnouncementApi:
     ) -> ApiResponse[Announcements]:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -162,6 +163,7 @@ class AnnouncementApi:
         )
 
 
+    @validate_call
     async def announcement_without_preload_content(
         self,
         _request_timeout: Union[
@@ -179,7 +181,7 @@ class AnnouncementApi:
     ) -> RESTResponseType:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -238,7 +240,9 @@ class AnnouncementApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters

@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **message** | **str** |  | [optional] 
 **cursor** | **str** |  | 
 **referrals** | [**List[Referral]**](Referral.md) |  | 
+**used_code** | **str** |  | 
 
 ## Example
 

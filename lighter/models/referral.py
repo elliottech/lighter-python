@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List
 from lighter.models.trade_stats import TradeStats
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Referral(BaseModel):
     """
@@ -31,11 +32,13 @@ class Referral(BaseModel):
     referral_code: StrictStr
     used_at: StrictInt
     trade_stats: TradeStats
+    tier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "referral_code", "used_at", "trade_stats"]
+    __properties: ClassVar[List[str]] = ["l1_address", "referral_code", "used_at", "trade_stats", "tier"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +50,7 @@ class Referral(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -94,11 +96,12 @@ class Referral(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_construct(**{
+        _obj = cls.model_validate({
             "l1_address": obj.get("l1_address"),
             "referral_code": obj.get("referral_code"),
             "used_at": obj.get("used_at"),
-            "trade_stats": TradeStats.from_dict(obj["trade_stats"]) if obj.get("trade_stats") is not None else None
+            "trade_stats": TradeStats.from_dict(obj["trade_stats"]) if obj.get("trade_stats") is not None else None,
+            "tier": obj.get("tier")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
