@@ -166,6 +166,7 @@ Paper trading lets you simulate trades against real order book data without subm
 
 - `paper_trading_health.py`
   - opens positions across multiple markets
+  - compares conservative vs aggressive leverage on the same two-market portfolio
   - inspects account health, margin usage, leverage, and liquidation prices
 
 ## Setup steps for mainnet
