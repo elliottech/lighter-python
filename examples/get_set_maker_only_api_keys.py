@@ -15,6 +15,8 @@ async def main():
     )
     print("set:", resp)
 
+    await asyncio.sleep(1)
+
     resp = await account_api.get_maker_only_api_keys(
         account_index=client.account_index,
         authorization=auth_token,
@@ -27,6 +29,8 @@ async def main():
         api_key_indexes=json.dumps([]),
         authorization=auth_token,
     )
+    print("set:", resp)
+    await asyncio.sleep(1)
 
     resp = await account_api.get_maker_only_api_keys(
         account_index=client.account_index,
