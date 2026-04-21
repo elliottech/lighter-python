@@ -6,6 +6,11 @@ async def main():
     auth_token, err = client.create_auth_token_with_expiry()
     assert err is None
 
+    # set_maker_only_api_keys replaces the full set of maker-only API key indexes for the account.
+    # Pass "[]" to clear all maker-only restrictions on the account
+    # For set_maker_only_api_keys you can call this endpoint only once per hour
+    # Indexes must be >= 4 e.g [4, 5, 6]
+
     account_api = lighter.AccountApi(api_client)
 
     resp = await account_api.set_maker_only_api_keys(
