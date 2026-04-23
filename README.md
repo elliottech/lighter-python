@@ -2,7 +2,7 @@
 
 Python SDK for Lighter
 
-## Requirements.
+## Requirements
 
 Python 3.8+
 

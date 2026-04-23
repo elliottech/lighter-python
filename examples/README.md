@@ -26,7 +26,7 @@
 
 - `create_grouped_ioc_with_attached_sl_tp.py`
   - creates an ask (sell) IoC order for 0.1 ETH
-  - along w/ the order, it sets up a Stop Loss (SL) and a Take Profit (TP) order for the whole size of the order
+  - along with the order, it sets up a Stop Loss (SL) and a Take Profit (TP) order for the whole size of the order
   - the size of the SL/TP will be equal to the executed size of the order
   - the SL/TP orders are canceled when the sign of your position changes
 
@@ -62,14 +62,14 @@ What about the order types? Just as normal orders, SL/TP orders trigger an order
 - `send_batch_tx_http.py`
   - sends multiple orders in a single HTTP request
 - `send_batch_tx_ws.py`
-  - sends multiple orders in a single WS request`
+  - sends multiple orders in a single WS request
 
 Batch TXs will be executed back to back, without the possibility of other TXs interfering.
 
 ## Spot Trading
 To trade spot markets, you need to have spot USDC. USDC used in your perpetual account will be used as collateral for your cross-positions.  
 USDC deposited in the spot account can only be used to buy spot assets.  
-To transfer USDC between spot <> perp balance, or vice verse, check out
+To transfer USDC between spot <> perp balance, or vice versa, check out
 - `spot_self_transfer_perp_spot.py`
 - `spot_self_transfer_spot_perp.py`
 
