@@ -1,6 +1,7 @@
 import asyncio
 from threading import RLock
 from typing import Any, Dict, List, Mapping, Optional
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from lighter.api.order_api import OrderApi
 from lighter.api_client import ApiClient
@@ -73,14 +74,20 @@ class PaperClient:
         self._account_tier = account_tier
 
         self.api_client = api_client
-        self.order_api = order_api if order_api is not None else OrderApi(api_client)
+        self.order_api = (
+            order_api
+            if order_api is not None
+            else OrderApi(_ReadOnlyApiClientProxy(api_client))
+        )
         self.order_book_limit = order_book_limit
         self.account = new_paper_account(initial_collateral_usdc)
         self.market_configs: Dict[int, MarketConfig] = {}
         self.order_books: Dict[int, InMemoryOrderBook] = {}
         raw_ws_url = ws_url if ws_url is not None else self._default_ws_url(api_client, ws_path)
-        separator = "&" if "?" in raw_ws_url else "?"
-        self.ws_url = f"{raw_ws_url}{separator}encoding=json"
+        self.ws_url = _append_query_params(
+            raw_ws_url,
+            [("encoding", "json"), ("readonly", "true")],
+        )
         self.initial_snapshot_timeout = initial_snapshot_timeout
         self._live_listeners: Dict[int, PaperOrderBookListener] = {}
         self._state_lock = asyncio.Lock()
@@ -353,3 +360,32 @@ class PaperClient:
                 "paper trading only supports perp markets "
                 f"(market_id < 2048), got {market_id}"
             )
+
+
+def _with_readonly(query_params):
+    query_params = list(query_params or [])
+    if not any(name == "readonly" for name, _ in query_params):
+        query_params.append(("readonly", "true"))
+    return query_params
+
+
+def _append_query_params(url: str, query_params) -> str:
+    parts = urlsplit(url)
+    params = parse_qsl(parts.query, keep_blank_values=True)
+    names = {name for name, _ in params}
+    params.extend((name, value) for name, value in query_params if name not in names)
+    return urlunsplit(parts._replace(query=urlencode(params)))
+
+
+class _ReadOnlyApiClientProxy:
+    """Lightweight proxy for ApiClient, ensuring readonly=true to generated REST URLs."""
+
+    def __init__(self, api_client: Optional[ApiClient]) -> None:
+        self._api_client = api_client if api_client is not None else ApiClient.get_default()
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._api_client, name)
+
+    def param_serialize(self, *args, **kwargs):
+        kwargs["query_params"] = _with_readonly(kwargs.get("query_params"))
+        return self._api_client.param_serialize(*args, **kwargs)
