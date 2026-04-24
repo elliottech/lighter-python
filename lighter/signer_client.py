@@ -175,6 +175,9 @@ def __populate_shared_library_functions(signer):
     signer.SignUpdateAccountConfig.argtypes = [ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateAccountConfig.restype = SignedTxResponse
 
+    signer.SignUpdateAccountAssetConfig.argtypes = [ctypes.c_int16, ctypes.c_uint8, ctypes.c_uint8,  ctypes.c_longlong,  ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdateAccountAssetConfig.restype = SignedTxResponse
+
     signer.Free.argtypes = [ctypes.c_void_p]
     signer.Free.restype = None
 
@@ -278,6 +281,9 @@ class SignerClient:
 
     CROSS_MARGIN_MODE = 0
     ISOLATED_MARGIN_MODE = 1
+
+    ASSET_MARGIN_MODE_DISABLED = 0
+    ASSET_MARGIN_MODE_ENABLED = 1
 
     ISOLATED_MARGIN_REMOVE_COLLATERAL = 0
     ISOLATED_MARGIN_ADD_COLLATERAL = 1
@@ -627,6 +633,9 @@ class SignerClient:
                                    nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         return self.__decode_tx_info(self.signer.SignUpdateAccountConfig(account_trading_mode, skip_nonce, nonce, api_key_index,
                                                 self.account_index))
+
+    def sign_update_account_asset_config(self, asset_index: int, asset_margin_mode: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignUpdateAccountAssetConfig(asset_index, asset_margin_mode, skip_nonce, nonce, api_key_index, self.account_index))
 
     @process_api_key_and_nonce
     async def create_order(
@@ -1359,6 +1368,17 @@ class SignerClient:
             return None, None, error
         api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
         return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def update_account_asset_config(self, asset_index: int, asset_margin_mode: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_update_account_asset_config(
+            asset_index, asset_margin_mode, skip_nonce, nonce, api_key_index
+        )
+        if error is not None:
+            return None, None, error
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        return tx_info, api_response, None
+
 
     async def send_tx(self, tx_type: StrictInt, tx_info: str) -> RespSendTx:
         if tx_info[0] != "{":

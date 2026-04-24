@@ -142,6 +142,7 @@ extern SignedTxResponse SignStakeAssets(long long cStakingPoolIndex, long long c
 extern SignedTxResponse SignUnstakeAssets(long long cStakingPoolIndex, long long cShareAmount, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignApproveIntegrator(long long cIntegratorIndex, uint32_t cMaxPerpsTakerFee, uint32_t cMaxPerpsMakerFee, uint32_t cMaxSpotTakerFee, uint32_t cMaxSpotMakerFee, long long cApprovalExpiry, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignUpdateAccountConfig(uint8_t cAccountTradingMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignUpdateAccountAssetConfig(int16_t cAssetIndex, uint8_t cAssetMarginMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern void Free(void* ptr);
 
 #ifdef __cplusplus

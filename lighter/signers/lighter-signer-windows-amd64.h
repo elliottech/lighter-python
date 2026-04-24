@@ -134,6 +134,7 @@ extern __declspec(dllexport) SignedTxResponse SignStakeAssets(long long int cSta
 extern __declspec(dllexport) SignedTxResponse SignUnstakeAssets(long long int cStakingPoolIndex, long long int cShareAmount, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) SignedTxResponse SignApproveIntegrator(long long int cIntegratorIndex, uint32_t cMaxPerpsTakerFee, uint32_t cMaxPerpsMakerFee, uint32_t cMaxSpotTakerFee, uint32_t cMaxSpotMakerFee, long long int cApprovalExpiry, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) SignedTxResponse SignUpdateAccountConfig(uint8_t cAccountTradingMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern __declspec(dllexport) SignedTxResponse SignUpdateAccountAssetConfig(int16_t cAssetIndex, uint8_t cAssetMarginMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) void Free(void* ptr);
 
 #ifdef __cplusplus
