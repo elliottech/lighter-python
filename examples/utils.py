@@ -30,7 +30,7 @@ def get_api_key_config(config_file="./api_key_config.json"):
     return cfg["baseUrl"], cfg["accountIndex"], private_key
 
 
-def default_example_setup(config_file="./api_key_config.json") -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
+def default_example_setup(config_file="./api_key_config.json", nonce_management_type=lighter.nonce_manager.NonceManagerType.OPTIMISTIC) -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
     logging.basicConfig(level=logging.DEBUG)
 
     base_url, account_index, private_keys = get_api_key_config(config_file)
@@ -39,6 +39,7 @@ def default_example_setup(config_file="./api_key_config.json") -> Optional[Tuple
         url=base_url,
         account_index=account_index,
         api_private_keys=private_keys,
+        nonce_management_type=nonce_management_type,
     )
 
     err = client.check_client()

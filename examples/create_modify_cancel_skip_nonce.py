@@ -1,17 +1,20 @@
 import asyncio
+
+from lighter.nonce_manager import NonceManagerType
 from utils import default_example_setup
 
 
 async def main():
-    client, api_client, _ = default_example_setup()
+    # noop nonce manager
+    client, api_client, _ = default_example_setup(nonce_management_type=NonceManagerType.NONE)
     client.check_client()
 
     # Note: change this to 2048 to trade spot ETH. Make sure you have at least 0.1 ETH to trade spot.
     market_index = 0
 
     # create order
-    api_key_index, base_nonce = client.nonce_manager.next_nonce()
-    nonce_interval = 1000
+    api_key_index, base_nonce = 4, 22 # can't use client.nonce_manager.next_nonce()
+    nonce_interval = 3
     tx, tx_hash, err = await client.create_order(
         market_index=market_index,
         client_order_index=123,

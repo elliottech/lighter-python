@@ -97,9 +97,36 @@ class ApiNonceManager(NonceManager):
         return api_key, nonce
 
 
+class NoOpNonceManager(NonceManager):
+    """For users who provide their own nonces (skip_nonce mode)."""
+    # noinspection PyMissingConstructor
+    def __init__(self, account_index, api_client, api_keys_list):
+        # Skip super().__init__() to avoid the HTTP call
+        self.account_index = account_index
+        self.api_client = api_client
+        self.api_keys_list = api_keys_list
+        self.nonce = {}
+        self.current = 0
+
+    def next_nonce(self, api_key=None):
+        raise ValidationError(
+            "NoOpNonceManager does not manage nonces. "
+            "You must provide nonce and api_key_index explicitly."
+        )
+
+    def acknowledge_failure(self, api_key):
+        pass  # no-op
+
+    def refresh_nonce(self, api_key):
+        pass  # no-op
+
+    def hard_refresh_nonce(self, api_key):
+        pass  # no-op
+
 class NonceManagerType(enum.Enum):
     OPTIMISTIC = 1
     API = 2
+    NONE = 3
 
 
 def nonce_manager_factory(
@@ -116,6 +143,12 @@ def nonce_manager_factory(
         )
     elif nonce_manager_type == NonceManagerType.API:
         return ApiNonceManager(
+            account_index=account_index,
+            api_client=api_client,
+            api_keys_list=api_keys_list,
+        )
+    elif nonce_manager_type == NonceManagerType.NONE:
+        return NoOpNonceManager(
             account_index=account_index,
             api_client=api_client,
             api_keys_list=api_keys_list,
