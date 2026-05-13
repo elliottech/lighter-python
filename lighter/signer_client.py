@@ -1,3 +1,4 @@
+import atexit
 import ctypes
 from functools import wraps
 import inspect
@@ -5,6 +6,8 @@ import json
 import platform
 import logging
 import os
+import shutil
+import tempfile
 import time
 from typing import Dict, List, Optional, Tuple
 
@@ -43,7 +46,18 @@ class StrOrErr(ctypes.Structure):
     _fields_ = [("str", ctypes.c_char_p), ("err", ctypes.c_char_p)]
 
 
-def _initialize_signer():
+_isolated_signer_directories = []
+
+
+def _cleanup_isolated_signer_directories():
+    for temp_dir in _isolated_signer_directories:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+atexit.register(_cleanup_isolated_signer_directories)
+
+
+def _get_signer_library_path():
     is_linux = platform.system() == "Linux"
     is_mac = platform.system() == "Darwin"
     is_windows = platform.system() == "Windows"
@@ -54,11 +68,11 @@ def _initialize_signer():
     path_to_signer_folders = os.path.join(current_file_directory, "signers")
 
     if is_arm and is_mac:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "signer-arm64.dylib"))
+        return os.path.join(path_to_signer_folders, "signer-arm64.dylib")
     elif is_linux and is_x64:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "signer-amd64.so"))
+        return os.path.join(path_to_signer_folders, "signer-amd64.so")
     elif is_windows and is_x64:
-        return ctypes.CDLL(os.path.join(path_to_signer_folders, "signer-amd64.dll"))
+        return os.path.join(path_to_signer_folders, "signer-amd64.dll")
     else:
         raise Exception(
             f"Unsupported platform/architecture: {platform.system()}/{platform.machine()}. "
@@ -66,8 +80,23 @@ def _initialize_signer():
         )
 
 
-def create_api_key(seed=""):
-    signer = _initialize_signer()
+def _load_signer_library(library_path: str):
+    return ctypes.CDLL(library_path)
+
+
+def _initialize_signer(isolated: bool = False):
+    signer_library_path = _get_signer_library_path()
+    if isolated:
+        isolated_directory = tempfile.mkdtemp(prefix="lighter-signer-")
+        _isolated_signer_directories.append(isolated_directory)
+        isolated_library_path = os.path.join(isolated_directory, os.path.basename(signer_library_path))
+        shutil.copy2(signer_library_path, isolated_library_path)
+        signer_library_path = isolated_library_path
+    return _load_signer_library(signer_library_path)
+
+
+def create_api_key(seed="", isolated_signer_instance: bool = False):
+    signer = _initialize_signer(isolated=isolated_signer_instance)
     signer.GenerateAPIKey.argtypes = [
         ctypes.c_char_p,
     ]
@@ -179,6 +208,7 @@ class SignerClient:
         max_api_key_index=-1,
         private_keys: Optional[Dict[int, str]] = None,
         nonce_management_type=nonce_manager.NonceManagerType.OPTIMISTIC,
+        isolated_signer_instance: bool = True,
     ):
         """
         First private key needs to be passed separately for backwards compatibility.
@@ -202,7 +232,7 @@ class SignerClient:
         self.validate_api_private_keys(private_key, private_keys)
         self.api_key_dict = self.build_api_key_dict(private_key, private_keys)
         self.account_index = account_index
-        self.signer = _initialize_signer()
+        self.signer = _initialize_signer(isolated=isolated_signer_instance)
         self.api_client = lighter.ApiClient(configuration=Configuration(host=url))
         self.tx_api = lighter.TransactionApi(self.api_client)
         self.order_api = lighter.OrderApi(self.api_client)
