@@ -1,18 +1,18 @@
-"""Async-first WebSocket client for the Lighter API.
+"""Async WebSocket client for the Lighter API.
 
-This module wraps the :mod:`websockets` library to expose a high-level
-interface around the channels documented at
+Implements the channels and message types documented at
 https://apidocs.lighter.xyz/docs/websocket-reference.
 
-Supported channels include order book, ticker, market stats, trades,
-candles, account-scoped streams, pool data, height, and notifications. The
-client can also send transactions over the ``jsonapi/sendtx`` and
-``jsonapi/sendtxbatch`` envelopes.
+The client exposes a single uniform :meth:`WsClient.subscribe` method for
+all channels: callers pass the full channel string (e.g. ``"order_book/0"``,
+``"trade/0"``, ``"candle/0/1m"``, ``"market_stats/all"``,
+``"account_all/123"``) and an ``on_update`` callback. Authenticated
+channels receive a default auth token from the client (overridable per
+subscription).
 
-Backwards compatibility is preserved with the prior client: instances can
-still be constructed with ``order_book_ids`` / ``account_ids`` /
-``on_order_book_update`` / ``on_account_update`` and driven with
-:meth:`WsClient.run` or :meth:`WsClient.run_async`.
+Transaction submission is supported via :meth:`WsClient.send_tx` and
+:meth:`WsClient.send_tx_batch` which wrap the ``jsonapi/sendtx`` and
+``jsonapi/sendtxbatch`` envelopes.
 """
 
 from __future__ import annotations
@@ -21,10 +21,12 @@ import asyncio
 import json
 import logging
 from contextlib import suppress
+from dataclasses import dataclass
 from typing import (
     Any,
     Awaitable,
     Callable,
+    Coroutine,
     Dict,
     Iterable,
     List,
@@ -59,9 +61,14 @@ _AUTH_REQUIRED_PREFIXES: Tuple[str, ...] = (
     "pool_info/",
 )
 
-# Subscriptions passed to the constructor as a plain channel string or a
-# ``(channel, auth)`` tuple.
-SubscriptionSpec = Union[str, Tuple[str, Optional[str]]]
+
+@dataclass
+class _Subscription:
+    """A registered channel subscription."""
+
+    channel: str
+    on_update: Optional[Callback] = None
+    auth: Optional[str] = None
 
 
 class WsClient:
@@ -75,32 +82,27 @@ class WsClient:
     path
         WebSocket path (default ``"/stream"``).
     readonly
-        If ``True`` connect with the ``?readonly=true`` query parameter so
-        the server allows read-only data from restricted regions.
+        If ``True`` connect with the ``?readonly=true`` query parameter.
     auth
-        Default auth token used for channels that require authentication
-        when no per-subscription token is provided.
-    order_book_ids
-        Convenience: list of market indices to subscribe to ``order_book``.
-    account_ids
-        Convenience: list of account indices to subscribe to ``account_all``.
-    subscriptions
-        Additional channels to subscribe to on connect. Each item is either
-        a channel string (e.g. ``"trade/0"``, ``"candle/0/1m"``,
-        ``"market_stats/all"``) or a ``(channel, auth)`` tuple.
+        Default auth token used for channels under the documented
+        auth-required prefixes when no per-subscription token is provided.
     ping_interval, ping_timeout
-        Forwarded to :func:`websockets.connect` to keep the connection
-        alive. The Lighter server closes connections that send no frames
-        for two minutes, so ``ping_interval`` should remain well below
-        that.
+        Forwarded to :func:`websockets.connect` for WebSocket-level
+        keepalive. The Lighter server closes connections that send no
+        frames for two minutes, so ``ping_interval`` should remain well
+        below that.
     auto_reconnect
         If ``True``, the run loop reconnects when the connection drops.
+        Registered subscriptions are re-sent on each reconnect.
     reconnect_delay
         Seconds to wait between reconnect attempts.
-    on_*
-        Optional callbacks (sync or async) invoked when an update for the
-        corresponding channel arrives. Each callback receives the natural
-        identifier(s) for the channel followed by the full server message.
+    on_message
+        Optional callback invoked for any server message that does not
+        match a registered subscription (e.g. the ``connected`` welcome
+        message or unknown channels).
+    on_tx_response
+        Optional callback invoked for every ``jsonapi/*`` server message
+        (transaction send responses and errors).
     """
 
     DEFAULT_PATH = "/stream"
@@ -108,39 +110,16 @@ class WsClient:
     def __init__(
         self,
         host: Optional[str] = None,
-        path: str = DEFAULT_PATH,
         *,
+        path: str = DEFAULT_PATH,
         readonly: bool = False,
         auth: Optional[str] = None,
-        order_book_ids: Optional[Iterable[int]] = None,
-        account_ids: Optional[Iterable[int]] = None,
-        subscriptions: Optional[Iterable[SubscriptionSpec]] = None,
         ping_interval: Optional[float] = 30.0,
         ping_timeout: Optional[float] = 60.0,
         auto_reconnect: bool = False,
         reconnect_delay: float = 1.0,
-        on_order_book_update: Optional[Callback] = None,
-        on_account_update: Optional[Callback] = None,
-        on_ticker_update: Optional[Callback] = None,
-        on_market_stats_update: Optional[Callback] = None,
-        on_spot_market_stats_update: Optional[Callback] = None,
-        on_trade_update: Optional[Callback] = None,
-        on_candle_update: Optional[Callback] = None,
-        on_account_market_update: Optional[Callback] = None,
-        on_account_all_orders_update: Optional[Callback] = None,
-        on_account_orders_update: Optional[Callback] = None,
-        on_account_all_trades_update: Optional[Callback] = None,
-        on_account_all_positions_update: Optional[Callback] = None,
-        on_account_all_assets_update: Optional[Callback] = None,
-        on_account_spot_avg_entry_prices_update: Optional[Callback] = None,
-        on_account_tx_update: Optional[Callback] = None,
-        on_user_stats_update: Optional[Callback] = None,
-        on_notification_update: Optional[Callback] = None,
-        on_pool_data_update: Optional[Callback] = None,
-        on_pool_info_update: Optional[Callback] = None,
-        on_height_update: Optional[Callback] = None,
-        on_tx_response: Optional[Callback] = None,
         on_message: Optional[Callback] = None,
+        on_tx_response: Optional[Callback] = None,
     ) -> None:
         if host is None:
             default_host = Configuration.get_default().host
@@ -154,171 +133,80 @@ class WsClient:
         self.ping_timeout = ping_timeout
         self.auto_reconnect = auto_reconnect
         self.reconnect_delay = reconnect_delay
+        self.on_message = on_message
+        self.on_tx_response = on_tx_response
 
         query = "?readonly=true" if readonly else ""
         self.base_url = f"wss://{host}{path}{query}"
 
-        # Map of channel -> optional explicit auth token to send on subscribe.
-        self._subscriptions: Dict[str, Optional[str]] = {}
+        # Registered subscriptions keyed by canonical channel name (using
+        # ``/`` separators throughout for parity with the docs).
+        self._subscriptions: Dict[str, _Subscription] = {}
 
-        for market_id in order_book_ids or []:
-            self._subscriptions[f"order_book/{int(market_id)}"] = None
-        for account_id in account_ids or []:
-            self._subscriptions[f"account_all/{int(account_id)}"] = None
-        for spec in subscriptions or []:
-            channel, token = _normalize_subscription(spec)
-            self._subscriptions[channel] = token
-
-        # Locally cached state. ``order_book_states`` reflects the merged
-        # snapshot+diffs for each market, while ``account_states`` mirrors
-        # the most recent ``account_all`` payload.
+        # Reconstructed order book snapshots, keyed by market_id. The
+        # client merges snapshot+diff messages for any ``order_book/*``
+        # subscription so that callers can read the current book without
+        # having to maintain state themselves.
         self.order_book_states: Dict[int, Dict[str, List[Dict[str, Any]]]] = {}
-        self.account_states: Dict[int, Dict[str, Any]] = {}
-
-        self.on_order_book_update = on_order_book_update
-        self.on_account_update = on_account_update
-        self.on_ticker_update = on_ticker_update
-        self.on_market_stats_update = on_market_stats_update
-        self.on_spot_market_stats_update = on_spot_market_stats_update
-        self.on_trade_update = on_trade_update
-        self.on_candle_update = on_candle_update
-        self.on_account_market_update = on_account_market_update
-        self.on_account_all_orders_update = on_account_all_orders_update
-        self.on_account_orders_update = on_account_orders_update
-        self.on_account_all_trades_update = on_account_all_trades_update
-        self.on_account_all_positions_update = on_account_all_positions_update
-        self.on_account_all_assets_update = on_account_all_assets_update
-        self.on_account_spot_avg_entry_prices_update = (
-            on_account_spot_avg_entry_prices_update
-        )
-        self.on_account_tx_update = on_account_tx_update
-        self.on_user_stats_update = on_user_stats_update
-        self.on_notification_update = on_notification_update
-        self.on_pool_data_update = on_pool_data_update
-        self.on_pool_info_update = on_pool_info_update
-        self.on_height_update = on_height_update
-        self.on_tx_response = on_tx_response
-        self.on_message = on_message
 
         self.ws: Optional[Any] = None
         self._send_lock: Optional[asyncio.Lock] = None
         self._stopped = False
 
     # ------------------------------------------------------------------
-    # Subscription registration (pre-connect, synchronous)
+    # Subscription management
     # ------------------------------------------------------------------
 
-    def add_subscription(
-        self, channel: str, *, auth: Optional[str] = None
-    ) -> None:
-        """Queue a channel to be subscribed to once :meth:`run_async` connects."""
-        self._subscriptions[channel] = auth
-
-    def add_order_book(self, market_id: int) -> None:
-        self.add_subscription(f"order_book/{int(market_id)}")
-
-    def add_ticker(self, market_id: int) -> None:
-        self.add_subscription(f"ticker/{int(market_id)}")
-
-    def add_market_stats(self, market_id: Union[int, str] = "all") -> None:
-        self.add_subscription(f"market_stats/{market_id}")
-
-    def add_spot_market_stats(self, market_id: Union[int, str] = "all") -> None:
-        self.add_subscription(f"spot_market_stats/{market_id}")
-
-    def add_trade(self, market_id: int) -> None:
-        self.add_subscription(f"trade/{int(market_id)}")
-
-    def add_candle(self, market_id: int, resolution: str) -> None:
-        self.add_subscription(f"candle/{int(market_id)}/{resolution}")
-
-    def add_height(self) -> None:
-        self.add_subscription("height")
-
-    def add_account_all(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(f"account_all/{int(account_id)}", auth=auth)
-
-    def add_account_market(
+    def subscribe(
         self,
-        market_id: int,
-        account_id: int,
+        channel: str,
+        on_update: Optional[Callback] = None,
         *,
         auth: Optional[str] = None,
     ) -> None:
-        self.add_subscription(
-            f"account_market/{int(market_id)}/{int(account_id)}", auth=auth
+        """Register a subscription for ``channel``.
+
+        The subscription is sent to the server on connect (and re-sent on
+        each reconnect when :attr:`auto_reconnect` is enabled). If the
+        client is already connected when :meth:`subscribe` is called the
+        subscribe frame is dispatched immediately via the running event
+        loop.
+
+        ``on_update`` is invoked with the full server message dict (both
+        the initial ``subscribed/...`` snapshot and subsequent
+        ``update/...`` messages). The callback may be sync or async.
+
+        ``auth`` is sent alongside the subscribe message. If omitted and
+        ``channel`` is under one of the documented auth-required
+        prefixes, the client's default :attr:`auth` is used.
+        """
+        canonical = _canonical_channel(channel)
+        self._subscriptions[canonical] = _Subscription(
+            channel=canonical, on_update=on_update, auth=auth
         )
+        if self.ws is not None:
+            self._spawn(self._send_subscribe(canonical))
 
-    def add_account_all_orders(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(
-            f"account_all_orders/{int(account_id)}", auth=auth
-        )
-
-    def add_account_orders(
-        self,
-        market_id: int,
-        account_id: int,
-        *,
-        auth: Optional[str] = None,
-    ) -> None:
-        self.add_subscription(
-            f"account_orders/{int(market_id)}/{int(account_id)}", auth=auth
-        )
-
-    def add_account_all_trades(self, account_id: int) -> None:
-        self.add_subscription(f"account_all_trades/{int(account_id)}")
-
-    def add_account_all_positions(self, account_id: int) -> None:
-        self.add_subscription(f"account_all_positions/{int(account_id)}")
-
-    def add_account_all_assets(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(
-            f"account_all_assets/{int(account_id)}", auth=auth
-        )
-
-    def add_account_spot_avg_entry_prices(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(
-            f"account_spot_avg_entry_prices/{int(account_id)}", auth=auth
-        )
-
-    def add_account_tx(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(f"account_tx/{int(account_id)}", auth=auth)
-
-    def add_user_stats(self, account_id: int) -> None:
-        self.add_subscription(f"user_stats/{int(account_id)}")
-
-    def add_notification(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(f"notification/{int(account_id)}", auth=auth)
-
-    def add_pool_data(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(f"pool_data/{int(account_id)}", auth=auth)
-
-    def add_pool_info(
-        self, account_id: int, *, auth: Optional[str] = None
-    ) -> None:
-        self.add_subscription(f"pool_info/{int(account_id)}", auth=auth)
+    def unsubscribe(self, channel: str) -> None:
+        """Unsubscribe from ``channel`` and discard any cached state."""
+        canonical = _canonical_channel(channel)
+        self._subscriptions.pop(canonical, None)
+        if canonical.startswith("order_book/"):
+            with suppress(ValueError):
+                market_id = int(canonical.split("/", 1)[1])
+                self.order_book_states.pop(market_id, None)
+        if self.ws is not None:
+            self._spawn(
+                self.send_json({"type": "unsubscribe", "channel": canonical})
+            )
 
     @property
-    def subscriptions(self) -> Dict[str, Optional[str]]:
-        """A copy of the registered subscriptions (channel -> auth token)."""
+    def subscriptions(self) -> Mapping[str, _Subscription]:
+        """A read-only view of registered subscriptions."""
         return dict(self._subscriptions)
 
     # ------------------------------------------------------------------
-    # Async send helpers (runtime)
+    # Sending
     # ------------------------------------------------------------------
 
     async def send_json(self, message: Mapping[str, Any]) -> None:
@@ -331,34 +219,6 @@ class WsClient:
         async with self._send_lock:
             await ws.send(json.dumps(message))
 
-    async def subscribe(
-        self, channel: str, auth: Optional[str] = None
-    ) -> None:
-        """Subscribe to ``channel`` at runtime.
-
-        The subscription is also remembered so that it will be re-sent if
-        :attr:`auto_reconnect` triggers a reconnect.
-        """
-        token = auth if auth is not None else self._auth_for_channel(channel)
-        payload: Dict[str, Any] = {"type": "subscribe", "channel": channel}
-        if token is not None:
-            payload["auth"] = token
-        await self.send_json(payload)
-        self._subscriptions[channel] = auth
-
-    async def unsubscribe(self, channel: str) -> None:
-        """Unsubscribe from ``channel`` at runtime and drop any cached state."""
-        await self.send_json({"type": "unsubscribe", "channel": channel})
-        self._subscriptions.pop(channel, None)
-        if channel.startswith("order_book/"):
-            with suppress(ValueError):
-                market_id = int(channel.split("/", 1)[1])
-                self.order_book_states.pop(market_id, None)
-        elif channel.startswith("account_all/"):
-            with suppress(ValueError):
-                account_id = int(channel.split("/", 1)[1])
-                self.account_states.pop(account_id, None)
-
     async def send_tx(
         self,
         tx_type: int,
@@ -366,11 +226,7 @@ class WsClient:
         *,
         id: Optional[str] = None,
     ) -> None:
-        """Send a signed transaction via ``jsonapi/sendtx``.
-
-        ``tx_info`` may be the JSON-encoded string returned by the signer
-        helpers or an already-parsed mapping.
-        """
+        """Send a signed transaction via ``jsonapi/sendtx``."""
         data: Dict[str, Any] = {
             "tx_type": int(tx_type),
             "tx_info": _decode_tx_info(tx_info),
@@ -388,9 +244,8 @@ class WsClient:
     ) -> None:
         """Send a batch of signed transactions via ``jsonapi/sendtxbatch``.
 
-        The server expects ``tx_types`` and ``tx_infos`` as JSON-encoded
-        string arrays; this method matches that wire format so it accepts
-        the same ``tx_info`` strings produced by the signer helpers.
+        ``tx_types`` and ``tx_infos`` are wire-encoded as JSON-encoded
+        string arrays (the form produced by the signer helpers).
         """
         info_strings: List[str] = []
         for info in tx_infos:
@@ -405,14 +260,6 @@ class WsClient:
         if id is not None:
             data["id"] = id
         await self.send_json({"type": "jsonapi/sendtxbatch", "data": data})
-
-    def _auth_for_channel(self, channel: str) -> Optional[str]:
-        stored = self._subscriptions.get(channel)
-        if stored is not None:
-            return stored
-        if channel.startswith(_AUTH_REQUIRED_PREFIXES):
-            return self.auth
-        return None
 
     # ------------------------------------------------------------------
     # Run loop
@@ -460,11 +307,10 @@ class WsClient:
             self.ws = ws
             self._send_lock = asyncio.Lock()
             try:
-                await self._send_all_subscriptions()
+                for channel in list(self._subscriptions):
+                    await self._send_subscribe(channel)
                 async for raw in ws:
                     if isinstance(raw, bytes):
-                        # Lighter sends JSON text; ignore unexpected binary
-                        # frames so callers can still rely on dict payloads.
                         logger.debug("Ignoring binary WebSocket frame")
                         continue
                     await self._dispatch(json.loads(raw))
@@ -472,17 +318,33 @@ class WsClient:
                 self.ws = None
                 self._send_lock = None
 
-    async def _send_all_subscriptions(self) -> None:
-        for channel, explicit_auth in list(self._subscriptions.items()):
-            payload: Dict[str, Any] = {"type": "subscribe", "channel": channel}
-            token = (
-                explicit_auth
-                if explicit_auth is not None
-                else self._auth_for_channel(channel)
-            )
-            if token is not None:
-                payload["auth"] = token
-            await self.send_json(payload)
+    async def _send_subscribe(self, channel: str) -> None:
+        sub = self._subscriptions.get(channel)
+        if sub is None:
+            return
+        payload: Dict[str, Any] = {"type": "subscribe", "channel": channel}
+        token = sub.auth if sub.auth is not None else self._default_auth(channel)
+        if token is not None:
+            payload["auth"] = token
+        await self.send_json(payload)
+
+    def _default_auth(self, channel: str) -> Optional[str]:
+        if channel.startswith(_AUTH_REQUIRED_PREFIXES):
+            return self.auth
+        return None
+
+    def _spawn(self, coro: Coroutine[Any, Any, None]) -> None:
+        """Schedule a coroutine on the running event loop, if any.
+
+        Used so the sync :meth:`subscribe` / :meth:`unsubscribe` methods can
+        also drive runtime subscribe/unsubscribe frames when the caller is
+        inside an async context.
+        """
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return
+        loop.create_task(coro)
 
     # ------------------------------------------------------------------
     # Message dispatch
@@ -496,33 +358,36 @@ class WsClient:
             return
         if message_type == "pong":
             return
-        if message_type == "connected":
-            # The server's welcome message arrives once per connection.
-            # Subscriptions are already sent eagerly on connect.
-            await self._call(self.on_message, message)
-            return
         if message_type.startswith("jsonapi/"):
             await self._call(self.on_tx_response, message)
             return
-
-        kind = _channel_kind(message_type)
-        if kind is None:
+        if message_type == "connected" or not message_type.startswith(
+            ("subscribed/", "update/")
+        ):
             await self._call(self.on_message, message)
             return
 
-        handler = getattr(self, f"_handle_{kind}", None)
-        if handler is None:
+        channel_raw = message.get("channel")
+        if not isinstance(channel_raw, str):
             await self._call(self.on_message, message)
             return
-        await handler(message)
+        channel = _canonical_channel(channel_raw)
 
-    # ------------------------------------------------------------------
-    # Per-channel handlers
-    # ------------------------------------------------------------------
+        if channel.startswith("order_book/"):
+            self._update_order_book_state(channel, message)
 
-    async def _handle_order_book(self, message: Dict[str, Any]) -> None:
-        market_id = _parse_id(message.get("channel", ""))
-        if market_id is None:
+        sub = self._subscriptions.get(channel)
+        if sub is None:
+            await self._call(self.on_message, message)
+            return
+        await self._call(sub.on_update, message)
+
+    def _update_order_book_state(
+        self, channel: str, message: Dict[str, Any]
+    ) -> None:
+        try:
+            market_id = int(channel.split("/", 1)[1])
+        except (IndexError, ValueError):
             return
         order_book = message.get("order_book") or {}
         if message.get("type") == "subscribed/order_book":
@@ -530,134 +395,12 @@ class WsClient:
                 "asks": list(order_book.get("asks") or []),
                 "bids": list(order_book.get("bids") or []),
             }
-        else:
-            state = self.order_book_states.setdefault(
-                market_id, {"asks": [], "bids": []}
-            )
-            _apply_order_book_diff(
-                order_book.get("asks") or [], state["asks"]
-            )
-            _apply_order_book_diff(
-                order_book.get("bids") or [], state["bids"]
-            )
-        await self._call(
-            self.on_order_book_update,
-            market_id,
-            self.order_book_states[market_id],
-        )
-
-    async def _handle_account_all(self, message: Dict[str, Any]) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        if account_id is None:
             return
-        self.account_states[account_id] = message
-        await self._call(self.on_account_update, account_id, message)
-
-    async def _handle_ticker(self, message: Dict[str, Any]) -> None:
-        market_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_ticker_update, market_id, message)
-
-    async def _handle_market_stats(self, message: Dict[str, Any]) -> None:
-        key = _parse_key(message.get("channel", ""))
-        await self._call(self.on_market_stats_update, key, message)
-
-    async def _handle_spot_market_stats(
-        self, message: Dict[str, Any]
-    ) -> None:
-        key = _parse_key(message.get("channel", ""))
-        await self._call(self.on_spot_market_stats_update, key, message)
-
-    async def _handle_trade(self, message: Dict[str, Any]) -> None:
-        market_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_trade_update, market_id, message)
-
-    async def _handle_candle(self, message: Dict[str, Any]) -> None:
-        market_id, resolution = _parse_candle_channel(message.get("channel", ""))
-        await self._call(
-            self.on_candle_update, market_id, resolution, message
+        state = self.order_book_states.setdefault(
+            market_id, {"asks": [], "bids": []}
         )
-
-    async def _handle_account_market(self, message: Dict[str, Any]) -> None:
-        market_id, account_id = _parse_two_ids(message.get("channel", ""))
-        await self._call(
-            self.on_account_market_update, market_id, account_id, message
-        )
-
-    async def _handle_account_orders(self, message: Dict[str, Any]) -> None:
-        market_id, account_id = _parse_two_ids(message.get("channel", ""))
-        await self._call(
-            self.on_account_orders_update, market_id, account_id, message
-        )
-
-    async def _handle_account_all_orders(
-        self, message: Dict[str, Any]
-    ) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(
-            self.on_account_all_orders_update, account_id, message
-        )
-
-    async def _handle_account_all_trades(
-        self, message: Dict[str, Any]
-    ) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(
-            self.on_account_all_trades_update, account_id, message
-        )
-
-    async def _handle_account_all_positions(
-        self, message: Dict[str, Any]
-    ) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(
-            self.on_account_all_positions_update, account_id, message
-        )
-
-    async def _handle_account_all_assets(
-        self, message: Dict[str, Any]
-    ) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(
-            self.on_account_all_assets_update, account_id, message
-        )
-
-    async def _handle_account_spot_avg_entry_prices(
-        self, message: Dict[str, Any]
-    ) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(
-            self.on_account_spot_avg_entry_prices_update,
-            account_id,
-            message,
-        )
-
-    async def _handle_account_tx(self, message: Dict[str, Any]) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_account_tx_update, account_id, message)
-
-    async def _handle_user_stats(self, message: Dict[str, Any]) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_user_stats_update, account_id, message)
-
-    async def _handle_notification(self, message: Dict[str, Any]) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_notification_update, account_id, message)
-
-    async def _handle_pool_data(self, message: Dict[str, Any]) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_pool_data_update, account_id, message)
-
-    async def _handle_pool_info(self, message: Dict[str, Any]) -> None:
-        account_id = _parse_id(message.get("channel", ""))
-        await self._call(self.on_pool_info_update, account_id, message)
-
-    async def _handle_height(self, message: Dict[str, Any]) -> None:
-        height = message.get("height")
-        await self._call(self.on_height_update, height, message)
-
-    # ------------------------------------------------------------------
-    # Callback invocation helper
-    # ------------------------------------------------------------------
+        _apply_order_book_diff(order_book.get("asks") or [], state["asks"])
+        _apply_order_book_diff(order_book.get("bids") or [], state["bids"])
 
     async def _call(
         self, callback: Optional[Callback], *args: Any
@@ -674,90 +417,15 @@ class WsClient:
 # ---------------------------------------------------------------------
 
 
-def _normalize_subscription(spec: SubscriptionSpec) -> Tuple[str, Optional[str]]:
-    if isinstance(spec, tuple):
-        if len(spec) != 2:
-            raise ValueError(
-                "subscription tuples must have the form (channel, auth_token)"
-            )
-        channel, token = spec
-        return str(channel), token
-    return str(spec), None
+def _canonical_channel(channel: str) -> str:
+    """Normalize a channel string.
 
-
-def _channel_kind(message_type: str) -> Optional[str]:
-    """Return the channel kind for ``subscribed/<kind>`` and ``update/<kind>``."""
-    if not message_type:
-        return None
-    for prefix in ("subscribed/", "update/"):
-        if message_type.startswith(prefix):
-            return message_type[len(prefix):]
-    return None
-
-
-def _channel_body(channel: str) -> List[str]:
-    """Return the parts of the channel that follow the leading name.
-
-    Channel strings appear with either ``/`` or ``:`` separators depending on
-    whether they come from a subscribe request or a server response.
+    Server-emitted channels use ``:`` as the separator (e.g.
+    ``"order_book:0"``); subscribe requests in the docs use ``/`` (e.g.
+    ``"order_book/0"``). The client stores and matches channels using
+    ``/`` everywhere so users only have to remember one form.
     """
-    if not channel:
-        return []
-    normalized = channel.replace("/", ":")
-    parts = normalized.split(":")
-    if len(parts) <= 1:
-        return []
-    return parts[1:]
-
-
-def _parse_id(channel: str) -> Optional[int]:
-    parts = _channel_body(channel)
-    if not parts:
-        return None
-    try:
-        return int(parts[0])
-    except ValueError:
-        return None
-
-
-def _parse_key(channel: str) -> Union[int, str, None]:
-    parts = _channel_body(channel)
-    if not parts:
-        return None
-    value = parts[0]
-    try:
-        return int(value)
-    except ValueError:
-        return value
-
-
-def _parse_two_ids(
-    channel: str,
-) -> Tuple[Optional[int], Optional[int]]:
-    parts = _channel_body(channel)
-    first: Optional[int] = None
-    second: Optional[int] = None
-    if len(parts) >= 1:
-        with suppress(ValueError):
-            first = int(parts[0])
-    if len(parts) >= 2:
-        with suppress(ValueError):
-            second = int(parts[1])
-    return first, second
-
-
-def _parse_candle_channel(
-    channel: str,
-) -> Tuple[Optional[int], Optional[str]]:
-    parts = _channel_body(channel)
-    market_id: Optional[int] = None
-    resolution: Optional[str] = None
-    if len(parts) >= 1:
-        with suppress(ValueError):
-            market_id = int(parts[0])
-    if len(parts) >= 2:
-        resolution = parts[1]
-    return market_id, resolution
+    return channel.replace(":", "/")
 
 
 def _decode_tx_info(
@@ -774,10 +442,9 @@ def _apply_order_book_diff(
 ) -> None:
     """Merge ``new_orders`` into ``existing_orders`` in-place using price as key.
 
-    Entries with size ``0`` remove the corresponding price level. The order
-    of the resulting list reflects the underlying dict insertion order so it
-    is not guaranteed to be sorted; consumers that need a sorted book should
-    sort by ``price`` after each update.
+    Entries with size ``0`` remove the corresponding price level. The
+    resulting list is not guaranteed to be sorted by price; consumers
+    that need a sorted book should sort after each update.
     """
     by_price: Dict[str, Dict[str, Any]] = {
         order["price"]: order for order in existing_orders
