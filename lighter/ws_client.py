@@ -42,6 +42,7 @@ except ImportError:  # pragma: no cover - websockets 12.x fallback
     from websockets.client import connect as _ws_connect
 
 from lighter.configuration import Configuration
+from lighter.ws_messages import parse_ws_message
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,7 @@ class _Subscription:
     channel: str
     on_update: Optional[Callback] = None
     auth: Optional[str] = None
+    parse: bool = False
 
 
 class WsClient:
@@ -163,6 +165,7 @@ class WsClient:
         on_update: Optional[Callback] = None,
         *,
         auth: Optional[str] = None,
+        parse: bool = False,
     ) -> None:
         """Register a subscription for ``channel``.
 
@@ -172,17 +175,25 @@ class WsClient:
         subscribe frame is dispatched immediately via the running event
         loop.
 
-        ``on_update`` is invoked with the full server message dict (both
-        the initial ``subscribed/...`` snapshot and subsequent
-        ``update/...`` messages). The callback may be sync or async.
+        ``on_update`` is invoked with the full server message (both the
+        initial ``subscribed/...`` snapshot and subsequent ``update/...``
+        messages). The callback may be sync or async.
 
         ``auth`` is sent alongside the subscribe message. If omitted and
         ``channel`` is under one of the documented auth-required
         prefixes, the client's default :attr:`auth` is used.
+
+        ``parse`` is opt-in typed payloads. When ``True``, the message is
+        validated through :func:`lighter.ws_messages.parse_ws_message`
+        and the corresponding :class:`~lighter.ws_messages.WSEnvelope`
+        subclass is passed to ``on_update`` instead of the raw dict. The
+        envelopes are forward-compatible (``extra="allow"`` + Optional
+        fields) so server-side schema additions do not cause parsing to
+        fail.
         """
         canonical = _canonical_channel(channel)
         self._subscriptions[canonical] = _Subscription(
-            channel=canonical, on_update=on_update, auth=auth
+            channel=canonical, on_update=on_update, auth=auth, parse=parse,
         )
         if self.ws is not None:
             self._spawn(self._send_subscribe(canonical))
@@ -380,7 +391,8 @@ class WsClient:
         if sub is None:
             await self._call(self.on_message, message)
             return
-        await self._call(sub.on_update, message)
+        payload: Any = parse_ws_message(message) if sub.parse else message
+        await self._call(sub.on_update, payload)
 
     def _update_order_book_state(
         self, channel: str, message: Dict[str, Any]
