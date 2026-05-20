@@ -66,6 +66,7 @@ from lighter.models.market_config import MarketConfig
 from lighter.models.next_nonce import NextNonce
 from lighter.models.order import Order
 from lighter.models.order_book import OrderBook
+from lighter.models.order_book_depth import OrderBookDepth
 from lighter.models.order_book_details import OrderBookDetails
 from lighter.models.order_book_orders import OrderBookOrders
 from lighter.models.order_book_stats import OrderBookStats
@@ -77,6 +78,7 @@ from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
 from lighter.models.pn_l_entry import PnLEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
+from lighter.models.price_level import PriceLevel
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_metadata import PublicPoolMetadata
 from lighter.models.public_pool_share import PublicPoolShare

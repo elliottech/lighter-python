@@ -68,8 +68,14 @@ def default_detail(
             trading_hours="",
             funding_fee_discounts_enabled=False,
             hidden=False,
+            rfq_enabled=False,
         ),
         strategy_index=0,
+        is_maker_fee_enabled=True,
+        is_taker_fee_enabled=True,
+        funding_clamp_small="0",
+        funding_clamp_big="0",
+        base_interest_rate="0",
     )
 
 
