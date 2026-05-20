@@ -40,11 +40,14 @@ build-backend = "setuptools.build_meta"
 [tool.pylint.'MESSAGES CONTROL']
 extension-pkg-whitelist = "pydantic"
 
+[tool.flake8]
+max-line-length = 99
+
 [tool.mypy]
 files = [
   "lighter",
   #"test",  # auto-generated tests
-  "tests", # hand-written tests
+  "test/paper_client", # hand-written tests
 ]
 # TODO: enable "strict" once all these individual checks are passing
 # strict = true
