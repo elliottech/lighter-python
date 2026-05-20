@@ -53,7 +53,7 @@ class AnnouncementApi:
     ) -> Announcements:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -116,7 +116,7 @@ class AnnouncementApi:
     ) -> ApiResponse[Announcements]:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -179,7 +179,7 @@ class AnnouncementApi:
     ) -> RESTResponseType:
         """announcement
 
-        Get announcement
+        Get announcements
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

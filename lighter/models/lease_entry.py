@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
@@ -26,14 +26,14 @@ class LeaseEntry(BaseModel):
     """
     LeaseEntry
     """ # noqa: E501
-    id: StrictInt
-    master_account_index: StrictInt
-    lease_amount: StrictInt
-    fee_amount: StrictInt
-    start: StrictInt
-    end: StrictInt
-    status: StrictStr
-    error: StrictStr
+    id: StrictInt = Field(description="Lease ID")
+    master_account_index: StrictInt = Field(description="Master account index")
+    lease_amount: StrictInt = Field(description="Leased LIT amount in raw units (1 LIT = 1e8)")
+    fee_amount: StrictInt = Field(description="Fee paid in raw units")
+    start: StrictInt = Field(description="Lease start time (Unix milliseconds)")
+    end: StrictInt = Field(description="Lease end time (Unix milliseconds)")
+    status: StrictStr = Field(description="Lease status")
+    error: StrictStr = Field(description="Error message if lease was canceled")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["id", "master_account_index", "lease_amount", "fee_amount", "start", "end", "status", "error"]
 

@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
 from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
@@ -26,8 +26,8 @@ class LeaseOptionEntry(BaseModel):
     """
     LeaseOptionEntry
     """ # noqa: E501
-    duration_days: StrictInt
-    annual_rate: Union[StrictFloat, StrictInt]
+    duration_days: StrictInt = Field(description="Lease duration in days")
+    annual_rate: Union[StrictFloat, StrictInt] = Field(description="Annual rate as a percentage (e.g. 25.0 means 25%)")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["duration_days", "annual_rate"]
 

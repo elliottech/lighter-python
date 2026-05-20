@@ -27,14 +27,14 @@ class WithdrawHistoryItem(BaseModel):
     WithdrawHistoryItem
     """ # noqa: E501
     id: StrictStr
-    asset_id: StrictInt
     amount: StrictStr
     timestamp: StrictInt
     status: StrictStr
     type: StrictStr
     l1_tx_hash: StrictStr
+    asset_id: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["id", "asset_id", "amount", "timestamp", "status", "type", "l1_tx_hash"]
+    __properties: ClassVar[List[str]] = ["id", "amount", "timestamp", "status", "type", "l1_tx_hash", "asset_id"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -109,12 +109,12 @@ class WithdrawHistoryItem(BaseModel):
 
         _obj = cls.model_construct(**{
             "id": obj.get("id"),
-            "asset_id": obj.get("asset_id"),
             "amount": obj.get("amount"),
             "timestamp": obj.get("timestamp"),
             "status": obj.get("status"),
             "type": obj.get("type"),
-            "l1_tx_hash": obj.get("l1_tx_hash")
+            "l1_tx_hash": obj.get("l1_tx_hash"),
+            "asset_id": obj.get("asset_id")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

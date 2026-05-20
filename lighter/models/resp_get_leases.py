@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.lease_entry import LeaseEntry
 from typing import Optional, Set
@@ -30,7 +30,7 @@ class RespGetLeases(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     leases: List[LeaseEntry]
-    next_cursor: Optional[StrictStr] = None
+    next_cursor: Optional[StrictStr] = Field(default=None, description="Cursor to pass as the cursor param to fetch the next page. Absent if no more pages.")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "leases", "next_cursor"]
 

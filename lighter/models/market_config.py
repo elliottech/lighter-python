@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,11 +30,12 @@ class MarketConfig(BaseModel):
     insurance_fund_account_index: StrictInt
     liquidation_mode: StrictInt
     force_reduce_only: StrictBool
+    funding_fee_discounts_enabled: Optional[StrictBool] = None
     trading_hours: StrictStr
-    funding_fee_discounts_enabled: StrictBool
     hidden: StrictBool
+    rfq_enabled: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["market_margin_mode", "insurance_fund_account_index", "liquidation_mode", "force_reduce_only", "trading_hours", "funding_fee_discounts_enabled", "hidden"]
+    __properties: ClassVar[List[str]] = ["market_margin_mode", "insurance_fund_account_index", "liquidation_mode", "force_reduce_only", "funding_fee_discounts_enabled", "trading_hours", "hidden", "rfq_enabled"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -98,9 +99,10 @@ class MarketConfig(BaseModel):
             "insurance_fund_account_index": obj.get("insurance_fund_account_index"),
             "liquidation_mode": obj.get("liquidation_mode"),
             "force_reduce_only": obj.get("force_reduce_only"),
-            "trading_hours": obj.get("trading_hours"),
             "funding_fee_discounts_enabled": obj.get("funding_fee_discounts_enabled"),
-            "hidden": obj.get("hidden")
+            "trading_hours": obj.get("trading_hours"),
+            "hidden": obj.get("hidden"),
+            "rfq_enabled": obj.get("rfq_enabled")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

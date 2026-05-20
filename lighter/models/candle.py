@@ -18,28 +18,28 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
-from typing import Any, ClassVar, Dict, List, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
 class Candle(BaseModel):
     """
-    Candle
+    Abbreviated candle format. Zero values are omitted.
     """ # noqa: E501
-    t: StrictInt = Field(description=" timestamp")
-    o: Union[StrictFloat, StrictInt] = Field(description=" open")
-    h: Union[StrictFloat, StrictInt] = Field(description=" high")
-    l: Union[StrictFloat, StrictInt] = Field(description=" low")
-    c: Union[StrictFloat, StrictInt] = Field(description=" close")
-    O: Union[StrictFloat, StrictInt] = Field(description=" open_raw", alias="O")
-    H: Union[StrictFloat, StrictInt] = Field(description=" high_raw", alias="H")
-    L: Union[StrictFloat, StrictInt] = Field(description=" low_raw", alias="L")
-    C: Union[StrictFloat, StrictInt] = Field(description=" close_raw", alias="C")
-    v: Union[StrictFloat, StrictInt] = Field(description=" volume0")
-    V: Union[StrictFloat, StrictInt] = Field(description=" volume1", alias="V")
-    i: StrictInt = Field(description=" last_trade_id")
+    t: StrictInt = Field(description="Timestamp")
+    o: Union[StrictFloat, StrictInt] = Field(description="Open price")
+    h: Union[StrictFloat, StrictInt] = Field(description="High price")
+    l: Union[StrictFloat, StrictInt] = Field(description="Low price")
+    c: Union[StrictFloat, StrictInt] = Field(description="Close price")
+    v: Union[StrictFloat, StrictInt] = Field(description="Base token volume (volume0)")
+    V: Union[StrictFloat, StrictInt] = Field(description="Quote token volume (volume1)", alias="V")
+    i: StrictInt = Field(description="Last trade ID")
+    C: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" close_raw", alias="C")
+    H: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" high_raw", alias="H")
+    L: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" low_raw", alias="L")
+    O: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description=" open_raw", alias="O")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["t", "o", "h", "l", "c", "O", "H", "L", "C", "v", "V", "i"]
+    __properties: ClassVar[List[str]] = ["t", "o", "h", "l", "c", "v", "V", "i", "C", "H", "L", "O"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -104,13 +104,13 @@ class Candle(BaseModel):
             "h": obj.get("h"),
             "l": obj.get("l"),
             "c": obj.get("c"),
-            "O": obj.get("O"),
-            "H": obj.get("H"),
-            "L": obj.get("L"),
-            "C": obj.get("C"),
             "v": obj.get("v"),
             "V": obj.get("V"),
-            "i": obj.get("i")
+            "i": obj.get("i"),
+            "C": obj.get("C"),
+            "H": obj.get("H"),
+            "L": obj.get("L"),
+            "O": obj.get("O")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

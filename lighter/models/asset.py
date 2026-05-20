@@ -35,8 +35,16 @@ class Asset(BaseModel):
     margin_mode: StrictStr
     index_price: StrictStr
     l1_address: StrictStr
+    global_supply_cap: StrictStr
+    liquidation_fee: StrictStr
+    liquidation_threshold: StrictStr
+    loan_to_value: StrictStr
+    price_decimals: StrictInt
+    total_supplied: StrictStr
+    user_supply_cap: StrictStr
+    liquidation_factor: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address"]
+    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap", "liquidation_factor"]
 
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
@@ -111,7 +119,15 @@ class Asset(BaseModel):
             "min_withdrawal_amount": obj.get("min_withdrawal_amount"),
             "margin_mode": obj.get("margin_mode"),
             "index_price": obj.get("index_price"),
-            "l1_address": obj.get("l1_address")
+            "l1_address": obj.get("l1_address"),
+            "global_supply_cap": obj.get("global_supply_cap"),
+            "liquidation_fee": obj.get("liquidation_fee"),
+            "liquidation_threshold": obj.get("liquidation_threshold"),
+            "loan_to_value": obj.get("loan_to_value"),
+            "price_decimals": obj.get("price_decimals"),
+            "total_supplied": obj.get("total_supplied"),
+            "user_supply_cap": obj.get("user_supply_cap"),
+            "liquidation_factor": obj.get("liquidation_factor")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

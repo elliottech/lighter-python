@@ -9,6 +9,8 @@ Name | Type | Description | Notes
 **risk_info_before** | [**RiskInfo**](RiskInfo.md) |  | 
 **risk_info_after** | [**RiskInfo**](RiskInfo.md) |  | 
 **mark_prices** | **Dict[str, float]** |  | 
+**assets** | [**List[AccountAsset]**](AccountAsset.md) |  | 
+**asset_index_prices** | **Dict[str, str]** |  | 
 
 ## Example
 

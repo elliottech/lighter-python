@@ -9,9 +9,10 @@ Name | Type | Description | Notes
 **insurance_fund_account_index** | **int** |  | 
 **liquidation_mode** | **int** |  | 
 **force_reduce_only** | **bool** |  | 
+**funding_fee_discounts_enabled** | **bool** |  | [optional] 
 **trading_hours** | **str** |  | 
-**funding_fee_discounts_enabled** | **bool** |  | 
 **hidden** | **bool** |  | 
+**rfq_enabled** | **bool** |  | 
 
 ## Example
 

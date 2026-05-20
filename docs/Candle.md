@@ -1,22 +1,23 @@
 # Candle
 
+Abbreviated candle format. Zero values are omitted.
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**t** | **int** |  timestamp | 
-**o** | **float** |  open | 
-**h** | **float** |  high | 
-**l** | **float** |  low | 
-**c** | **float** |  close | 
-**o** | **float** |  open_raw | 
-**h** | **float** |  high_raw | 
-**l** | **float** |  low_raw | 
-**c** | **float** |  close_raw | 
-**v** | **float** |  volume0 | 
-**v** | **float** |  volume1 | 
-**i** | **int** |  last_trade_id | 
+**t** | **int** | Timestamp | 
+**o** | **float** | Open price | 
+**h** | **float** | High price | 
+**l** | **float** | Low price | 
+**c** | **float** | Close price | 
+**v** | **float** | Base token volume (volume0) | 
+**v** | **float** | Quote token volume (volume1) | 
+**i** | **int** | Last trade ID | 
+**c** | **float** |  close_raw | [optional] 
+**h** | **float** |  high_raw | [optional] 
+**l** | **float** |  low_raw | [optional] 
+**o** | **float** |  open_raw | [optional] 
 
 ## Example
 

@@ -28,11 +28,11 @@ class Candles(BaseModel):
     Candles
     """ # noqa: E501
     code: StrictInt
+    r: StrictStr = Field(description="Resolution")
+    c: List[Candle] = Field(description="Array of candles (max 500 per call)")
     message: Optional[StrictStr] = None
-    r: StrictStr = Field(description=" resolution")
-    c: List[Candle] = Field(description=" candles")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "r", "c"]
+    __properties: ClassVar[List[str]] = ["code", "r", "c", "message"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -100,9 +100,9 @@ class Candles(BaseModel):
 
         _obj = cls.model_construct(**{
             "code": obj.get("code"),
-            "message": obj.get("message"),
             "r": obj.get("r"),
-            "c": [Candle.from_dict(_item) for _item in obj["c"]] if obj.get("c") is not None else None
+            "c": [Candle.from_dict(_item) for _item in obj["c"]] if obj.get("c") is not None else None,
+            "message": obj.get("message")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

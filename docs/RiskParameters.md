@@ -11,6 +11,9 @@ Name | Type | Description | Notes
 **initial_margin_req** | **str** |  | 
 **maintenance_margin_req** | **str** |  | 
 **close_out_margin_req** | **str** |  | 
+**total_account_liquidation_threshold** | **str** |  | 
+**usdc_collateral_with_funding** | **str** |  | 
+**usdc_portfolio_value** | **str** |  | 
 
 ## Example
 

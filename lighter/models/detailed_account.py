@@ -35,6 +35,7 @@ class DetailedAccount(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     account_type: StrictInt
+    account_trading_mode: Optional[StrictInt] = Field(default=None, description="Classic=0 and Unified=1")
     index: StrictInt
     l1_address: StrictStr
     cancel_all_time: StrictInt
@@ -44,25 +45,27 @@ class DetailedAccount(BaseModel):
     available_balance: StrictStr
     status: StrictInt
     collateral: StrictStr
-    transaction_time: StrictInt
-    account_trading_mode: StrictInt
     account_index: StrictInt
     name: StrictStr
     description: StrictStr
     can_invite: StrictBool = Field(description=" Remove After FE uses L1 meta endpoint")
     referral_points_percentage: StrictStr = Field(description=" Remove After FE uses L1 meta endpoint")
-    can_rfq: StrictBool
-    created_at: StrictInt
     positions: List[AccountPosition]
     assets: List[AccountAsset]
     total_asset_value: StrictStr
     cross_asset_value: StrictStr
     pool_info: PublicPoolInfo
     shares: List[PublicPoolShare]
-    pending_unlocks: List[PendingUnlock]
-    approved_integrators: List[ApprovedIntegrator]
+    created_at: StrictInt
+    transaction_time: StrictInt
+    pending_unlocks: Optional[List[PendingUnlock]] = None
+    approved_integrators: Optional[List[ApprovedIntegrator]] = None
+    can_rfq: StrictBool
+    cross_initial_margin_requirement: StrictStr
+    cross_maintenance_margin_requirement: StrictStr
+    can_rfq_market_ids: List[StrictStr]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time", "account_trading_mode", "account_index", "name", "description", "can_invite", "referral_points_percentage", "can_rfq", "created_at", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "pending_unlocks", "approved_integrators"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -163,6 +166,7 @@ class DetailedAccount(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "account_type": obj.get("account_type"),
+            "account_trading_mode": obj.get("account_trading_mode"),
             "index": obj.get("index"),
             "l1_address": obj.get("l1_address"),
             "cancel_all_time": obj.get("cancel_all_time"),
@@ -172,23 +176,25 @@ class DetailedAccount(BaseModel):
             "available_balance": obj.get("available_balance"),
             "status": obj.get("status"),
             "collateral": obj.get("collateral"),
-            "transaction_time": obj.get("transaction_time"),
-            "account_trading_mode": obj.get("account_trading_mode"),
             "account_index": obj.get("account_index"),
             "name": obj.get("name"),
             "description": obj.get("description"),
             "can_invite": obj.get("can_invite"),
             "referral_points_percentage": obj.get("referral_points_percentage"),
-            "can_rfq": obj.get("can_rfq"),
-            "created_at": obj.get("created_at"),
             "positions": [AccountPosition.from_dict(_item) for _item in obj["positions"]] if obj.get("positions") is not None else None,
             "assets": [AccountAsset.from_dict(_item) for _item in obj["assets"]] if obj.get("assets") is not None else None,
             "total_asset_value": obj.get("total_asset_value"),
             "cross_asset_value": obj.get("cross_asset_value"),
             "pool_info": PublicPoolInfo.from_dict(obj["pool_info"]) if obj.get("pool_info") is not None else None,
             "shares": [PublicPoolShare.from_dict(_item) for _item in obj["shares"]] if obj.get("shares") is not None else None,
+            "created_at": obj.get("created_at"),
+            "transaction_time": obj.get("transaction_time"),
             "pending_unlocks": [PendingUnlock.from_dict(_item) for _item in obj["pending_unlocks"]] if obj.get("pending_unlocks") is not None else None,
-            "approved_integrators": [ApprovedIntegrator.from_dict(_item) for _item in obj["approved_integrators"]] if obj.get("approved_integrators") is not None else None
+            "approved_integrators": [ApprovedIntegrator.from_dict(_item) for _item in obj["approved_integrators"]] if obj.get("approved_integrators") is not None else None,
+            "can_rfq": obj.get("can_rfq"),
+            "cross_initial_margin_requirement": obj.get("cross_initial_margin_requirement"),
+            "cross_maintenance_margin_requirement": obj.get("cross_maintenance_margin_requirement"),
+            "can_rfq_market_ids": obj.get("can_rfq_market_ids")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

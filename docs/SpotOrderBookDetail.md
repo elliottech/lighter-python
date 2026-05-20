@@ -30,6 +30,8 @@ Name | Type | Description | Notes
 **daily_price_high** | **float** |  | 
 **daily_price_change** | **float** |  | 
 **daily_chart** | **Dict[str, float]** |  | 
+**is_maker_fee_enabled** | **bool** |  | 
+**is_taker_fee_enabled** | **bool** |  | 
 
 ## Example
 

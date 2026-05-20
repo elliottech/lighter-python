@@ -11,9 +11,9 @@ Name | Type | Description | Notes
 **total_shares** | **int** |  | 
 **operator_shares** | **int** |  | 
 **annual_percentage_yield** | **float** |  | 
-**sharpe_ratio** | **float** |  | 
 **daily_returns** | [**List[DailyReturn]**](DailyReturn.md) |  | 
 **share_prices** | [**List[SharePrice]**](SharePrice.md) |  | 
+**sharpe_ratio** | **float** |  | 
 **strategies** | [**List[Strategy]**](Strategy.md) |  | 
 
 ## Example

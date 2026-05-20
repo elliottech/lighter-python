@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_type** | **int** |  | 
+**account_trading_mode** | **int** | Classic&#x3D;0 and Unified&#x3D;1 | [optional] 
 **index** | **int** |  | 
 **l1_address** | **str** |  | 
 **cancel_all_time** | **int** |  | 
@@ -17,23 +18,25 @@ Name | Type | Description | Notes
 **available_balance** | **str** |  | 
 **status** | **int** |  | 
 **collateral** | **str** |  | 
-**transaction_time** | **int** |  | 
-**account_trading_mode** | **int** |  | 
 **account_index** | **int** |  | 
 **name** | **str** |  | 
 **description** | **str** |  | 
 **can_invite** | **bool** |  Remove After FE uses L1 meta endpoint | 
 **referral_points_percentage** | **str** |  Remove After FE uses L1 meta endpoint | 
-**can_rfq** | **bool** |  | 
-**created_at** | **int** |  | 
 **positions** | [**List[AccountPosition]**](AccountPosition.md) |  | 
 **assets** | [**List[AccountAsset]**](AccountAsset.md) |  | 
 **total_asset_value** | **str** |  | 
 **cross_asset_value** | **str** |  | 
 **pool_info** | [**PublicPoolInfo**](PublicPoolInfo.md) |  | 
 **shares** | [**List[PublicPoolShare]**](PublicPoolShare.md) |  | 
-**pending_unlocks** | [**List[PendingUnlock]**](PendingUnlock.md) |  | 
-**approved_integrators** | [**List[ApprovedIntegrator]**](ApprovedIntegrator.md) |  | 
+**created_at** | **int** |  | 
+**transaction_time** | **int** |  | 
+**pending_unlocks** | [**List[PendingUnlock]**](PendingUnlock.md) |  | [optional] 
+**approved_integrators** | [**List[ApprovedIntegrator]**](ApprovedIntegrator.md) |  | [optional] 
+**can_rfq** | **bool** |  | 
+**cross_initial_margin_requirement** | **str** |  | 
+**cross_maintenance_margin_requirement** | **str** |  | 
+**can_rfq_market_ids** | **List[str]** |  | 
 
 ## Example
 

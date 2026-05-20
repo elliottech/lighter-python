@@ -16,10 +16,10 @@ Name | Type | Description | Notes
 **liquidation_fee** | **str** |  | 
 **min_base_amount** | **str** |  | 
 **min_quote_amount** | **str** |  | 
-**order_quote_limit** | **str** |  | 
 **supported_size_decimals** | **int** |  | 
 **supported_price_decimals** | **int** |  | 
 **supported_quote_decimals** | **int** |  | 
+**order_quote_limit** | **str** |  | 
 **size_decimals** | **int** |  | 
 **price_decimals** | **int** |  | 
 **quote_multiplier** | **int** |  | 
@@ -38,6 +38,11 @@ Name | Type | Description | Notes
 **daily_chart** | **Dict[str, float]** |  | 
 **market_config** | [**MarketConfig**](MarketConfig.md) |  | 
 **strategy_index** | **int** |  | 
+**is_maker_fee_enabled** | **bool** |  | 
+**is_taker_fee_enabled** | **bool** |  | 
+**funding_clamp_small** | **str** |  | 
+**funding_clamp_big** | **str** |  | 
+**base_interest_rate** | **str** |  | 
 
 ## Example
 

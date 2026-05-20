@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**duration_days** | **int** |  | 
-**annual_rate** | **float** |  | 
+**duration_days** | **int** | Lease duration in days | 
+**annual_rate** | **float** | Annual rate as a percentage (e.g. 25.0 means 25%) | 
 
 ## Example
 

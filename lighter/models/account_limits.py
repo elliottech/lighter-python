@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -29,16 +29,17 @@ class AccountLimits(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     max_llp_percentage: StrictInt
-    max_llp_amount: StrictStr
     user_tier: StrictStr
     can_create_public_pool: StrictBool
-    user_tier_name: StrictStr
+    max_llp_amount: StrictStr
     current_maker_fee_tick: StrictInt
     current_taker_fee_tick: StrictInt
-    leased_lit: StrictStr
-    effective_lit_stakes: StrictStr
+    effective_lit_stakes: StrictStr = Field(description="Effective staked LIT shares including active leases.")
+    leased_lit: StrictStr = Field(description="Total actively leased LIT.")
+    user_tier_name: StrictStr
+    user_tier_last_update: Optional[StrictInt] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "max_llp_percentage", "max_llp_amount", "user_tier", "can_create_public_pool", "user_tier_name", "current_maker_fee_tick", "current_taker_fee_tick", "leased_lit", "effective_lit_stakes"]
+    __properties: ClassVar[List[str]] = ["code", "message", "max_llp_percentage", "user_tier", "can_create_public_pool", "max_llp_amount", "current_maker_fee_tick", "current_taker_fee_tick", "effective_lit_stakes", "leased_lit", "user_tier_name", "user_tier_last_update"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -101,14 +102,15 @@ class AccountLimits(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "max_llp_percentage": obj.get("max_llp_percentage"),
-            "max_llp_amount": obj.get("max_llp_amount"),
             "user_tier": obj.get("user_tier"),
             "can_create_public_pool": obj.get("can_create_public_pool"),
-            "user_tier_name": obj.get("user_tier_name"),
+            "max_llp_amount": obj.get("max_llp_amount"),
             "current_maker_fee_tick": obj.get("current_maker_fee_tick"),
             "current_taker_fee_tick": obj.get("current_taker_fee_tick"),
+            "effective_lit_stakes": obj.get("effective_lit_stakes"),
             "leased_lit": obj.get("leased_lit"),
-            "effective_lit_stakes": obj.get("effective_lit_stakes")
+            "user_tier_name": obj.get("user_tier_name"),
+            "user_tier_last_update": obj.get("user_tier_last_update")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

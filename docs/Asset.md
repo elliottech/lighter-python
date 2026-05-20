@@ -14,6 +14,14 @@ Name | Type | Description | Notes
 **margin_mode** | **str** |  | 
 **index_price** | **str** |  | 
 **l1_address** | **str** |  | 
+**global_supply_cap** | **str** |  | 
+**liquidation_fee** | **str** |  | 
+**liquidation_threshold** | **str** |  | 
+**loan_to_value** | **str** |  | 
+**price_decimals** | **int** |  | 
+**total_supplied** | **str** |  | 
+**user_supply_cap** | **str** |  | 
+**liquidation_factor** | **str** |  | 
 
 ## Example
 

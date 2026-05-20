@@ -31,8 +31,9 @@ class Referral(BaseModel):
     referral_code: StrictStr
     used_at: StrictInt
     trade_stats: TradeStats
+    tier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "referral_code", "used_at", "trade_stats"]
+    __properties: ClassVar[List[str]] = ["l1_address", "referral_code", "used_at", "trade_stats", "tier"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -98,7 +99,8 @@ class Referral(BaseModel):
             "l1_address": obj.get("l1_address"),
             "referral_code": obj.get("referral_code"),
             "used_at": obj.get("used_at"),
-            "trade_stats": TradeStats.from_dict(obj["trade_stats"]) if obj.get("trade_stats") is not None else None
+            "trade_stats": TradeStats.from_dict(obj["trade_stats"]) if obj.get("trade_stats") is not None else None,
+            "tier": obj.get("tier")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.lease_option_entry import LeaseOptionEntry
 from typing import Optional, Set
@@ -30,7 +30,7 @@ class RespGetLeaseOptions(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     options: List[LeaseOptionEntry]
-    lit_incentives_account_index: StrictInt
+    lit_incentives_account_index: StrictInt = Field(description="Account index that receives the leasing fee")
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "options", "lit_incentives_account_index"]
 

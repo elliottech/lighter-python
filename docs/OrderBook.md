@@ -16,10 +16,12 @@ Name | Type | Description | Notes
 **liquidation_fee** | **str** |  | 
 **min_base_amount** | **str** |  | 
 **min_quote_amount** | **str** |  | 
-**order_quote_limit** | **str** |  | 
 **supported_size_decimals** | **int** |  | 
 **supported_price_decimals** | **int** |  | 
 **supported_quote_decimals** | **int** |  | 
+**order_quote_limit** | **str** |  | 
+**is_maker_fee_enabled** | **bool** |  | 
+**is_taker_fee_enabled** | **bool** |  | 
 
 ## Example
 

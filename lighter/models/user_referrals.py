@@ -31,8 +31,9 @@ class UserReferrals(BaseModel):
     message: Optional[StrictStr] = None
     cursor: StrictStr
     referrals: List[Referral]
+    used_code: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "cursor", "referrals"]
+    __properties: ClassVar[List[str]] = ["code", "message", "cursor", "referrals", "used_code"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -102,7 +103,8 @@ class UserReferrals(BaseModel):
             "code": obj.get("code"),
             "message": obj.get("message"),
             "cursor": obj.get("cursor"),
-            "referrals": [Referral.from_dict(_item) for _item in obj["referrals"]] if obj.get("referrals") is not None else None
+            "referrals": [Referral.from_dict(_item) for _item in obj["referrals"]] if obj.get("referrals") is not None else None,
+            "used_code": obj.get("used_code")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

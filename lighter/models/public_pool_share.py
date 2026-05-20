@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
@@ -28,11 +28,11 @@ class PublicPoolShare(BaseModel):
     """ # noqa: E501
     public_pool_index: StrictInt
     shares_amount: StrictInt
-    entry_usdc: StrictStr = Field(description=" For public pools and insurance fund")
-    principal_amount: StrictStr
+    entry_usdc: StrictStr
     entry_timestamp: StrictInt
+    principal_amount: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["public_pool_index", "shares_amount", "entry_usdc", "principal_amount", "entry_timestamp"]
+    __properties: ClassVar[List[str]] = ["public_pool_index", "shares_amount", "entry_usdc", "entry_timestamp", "principal_amount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -95,8 +95,8 @@ class PublicPoolShare(BaseModel):
             "public_pool_index": obj.get("public_pool_index"),
             "shares_amount": obj.get("shares_amount"),
             "entry_usdc": obj.get("entry_usdc"),
-            "principal_amount": obj.get("principal_amount"),
-            "entry_timestamp": obj.get("entry_timestamp")
+            "entry_timestamp": obj.get("entry_timestamp"),
+            "principal_amount": obj.get("principal_amount")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

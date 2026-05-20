@@ -5,14 +5,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **int** |  | 
-**master_account_index** | **int** |  | 
-**lease_amount** | **int** |  | 
-**fee_amount** | **int** |  | 
-**start** | **int** |  | 
-**end** | **int** |  | 
-**status** | **str** |  | 
-**error** | **str** |  | 
+**id** | **int** | Lease ID | 
+**master_account_index** | **int** | Master account index | 
+**lease_amount** | **int** | Leased LIT amount in raw units (1 LIT &#x3D; 1e8) | 
+**fee_amount** | **int** | Fee paid in raw units | 
+**start** | **int** | Lease start time (Unix milliseconds) | 
+**end** | **int** | Lease end time (Unix milliseconds) | 
+**status** | **str** | Lease status | 
+**error** | **str** | Error message if lease was canceled | 
 
 ## Example
 

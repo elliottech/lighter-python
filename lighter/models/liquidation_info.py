@@ -17,8 +17,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt
+from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Union
+from lighter.models.account_asset import AccountAsset
 from lighter.models.account_position import AccountPosition
 from lighter.models.risk_info import RiskInfo
 from typing import Optional, Set
@@ -32,8 +33,10 @@ class LiquidationInfo(BaseModel):
     risk_info_before: RiskInfo
     risk_info_after: RiskInfo
     mark_prices: Dict[str, Union[StrictFloat, StrictInt]]
+    assets: List[AccountAsset]
+    asset_index_prices: Dict[str, StrictStr]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["positions", "risk_info_before", "risk_info_after", "mark_prices"]
+    __properties: ClassVar[List[str]] = ["positions", "risk_info_before", "risk_info_after", "mark_prices", "assets", "asset_index_prices"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -89,6 +92,13 @@ class LiquidationInfo(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of risk_info_after
         if self.risk_info_after:
             _dict['risk_info_after'] = self.risk_info_after.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in assets (list)
+        _items = []
+        if self.assets:
+            for _item in self.assets:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['assets'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -109,7 +119,9 @@ class LiquidationInfo(BaseModel):
             "positions": [AccountPosition.from_dict(_item) for _item in obj["positions"]] if obj.get("positions") is not None else None,
             "risk_info_before": RiskInfo.from_dict(obj["risk_info_before"]) if obj.get("risk_info_before") is not None else None,
             "risk_info_after": RiskInfo.from_dict(obj["risk_info_after"]) if obj.get("risk_info_after") is not None else None,
-            "mark_prices": obj.get("mark_prices")
+            "mark_prices": obj.get("mark_prices"),
+            "assets": [AccountAsset.from_dict(_item) for _item in obj["assets"]] if obj.get("assets") is not None else None,
+            "asset_index_prices": obj.get("asset_index_prices")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

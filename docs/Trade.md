@@ -14,26 +14,39 @@ Name | Type | Description | Notes
 **usd_amount** | **str** |  | 
 **ask_id** | **int** |  | 
 **bid_id** | **int** |  | 
-**ask_client_id** | **int** |  | 
-**bid_client_id** | **int** |  | 
 **ask_account_id** | **int** |  | 
 **bid_account_id** | **int** |  | 
 **is_maker_ask** | **bool** |  | 
 **block_height** | **int** |  | 
 **timestamp** | **int** |  | 
-**taker_fee** | **int** |  | 
+**taker_fee** | **int** |  | [optional] 
 **taker_position_size_before** | **str** |  | 
 **taker_entry_quote_before** | **str** |  | 
 **taker_initial_margin_fraction_before** | **int** |  | 
 **taker_position_sign_changed** | **bool** |  | 
-**maker_fee** | **int** |  | 
+**maker_fee** | **int** |  | [optional] 
 **maker_position_size_before** | **str** |  | 
 **maker_entry_quote_before** | **str** |  | 
 **maker_initial_margin_fraction_before** | **int** |  | 
 **maker_position_sign_changed** | **bool** |  | 
 **transaction_time** | **int** |  | 
-**ask_account_pnl** | **str** |  | 
-**bid_account_pnl** | **str** |  | 
+**bid_account_pnl** | **str** | Realized PnL for the queried account index, triggered by reducing a short position | 
+**ask_account_pnl** | **str** | Realized PnL for the queried account index, triggered by reducing a long position, or a spot position | 
+**ask_client_id** | **int** |  | 
+**bid_client_id** | **int** |  | 
+**ask_client_id_str** | **str** |  | 
+**bid_client_id_str** | **str** |  | 
+**ask_id_str** | **str** |  | [optional] 
+**bid_id_str** | **str** |  | [optional] 
+**trade_id_str** | **str** |  | 
+**integrator_maker_fee** | **int** |  | 
+**integrator_maker_fee_collector_index** | **int** |  | 
+**integrator_taker_fee** | **int** |  | 
+**integrator_taker_fee_collector_index** | **int** |  | 
+**taker_allocated_margin_usdc_before** | **int** |  | 
+**taker_allocated_margin_usdc_after** | **int** |  | 
+**maker_allocated_margin_usdc_before** | **int** |  | 
+**maker_allocated_margin_usdc_after** | **int** |  | 
 
 ## Example
 

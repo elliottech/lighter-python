@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
@@ -51,8 +51,10 @@ class SpotOrderBookDetail(BaseModel):
     daily_price_high: Union[StrictFloat, StrictInt]
     daily_price_change: Union[StrictFloat, StrictInt]
     daily_chart: Dict[str, Union[StrictFloat, StrictInt]]
+    is_maker_fee_enabled: StrictBool
+    is_taker_fee_enabled: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "size_decimals", "price_decimals", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "daily_chart"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "size_decimals", "price_decimals", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "daily_chart", "is_maker_fee_enabled", "is_taker_fee_enabled"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
@@ -150,7 +152,9 @@ class SpotOrderBookDetail(BaseModel):
             "daily_price_low": obj.get("daily_price_low"),
             "daily_price_high": obj.get("daily_price_high"),
             "daily_price_change": obj.get("daily_price_change"),
-            "daily_chart": obj.get("daily_chart")
+            "daily_chart": obj.get("daily_chart"),
+            "is_maker_fee_enabled": obj.get("is_maker_fee_enabled"),
+            "is_taker_fee_enabled": obj.get("is_taker_fee_enabled")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

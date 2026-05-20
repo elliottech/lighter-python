@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
@@ -30,8 +30,17 @@ class AccountAsset(BaseModel):
     asset_id: StrictInt
     balance: StrictStr
     locked_balance: StrictStr
+    margin_balance: StrictStr
+    margin_mode: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "asset_id", "balance", "locked_balance"]
+    __properties: ClassVar[List[str]] = ["symbol", "asset_id", "balance", "locked_balance", "margin_balance", "margin_mode"]
+
+    @field_validator('margin_mode')
+    def margin_mode_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['enabled', 'disabled']):
+            raise ValueError("must be one of enum values ('enabled', 'disabled')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -94,7 +103,9 @@ class AccountAsset(BaseModel):
             "symbol": obj.get("symbol"),
             "asset_id": obj.get("asset_id"),
             "balance": obj.get("balance"),
-            "locked_balance": obj.get("locked_balance")
+            "locked_balance": obj.get("locked_balance"),
+            "margin_balance": obj.get("margin_balance"),
+            "margin_mode": obj.get("margin_mode")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

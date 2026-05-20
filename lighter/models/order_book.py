@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
@@ -37,12 +37,14 @@ class OrderBook(BaseModel):
     liquidation_fee: StrictStr
     min_base_amount: StrictStr
     min_quote_amount: StrictStr
-    order_quote_limit: StrictStr
     supported_size_decimals: StrictInt
     supported_price_decimals: StrictInt
     supported_quote_decimals: StrictInt
+    order_quote_limit: StrictStr
+    is_maker_fee_enabled: StrictBool
+    is_taker_fee_enabled: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "is_maker_fee_enabled", "is_taker_fee_enabled"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
@@ -127,10 +129,12 @@ class OrderBook(BaseModel):
             "liquidation_fee": obj.get("liquidation_fee"),
             "min_base_amount": obj.get("min_base_amount"),
             "min_quote_amount": obj.get("min_quote_amount"),
-            "order_quote_limit": obj.get("order_quote_limit"),
             "supported_size_decimals": obj.get("supported_size_decimals"),
             "supported_price_decimals": obj.get("supported_price_decimals"),
-            "supported_quote_decimals": obj.get("supported_quote_decimals")
+            "supported_quote_decimals": obj.get("supported_quote_decimals"),
+            "order_quote_limit": obj.get("order_quote_limit"),
+            "is_maker_fee_enabled": obj.get("is_maker_fee_enabled"),
+            "is_taker_fee_enabled": obj.get("is_taker_fee_enabled")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

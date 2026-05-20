@@ -63,7 +63,7 @@ class CandlestickApi:
     ) -> Candles:
         """candles
 
-        Get candles (optimized with shortened fields and smaller response size)
+        Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
         :param market_id: (required)
         :type market_id: int
@@ -150,7 +150,7 @@ class CandlestickApi:
     ) -> ApiResponse[Candles]:
         """candles
 
-        Get candles (optimized with shortened fields and smaller response size)
+        Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
         :param market_id: (required)
         :type market_id: int
@@ -237,7 +237,7 @@ class CandlestickApi:
     ) -> RESTResponseType:
         """candles
 
-        Get candles (optimized with shortened fields and smaller response size)
+        Get candles data. Returns at most 500 candles per call. Zero values are omitted from the response.
 
         :param market_id: (required)
         :type market_id: int

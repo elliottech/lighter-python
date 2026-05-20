@@ -31,7 +31,7 @@ class DetailedAccounts(BaseModel):
     message: Optional[StrictStr] = None
     total: StrictInt
     accounts: List[DetailedAccount]
-    next_cursor: Optional[StrictStr] = None
+    next_cursor: StrictStr
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "total", "accounts", "next_cursor"]
 

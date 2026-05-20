@@ -8,14 +8,15 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **max_llp_percentage** | **int** |  | 
-**max_llp_amount** | **str** |  | 
 **user_tier** | **str** |  | 
 **can_create_public_pool** | **bool** |  | 
-**user_tier_name** | **str** |  | 
+**max_llp_amount** | **str** |  | 
 **current_maker_fee_tick** | **int** |  | 
 **current_taker_fee_tick** | **int** |  | 
-**leased_lit** | **str** |  | 
-**effective_lit_stakes** | **str** |  | 
+**effective_lit_stakes** | **str** | Effective staked LIT shares including active leases. | 
+**leased_lit** | **str** | Total actively leased LIT. | 
+**user_tier_name** | **str** |  | 
+**user_tier_last_update** | **int** |  | [optional] 
 
 ## Example
 

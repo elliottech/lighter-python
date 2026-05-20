@@ -7,19 +7,20 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **timestamp** | **int** |  | 
 **trade_pnl** | **float** |  | 
-**trade_spot_pnl** | **float** |  | 
 **inflow** | **float** |  | 
 **outflow** | **float** |  | 
-**spot_outflow** | **float** |  | 
-**spot_inflow** | **float** |  | 
 **pool_pnl** | **float** |  | 
 **pool_inflow** | **float** |  | 
 **pool_outflow** | **float** |  | 
-**staking_pnl** | **float** |  | 
+**pool_total_shares** | **float** |  | 
+**spot_inflow** | **float** |  | 
+**spot_outflow** | **float** |  | 
+**staked_lit** | **float** |  | 
 **staking_inflow** | **float** |  | 
 **staking_outflow** | **float** |  | 
-**pool_total_shares** | **float** |  | 
-**staked_lit** | **float** |  | 
+**staking_pnl** | **float** |  | 
+**trade_spot_pnl** | **float** |  | 
+**volume** | **float** |  | 
 
 ## Example
 

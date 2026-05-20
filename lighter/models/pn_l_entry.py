@@ -28,21 +28,22 @@ class PnLEntry(BaseModel):
     """ # noqa: E501
     timestamp: StrictInt
     trade_pnl: Union[StrictFloat, StrictInt]
-    trade_spot_pnl: Union[StrictFloat, StrictInt]
     inflow: Union[StrictFloat, StrictInt]
     outflow: Union[StrictFloat, StrictInt]
-    spot_outflow: Union[StrictFloat, StrictInt]
-    spot_inflow: Union[StrictFloat, StrictInt]
     pool_pnl: Union[StrictFloat, StrictInt]
     pool_inflow: Union[StrictFloat, StrictInt]
     pool_outflow: Union[StrictFloat, StrictInt]
-    staking_pnl: Union[StrictFloat, StrictInt]
+    pool_total_shares: Union[StrictFloat, StrictInt]
+    spot_inflow: Union[StrictFloat, StrictInt]
+    spot_outflow: Union[StrictFloat, StrictInt]
+    staked_lit: Union[StrictFloat, StrictInt]
     staking_inflow: Union[StrictFloat, StrictInt]
     staking_outflow: Union[StrictFloat, StrictInt]
-    pool_total_shares: Union[StrictFloat, StrictInt]
-    staked_lit: Union[StrictFloat, StrictInt]
+    staking_pnl: Union[StrictFloat, StrictInt]
+    trade_spot_pnl: Union[StrictFloat, StrictInt]
+    volume: Union[StrictFloat, StrictInt]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["timestamp", "trade_pnl", "trade_spot_pnl", "inflow", "outflow", "spot_outflow", "spot_inflow", "pool_pnl", "pool_inflow", "pool_outflow", "staking_pnl", "staking_inflow", "staking_outflow", "pool_total_shares", "staked_lit"]
+    __properties: ClassVar[List[str]] = ["timestamp", "trade_pnl", "inflow", "outflow", "pool_pnl", "pool_inflow", "pool_outflow", "pool_total_shares", "spot_inflow", "spot_outflow", "staked_lit", "staking_inflow", "staking_outflow", "staking_pnl", "trade_spot_pnl", "volume"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -104,19 +105,20 @@ class PnLEntry(BaseModel):
         _obj = cls.model_construct(**{
             "timestamp": obj.get("timestamp"),
             "trade_pnl": obj.get("trade_pnl"),
-            "trade_spot_pnl": obj.get("trade_spot_pnl"),
             "inflow": obj.get("inflow"),
             "outflow": obj.get("outflow"),
-            "spot_outflow": obj.get("spot_outflow"),
-            "spot_inflow": obj.get("spot_inflow"),
             "pool_pnl": obj.get("pool_pnl"),
             "pool_inflow": obj.get("pool_inflow"),
             "pool_outflow": obj.get("pool_outflow"),
-            "staking_pnl": obj.get("staking_pnl"),
+            "pool_total_shares": obj.get("pool_total_shares"),
+            "spot_inflow": obj.get("spot_inflow"),
+            "spot_outflow": obj.get("spot_outflow"),
+            "staked_lit": obj.get("staked_lit"),
             "staking_inflow": obj.get("staking_inflow"),
             "staking_outflow": obj.get("staking_outflow"),
-            "pool_total_shares": obj.get("pool_total_shares"),
-            "staked_lit": obj.get("staked_lit")
+            "staking_pnl": obj.get("staking_pnl"),
+            "trade_spot_pnl": obj.get("trade_spot_pnl"),
+            "volume": obj.get("volume")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

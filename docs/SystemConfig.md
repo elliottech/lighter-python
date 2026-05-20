@@ -12,10 +12,11 @@ Name | Type | Description | Notes
 **funding_fee_rebate_account_index** | **int** |  | 
 **liquidity_pool_cooldown_period** | **int** |  | 
 **staking_pool_lockup_period** | **int** |  | 
-**max_integrator_spot_taker_fee** | **int** |  | 
-**max_integrator_spot_maker_fee** | **int** |  | 
-**max_integrator_perps_taker_fee** | **int** |  | 
 **max_integrator_perps_maker_fee** | **int** |  | 
+**max_integrator_perps_taker_fee** | **int** |  | 
+**max_integrator_spot_maker_fee** | **int** |  | 
+**max_integrator_spot_taker_fee** | **int** |  | 
+**market_maker_incentive_account_index** | **int** |  | 
 
 ## Example
 

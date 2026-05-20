@@ -4,22 +4,394 @@ All URIs are relative to *https://mainnet.zklighter.elliot.ai*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**referral_user_referrals**](ReferralApi.md#referral_user_referrals) | **GET** /api/v1/referral/userReferrals | referral_userReferrals
+[**referral_create**](ReferralApi.md#referral_create) | **POST** /api/v1/referral/create | referral_create
+[**referral_get**](ReferralApi.md#referral_get) | **GET** /api/v1/referral/get | referral_get
+[**referral_kickback_update**](ReferralApi.md#referral_kickback_update) | **POST** /api/v1/referral/kickback/update | referral_kickback_update
+[**referral_points**](ReferralApi.md#referral_points) | **GET** /api/v1/referral/points | referral_points
+[**referral_update**](ReferralApi.md#referral_update) | **POST** /api/v1/referral/update | referral_update
+[**referral_use**](ReferralApi.md#referral_use) | **POST** /api/v1/referral/use | referral_use
 
 
-# **referral_user_referrals**
-> UserReferrals referral_user_referrals(l1_address, authorization=authorization, auth=auth, cursor=cursor)
+# **referral_create**
+> ReferralCode referral_create(account_index, authorization=authorization, auth=auth)
 
-referral_userReferrals
+referral_create
 
-Get user referrals
+Create referral code
 
 ### Example
 
 
 ```python
 import lighter
-from lighter.models.user_referrals import UserReferrals
+from lighter.models.referral_code import ReferralCode
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.ReferralApi(api_client)
+    account_index = 56 # int | 
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # referral_create
+        api_response = await api_instance.referral_create(account_index, authorization=authorization, auth=auth)
+        print("The response of ReferralApi->referral_create:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReferralApi->referral_create: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**ReferralCode**](ReferralCode.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **referral_get**
+> ReferralCode referral_get(account_index, authorization=authorization, auth=auth)
+
+referral_get
+
+Get referral code
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.referral_code import ReferralCode
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.ReferralApi(api_client)
+    account_index = 56 # int | 
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # referral_get
+        api_response = await api_instance.referral_get(account_index, authorization=authorization, auth=auth)
+        print("The response of ReferralApi->referral_get:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReferralApi->referral_get: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**ReferralCode**](ReferralCode.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **referral_kickback_update**
+> RespUpdateKickback referral_kickback_update(account_index, kickback_percentage, authorization=authorization, auth=auth)
+
+referral_kickback_update
+
+Update kickback percentage for referral rewards (allowed once per day)
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_update_kickback import RespUpdateKickback
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.ReferralApi(api_client)
+    account_index = 56 # int | 
+    kickback_percentage = 3.4 # float | 
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # referral_kickback_update
+        api_response = await api_instance.referral_kickback_update(account_index, kickback_percentage, authorization=authorization, auth=auth)
+        print("The response of ReferralApi->referral_kickback_update:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReferralApi->referral_kickback_update: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **kickback_percentage** | **float**|  | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**RespUpdateKickback**](RespUpdateKickback.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **referral_points**
+> ReferralPoints referral_points(authorization, account_index)
+
+referral_points
+
+Get referral points
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.referral_points import ReferralPoints
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.ReferralApi(api_client)
+    authorization = 'authorization_example' # str | 
+    account_index = 56 # int | 
+
+    try:
+        # referral_points
+        api_response = await api_instance.referral_points(authorization, account_index)
+        print("The response of ReferralApi->referral_points:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReferralApi->referral_points: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **account_index** | **int**|  | 
+
+### Return type
+
+[**ReferralPoints**](ReferralPoints.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **referral_update**
+> RespUpdateReferralCode referral_update(account_index, new_referral_code, authorization=authorization, auth=auth)
+
+referral_update
+
+Update referral code (allowed once per account)
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_update_referral_code import RespUpdateReferralCode
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.ReferralApi(api_client)
+    account_index = 56 # int | 
+    new_referral_code = 'new_referral_code_example' # str | 
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # referral_update
+        api_response = await api_instance.referral_update(account_index, new_referral_code, authorization=authorization, auth=auth)
+        print("The response of ReferralApi->referral_update:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReferralApi->referral_update: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**|  | 
+ **new_referral_code** | **str**|  | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**RespUpdateReferralCode**](RespUpdateReferralCode.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **referral_use**
+> ResultCode referral_use(l1_address, referral_code, x, authorization=authorization, auth=auth, discord=discord, telegram=telegram, signature=signature)
+
+referral_use
+
+Use a referral code. You can change this at a later time.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.result_code import ResultCode
 from lighter.rest import ApiException
 from pprint import pprint
 
@@ -35,17 +407,21 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.ReferralApi(api_client)
     l1_address = 'l1_address_example' # str | 
-    authorization = 'authorization_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
-    cursor = 'cursor_example' # str |  (optional)
+    referral_code = 'referral_code_example' # str | 
+    x = 'x_example' # str | 
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    discord = 'discord_example' # str |  (optional)
+    telegram = 'telegram_example' # str |  (optional)
+    signature = 'signature_example' # str |  (optional)
 
     try:
-        # referral_userReferrals
-        api_response = await api_instance.referral_user_referrals(l1_address, authorization=authorization, auth=auth, cursor=cursor)
-        print("The response of ReferralApi->referral_user_referrals:\n")
+        # referral_use
+        api_response = await api_instance.referral_use(l1_address, referral_code, x, authorization=authorization, auth=auth, discord=discord, telegram=telegram, signature=signature)
+        print("The response of ReferralApi->referral_use:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling ReferralApi->referral_user_referrals: %s\n" % e)
+        print("Exception when calling ReferralApi->referral_use: %s\n" % e)
 ```
 
 
@@ -56,13 +432,17 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **l1_address** | **str**|  | 
- **authorization** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
- **cursor** | **str**|  | [optional] 
+ **referral_code** | **str**|  | 
+ **x** | **str**|  | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **discord** | **str**|  | [optional] 
+ **telegram** | **str**|  | [optional] 
+ **signature** | **str**|  | [optional] 
 
 ### Return type
 
-[**UserReferrals**](UserReferrals.md)
+[**ResultCode**](ResultCode.md)
 
 ### Authorization
 
@@ -70,7 +450,7 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/x-www-form-urlencoded
  - **Accept**: application/json
 
 ### HTTP response details
