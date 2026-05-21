@@ -72,6 +72,11 @@ Class | Method | HTTP request | Description
 *AccountApi* | [**position_funding**](docs/AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 *AccountApi* | [**public_pools_metadata**](docs/AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
 *AccountApi* | [**referral_user_referrals**](docs/AccountApi.md#referral_user_referrals) | **GET** /api/v1/referral/userReferrals | userReferrals
+*AccountApi* | [**rfq_create**](docs/AccountApi.md#rfq_create) | **POST** /api/v1/rfq/create | rfq_create
+*AccountApi* | [**rfq_get**](docs/AccountApi.md#rfq_get) | **GET** /api/v1/rfq/get | rfq_get
+*AccountApi* | [**rfq_list**](docs/AccountApi.md#rfq_list) | **GET** /api/v1/rfq/list | rfq_list
+*AccountApi* | [**rfq_respond**](docs/AccountApi.md#rfq_respond) | **POST** /api/v1/rfq/respond | rfq_respond
+*AccountApi* | [**rfq_update**](docs/AccountApi.md#rfq_update) | **POST** /api/v1/rfq/update | rfq_update
 *AccountApi* | [**set_maker_only_api_keys**](docs/AccountApi.md#set_maker_only_api_keys) | **POST** /api/v1/setMakerOnlyApiKeys | setMakerOnlyApiKeys
 *AccountApi* | [**tokens**](docs/AccountApi.md#tokens) | **GET** /api/v1/tokens | tokens
 *AccountApi* | [**tokens_create**](docs/AccountApi.md#tokens_create) | **POST** /api/v1/tokens/create | tokens_create
@@ -90,6 +95,7 @@ Class | Method | HTTP request | Description
 *CandlestickApi* | [**fundings**](docs/CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
 *FundingApi* | [**funding_rates**](docs/FundingApi.md#funding_rates) | **GET** /api/v1/funding-rates | funding-rates
 *InfoApi* | [**layer1_basic_info**](docs/InfoApi.md#layer1_basic_info) | **GET** /api/v1/layer1BasicInfo | layer1BasicInfo
+*InfoApi* | [**synthetic_spot_info**](docs/InfoApi.md#synthetic_spot_info) | **GET** /api/v1/syntheticSpotInfo | syntheticSpotInfo
 *InfoApi* | [**system_config**](docs/InfoApi.md#system_config) | **GET** /api/v1/systemConfig | systemConfig
 *InfoApi* | [**transfer_fee_info**](docs/InfoApi.md#transfer_fee_info) | **GET** /api/v1/transferFeeInfo | transferFeeInfo
 *InfoApi* | [**withdrawal_delay**](docs/InfoApi.md#withdrawal_delay) | **GET** /api/v1/withdrawalDelay | withdrawalDelay
@@ -182,7 +188,6 @@ Class | Method | HTTP request | Description
  - [NextNonce](docs/NextNonce.md)
  - [Order](docs/Order.md)
  - [OrderBook](docs/OrderBook.md)
- - [OrderBookDepth](docs/OrderBookDepth.md)
  - [OrderBookDetails](docs/OrderBookDetails.md)
  - [OrderBookOrders](docs/OrderBookOrders.md)
  - [OrderBookStats](docs/OrderBookStats.md)
@@ -194,16 +199,19 @@ Class | Method | HTTP request | Description
  - [PnLEntry](docs/PnLEntry.md)
  - [PositionFunding](docs/PositionFunding.md)
  - [PositionFundings](docs/PositionFundings.md)
- - [PriceLevel](docs/PriceLevel.md)
  - [PublicPoolInfo](docs/PublicPoolInfo.md)
  - [PublicPoolMetadata](docs/PublicPoolMetadata.md)
  - [PublicPoolShare](docs/PublicPoolShare.md)
+ - [RFQEntry](docs/RFQEntry.md)
+ - [RFQMetadata](docs/RFQMetadata.md)
+ - [RFQResponseEntry](docs/RFQResponseEntry.md)
  - [Referral](docs/Referral.md)
  - [ReferralCode](docs/ReferralCode.md)
  - [ReferralPointEntry](docs/ReferralPointEntry.md)
  - [ReferralPoints](docs/ReferralPoints.md)
  - [ReqSetAccountMetadata](docs/ReqSetAccountMetadata.md)
  - [RespChangeAccountTier](docs/RespChangeAccountTier.md)
+ - [RespCreateRFQ](docs/RespCreateRFQ.md)
  - [RespGetApiTokens](docs/RespGetApiTokens.md)
  - [RespGetExchangeMetrics](docs/RespGetExchangeMetrics.md)
  - [RespGetExecuteStats](docs/RespGetExecuteStats.md)
@@ -212,13 +220,18 @@ Class | Method | HTTP request | Description
  - [RespGetLeaseOptions](docs/RespGetLeaseOptions.md)
  - [RespGetLeases](docs/RespGetLeases.md)
  - [RespGetMakerOnlyApiKeys](docs/RespGetMakerOnlyApiKeys.md)
+ - [RespGetRFQ](docs/RespGetRFQ.md)
+ - [RespListRFQs](docs/RespListRFQs.md)
  - [RespPostApiToken](docs/RespPostApiToken.md)
  - [RespPublicPoolsMetadata](docs/RespPublicPoolsMetadata.md)
+ - [RespRespondToRFQ](docs/RespRespondToRFQ.md)
  - [RespRevokeApiToken](docs/RespRevokeApiToken.md)
  - [RespSendTx](docs/RespSendTx.md)
  - [RespSendTxBatch](docs/RespSendTxBatch.md)
  - [RespSetMakerOnlyApiKeys](docs/RespSetMakerOnlyApiKeys.md)
+ - [RespSyntheticSpotInfo](docs/RespSyntheticSpotInfo.md)
  - [RespUpdateKickback](docs/RespUpdateKickback.md)
+ - [RespUpdateRFQ](docs/RespUpdateRFQ.md)
  - [RespUpdateReferralCode](docs/RespUpdateReferralCode.md)
  - [RespWithdrawalDelay](docs/RespWithdrawalDelay.md)
  - [ResultCode](docs/ResultCode.md)

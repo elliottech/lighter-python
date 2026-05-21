@@ -21,6 +21,11 @@ Method | HTTP request | Description
 [**position_funding**](AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 [**public_pools_metadata**](AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
 [**referral_user_referrals**](AccountApi.md#referral_user_referrals) | **GET** /api/v1/referral/userReferrals | userReferrals
+[**rfq_create**](AccountApi.md#rfq_create) | **POST** /api/v1/rfq/create | rfq_create
+[**rfq_get**](AccountApi.md#rfq_get) | **GET** /api/v1/rfq/get | rfq_get
+[**rfq_list**](AccountApi.md#rfq_list) | **GET** /api/v1/rfq/list | rfq_list
+[**rfq_respond**](AccountApi.md#rfq_respond) | **POST** /api/v1/rfq/respond | rfq_respond
+[**rfq_update**](AccountApi.md#rfq_update) | **POST** /api/v1/rfq/update | rfq_update
 [**set_maker_only_api_keys**](AccountApi.md#set_maker_only_api_keys) | **POST** /api/v1/setMakerOnlyApiKeys | setMakerOnlyApiKeys
 [**tokens**](AccountApi.md#tokens) | **GET** /api/v1/tokens | tokens
 [**tokens_create**](AccountApi.md#tokens_create) | **POST** /api/v1/tokens/create | tokens_create
@@ -1287,6 +1292,379 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_create**
+> RespCreateRFQ rfq_create(authorization, market_index, direction, base_amount=base_amount, quote_amount=quote_amount, metadata=metadata)
+
+rfq_create
+
+Create RFQ
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_create_rfq import RespCreateRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    market_index = 56 # int | 
+    direction = 56 # int | 
+    base_amount = 'base_amount_example' # str |  (optional)
+    quote_amount = 'quote_amount_example' # str |  (optional)
+    metadata = 'metadata_example' # str |  (optional)
+
+    try:
+        # rfq_create
+        api_response = await api_instance.rfq_create(authorization, market_index, direction, base_amount=base_amount, quote_amount=quote_amount, metadata=metadata)
+        print("The response of AccountApi->rfq_create:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_create: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **market_index** | **int**|  | 
+ **direction** | **int**|  | 
+ **base_amount** | **str**|  | [optional] 
+ **quote_amount** | **str**|  | [optional] 
+ **metadata** | **str**|  | [optional] 
+
+### Return type
+
+[**RespCreateRFQ**](RespCreateRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_get**
+> RespGetRFQ rfq_get(authorization, rfq_id)
+
+rfq_get
+
+Get RFQ by ID
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_get_rfq import RespGetRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    rfq_id = 56 # int | 
+
+    try:
+        # rfq_get
+        api_response = await api_instance.rfq_get(authorization, rfq_id)
+        print("The response of AccountApi->rfq_get:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_get: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **rfq_id** | **int**|  | 
+
+### Return type
+
+[**RespGetRFQ**](RespGetRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_list**
+> RespListRFQs rfq_list(authorization, account_index=account_index, status=status, cursor=cursor, limit=limit)
+
+rfq_list
+
+List RFQs
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_list_rfqs import RespListRFQs
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    account_index = 56 # int |  (optional)
+    status = 'status_example' # str |  (optional)
+    cursor = 'cursor_example' # str |  (optional)
+    limit = 56 # int |  (optional)
+
+    try:
+        # rfq_list
+        api_response = await api_instance.rfq_list(authorization, account_index=account_index, status=status, cursor=cursor, limit=limit)
+        print("The response of AccountApi->rfq_list:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_list: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **account_index** | **int**|  | [optional] 
+ **status** | **str**|  | [optional] 
+ **cursor** | **str**|  | [optional] 
+ **limit** | **int**|  | [optional] 
+
+### Return type
+
+[**RespListRFQs**](RespListRFQs.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_respond**
+> RespRespondToRFQ rfq_respond(authorization, rfq_id, status)
+
+rfq_respond
+
+Respond to RFQ
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_respond_to_rfq import RespRespondToRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    rfq_id = 56 # int | 
+    status = 'status_example' # str | 
+
+    try:
+        # rfq_respond
+        api_response = await api_instance.rfq_respond(authorization, rfq_id, status)
+        print("The response of AccountApi->rfq_respond:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_respond: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **rfq_id** | **int**|  | 
+ **status** | **str**|  | 
+
+### Return type
+
+[**RespRespondToRFQ**](RespRespondToRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rfq_update**
+> RespUpdateRFQ rfq_update(authorization, rfq_id, status)
+
+rfq_update
+
+Update RFQ status
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.resp_update_rfq import RespUpdateRFQ
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    authorization = 'authorization_example' # str | 
+    rfq_id = 56 # int | 
+    status = 'status_example' # str | 
+
+    try:
+        # rfq_update
+        api_response = await api_instance.rfq_update(authorization, rfq_id, status)
+        print("The response of AccountApi->rfq_update:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->rfq_update: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **rfq_id** | **int**|  | 
+ **status** | **str**|  | 
+
+### Return type
+
+[**RespUpdateRFQ**](RespUpdateRFQ.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded
  - **Accept**: application/json
 
 ### HTTP response details

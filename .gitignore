@@ -69,6 +69,7 @@ openapi-generator-cli.jar
 .idea
 
 examples/secrets.py
+examples/system_setup_local.py
 
 # Environment variables
 .env
