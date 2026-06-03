@@ -12,8 +12,6 @@
 
 #ifndef GO_CGO_GOSTRING_TYPEDEF
 typedef struct { const char *p; ptrdiff_t n; } _GoString_;
-extern size_t _GoStringLen(_GoString_ s);
-extern const char *_GoStringPtr(_GoString_ s);
 #endif
 
 #endif
@@ -83,15 +81,9 @@ typedef size_t GoUintptr;
 typedef float GoFloat32;
 typedef double GoFloat64;
 #ifdef _MSC_VER
-#if !defined(__cplusplus) || _MSVC_LANG <= 201402L
 #include <complex.h>
 typedef _Fcomplex GoComplex64;
 typedef _Dcomplex GoComplex128;
-#else
-#include <complex>
-typedef std::complex<float> GoComplex64;
-typedef std::complex<double> GoComplex128;
-#endif
 #else
 typedef float _Complex GoComplex64;
 typedef double _Complex GoComplex128;
@@ -119,17 +111,17 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern ApiKeyResponse GenerateAPIKey(void);
+extern ApiKeyResponse GenerateAPIKey();
 extern char* CreateClient(char* cUrl, char* cPrivateKey, int cChainId, int cApiKeyIndex, long long cAccountIndex);
 extern char* CheckClient(int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignChangePubKey(char* cPubKey, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignCreateOrder(int cMarketIndex, long long cClientOrderIndex, long long cBaseAmount, int cPrice, int cIsAsk, int cOrderType, int cTimeInForce, int cReduceOnly, int cTriggerPrice, long long cOrderExpiry, long long cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignCreateGroupedOrders(uint8_t cGroupingType, CreateOrderTxReq* cOrders, int cLen, long long cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignCreateOrder(int cMarketIndex, long long cClientOrderIndex, long long cBaseAmount, int cPrice, int cIsAsk, int cOrderType, int cTimeInForce, int cReduceOnly, int cTriggerPrice, long long cOrderExpiry, long long cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignCreateGroupedOrders(uint8_t cGroupingType, CreateOrderTxReq* cOrders, int cLen, long long cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignCancelOrder(int cMarketIndex, long long cOrderIndex, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignWithdraw(int cAssetIndex, int cRouteType, unsigned long long cAmount, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignCreateSubAccount(uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignCancelAllOrders(int cTimeInForce, long long cTime, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignModifyOrder(int cMarketIndex, long long cIndex, long long cBaseAmount, long long cPrice, long long cTriggerPrice, long long cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignCancelAllOrders(int cTimeInForce, long long cTime, int cCancelAllMarketIndex, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignModifyOrder(int cMarketIndex, long long cIndex, long long cBaseAmount, long long cPrice, long long cTriggerPrice, long long cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignTransfer(long long cToAccountIndex, int16_t cAssetIndex, uint8_t cFromRouteType, uint8_t cToRouteType, long long cAmount, long long cUsdcFee, char* cMemo, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignCreatePublicPool(long long cOperatorFee, int cInitialTotalShares, long long cMinOperatorShareRate, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignUpdatePublicPool(long long cPublicPoolIndex, int cStatus, long long cOperatorFee, int cMinOperatorShareRate, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);

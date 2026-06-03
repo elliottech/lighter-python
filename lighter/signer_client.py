@@ -115,10 +115,10 @@ def __populate_shared_library_functions(signer):
     signer.SignChangePubKey.restype = SignedTxResponse
 
     signer.SignCreateOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
-                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+                                            ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateOrder.restype = SignedTxResponse
 
-    signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateGroupedOrders.restype = SignedTxResponse
 
     signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -130,10 +130,10 @@ def __populate_shared_library_functions(signer):
     signer.SignCreateSubAccount.argtypes = [ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateSubAccount.restype = SignedTxResponse
 
-    signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelAllOrders.restype = SignedTxResponse
 
-    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
     signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -291,6 +291,16 @@ class SignerClient:
     GROUPING_TYPE_ONE_TRIGGERS_THE_OTHER = 1
     GROUPING_TYPE_ONE_CANCELS_THE_OTHER = 2
     GROUPING_TYPE_ONE_TRIGGERS_A_ONE_CANCELS_THE_OTHER = 3
+
+    SELF_TRADE_BEHAVIOR_EXPIRE_MAKER = 0
+    SELF_TRADE_BEHAVIOR_EXPIRE_TAKER = 1
+    SELF_TRADE_BEHAVIOR_EXPIRE_BOTH = 2
+    SELF_TRADE_BEHAVIOR_REDUCE = 3
+
+    SELF_TRADE_EQUALITY_ACCOUNT_INDEX = 0
+    SELF_TRADE_EQUALITY_MASTER_ACCOUNT_INDEX = 1
+
+    NIL_MARKET_INDEX = 255
 
     ROUTE_PERP = 0
     ROUTE_SPOT = 1
@@ -475,6 +485,9 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            cancel_all_market_index: int = 255,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
@@ -494,6 +507,9 @@ class SignerClient:
             integrator_taker_fee,
             integrator_maker_fee,
             skip_nonce,
+            cancel_all_market_index,
+            self_trade_behavior_mode,
+            self_trade_equality_mode,
             nonce,
             api_key_index,
             self.account_index,
@@ -506,6 +522,8 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index=DEFAULT_API_KEY_INDEX
@@ -514,7 +532,7 @@ class SignerClient:
         orders_arr = arr_type(*orders)
 
         return self.__decode_tx_info(self.signer.SignCreateGroupedOrders(
-            grouping_type, orders_arr, len(orders), integrator_account_index, integrator_taker_fee, integrator_maker_fee, skip_nonce, nonce, api_key_index, self.account_index
+            grouping_type, orders_arr, len(orders), integrator_account_index, integrator_taker_fee, integrator_maker_fee, self_trade_behavior_mode, self_trade_equality_mode, skip_nonce, nonce, api_key_index, self.account_index
         ))
 
     def sign_cancel_order(self, market_index: int, order_index: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
@@ -526,7 +544,7 @@ class SignerClient:
     def sign_create_sub_account(self, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCreateSubAccount(skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+    def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, cancel_all_market_index: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCancelAllOrders(time_in_force, timestamp_ms, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_modify_order(
@@ -540,11 +558,13 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, skip_nonce, nonce, api_key_index, self.account_index))
+        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, self_trade_behavior_mode, self_trade_behavior_mode, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_approve_integrator(
             self,
@@ -654,6 +674,8 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce : int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
@@ -672,6 +694,8 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            self_trade_behavior_mode=self_trade_behavior_mode,
+            self_trade_equality_mode=self_trade_equality_mode,
             skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
@@ -693,6 +717,8 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce : int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
@@ -703,6 +729,8 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            self_trade_behavior_mode=self_trade_behavior_mode,
+            self_trade_equality_mode=self_trade_equality_mode,
             skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index
@@ -727,6 +755,8 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
@@ -744,6 +774,8 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            self_trade_behavior_mode=self_trade_behavior_mode,
+            self_trade_equality_mode=self_trade_equality_mode,
             skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index,
@@ -1114,8 +1146,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def cancel_all_orders(self, time_in_force, timestamp_ms, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX)-> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
-        tx_type, tx_info, tx_hash, error = self.sign_cancel_all_orders(time_in_force, timestamp_ms, skip_nonce, nonce, api_key_index)
+    async def cancel_all_orders(self, time_in_force, timestamp_ms, cancel_all_market_index, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX)-> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
+        tx_type, tx_info, tx_hash, error = self.sign_cancel_all_orders(time_in_force, timestamp_ms, cancel_all_market_index ,skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
@@ -1136,6 +1168,8 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
@@ -1149,6 +1183,8 @@ class SignerClient:
             integrator_account_index=integrator_account_index,
             integrator_taker_fee=integrator_taker_fee,
             integrator_maker_fee=integrator_maker_fee,
+            self_trade_behavior_mode=self_trade_behavior_mode,
+            self_trade_equality_mode=self_trade_equality_mode,
             skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index
