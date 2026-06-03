@@ -72,6 +72,8 @@ def __get_shared_library():
 
     if is_arm and is_mac:
         return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-darwin-arm64.dylib"))
+    elif is_x64 and is_mac:
+        return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-darwin-amd64.dylib"))
     elif is_linux and is_x64:
         return ctypes.CDLL(os.path.join(path_to_signer_folders, "lighter-signer-linux-amd64.so"))
     elif is_linux and is_arm:
@@ -81,7 +83,7 @@ def __get_shared_library():
     else:
         raise Exception(
             f"Unsupported platform/architecture: {platform.system()}/{platform.machine()}. "
-            "Currently supported: Linux(x86_64), macOS(arm64), and Windows(x86_64)."
+            "Currently supported: Linux(x86_64/arm64), macOS(arm64/x86_64), and Windows(x86_64)."
         )
 
 
@@ -485,7 +487,6 @@ class SignerClient:
             integrator_account_index: int = 0,
             integrator_taker_fee: int = 0,
             integrator_maker_fee: int = 0,
-            cancel_all_market_index: int = 255,
             self_trade_behavior_mode: int = 0,
             self_trade_equality_mode: int = 0,
             skip_nonce: int = SKIP_NONCE_OFF,
@@ -506,10 +507,9 @@ class SignerClient:
             integrator_account_index,
             integrator_taker_fee,
             integrator_maker_fee,
-            skip_nonce,
-            cancel_all_market_index,
             self_trade_behavior_mode,
             self_trade_equality_mode,
+            skip_nonce,
             nonce,
             api_key_index,
             self.account_index,
@@ -544,8 +544,8 @@ class SignerClient:
     def sign_create_sub_account(self, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignCreateSubAccount(skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, cancel_all_market_index: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignCancelAllOrders(time_in_force, timestamp_ms, skip_nonce, nonce, api_key_index, self.account_index))
+    def sign_cancel_all_orders(self, time_in_force: int, timestamp_ms: int, cancel_all_market_index: int = NIL_MARKET_INDEX, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignCancelAllOrders(time_in_force, timestamp_ms, cancel_all_market_index, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_modify_order(
             self,
@@ -564,7 +564,7 @@ class SignerClient:
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, self_trade_behavior_mode, self_trade_behavior_mode, skip_nonce, nonce, api_key_index, self.account_index))
+        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, self_trade_behavior_mode, self_trade_equality_mode, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_approve_integrator(
             self,
@@ -1146,8 +1146,8 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def cancel_all_orders(self, time_in_force, timestamp_ms, cancel_all_market_index, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX)-> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
-        tx_type, tx_info, tx_hash, error = self.sign_cancel_all_orders(time_in_force, timestamp_ms, cancel_all_market_index ,skip_nonce, nonce, api_key_index)
+    async def cancel_all_orders(self, time_in_force, timestamp_ms, cancel_all_market_index: int = NIL_MARKET_INDEX, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX)-> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
+        tx_type, tx_info, tx_hash, error = self.sign_cancel_all_orders(time_in_force, timestamp_ms, cancel_all_market_index, skip_nonce, nonce, api_key_index)
         if error is not None:
             return None, None, error
 
