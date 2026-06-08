@@ -568,7 +568,7 @@ class SignerClient:
 
     def sign_approve_integrator(
             self,
-            eth_private_key: str,
+            eth_private_key: Optional[str],
             integrator_account_index: int,
             max_perps_taker_fee: int,
             max_perps_maker_fee: int,
@@ -591,6 +591,8 @@ class SignerClient:
             api_key_index,
             self.account_index
         )
+        if eth_private_key is None:
+            return self.__decode_tx_info(res)
         return self.__decode_and_sign_tx_info(eth_private_key, res)
 
     def sign_approve_integrator_same_master_account(
@@ -1200,7 +1202,6 @@ class SignerClient:
     @process_api_key_and_nonce
     async def approve_integrator(
             self,
-            eth_private_key: str,
             integrator_account_index: int,
             max_perps_taker_fee: int,
             max_perps_maker_fee: int,
@@ -1209,7 +1210,8 @@ class SignerClient:
             approval_expiry: int,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
-            api_key_index: int = DEFAULT_API_KEY_INDEX
+            api_key_index: int = DEFAULT_API_KEY_INDEX,
+            eth_private_key: Optional[str] = None,
     ):
         tx_type, tx_info, tx_hash, error = self.sign_approve_integrator(
             eth_private_key,
