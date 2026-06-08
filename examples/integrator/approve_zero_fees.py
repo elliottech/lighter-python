@@ -3,26 +3,27 @@ import os
 import time
 from examples.utils import default_example_setup
 
-CONFIG = os.path.join(os.path.dirname(__file__), "..", "api_key_config.json")
-approval_expiry = int(time.time() * 1000) + 90 * 24 * 60 * 60 * 1000  # now + 90 days, in ms
+
+CONFIG_FILE = "../api_key_config.json"
+APPROVAL_EXPIRY = int(time.time() * 1000) + 90 * 24 * 60 * 60 * 1000  # now + 90 days, in ms
 
 
 async def main():
-    client, api_client, _ = default_example_setup(config_file=CONFIG)
+    client, api_client, _ = default_example_setup(CONFIG_FILE)
 
     err = client.check_client()
     if err is not None:
         print(f"CheckClient error: {err}")
         return
 
-    # Revoke = all fees 0 + expiry 0. No eth_private_key required, L2 sig only.
+    # no L1 sig required if integrator takes no fees
     tx_info, response, err = await client.approve_integrator(
         integrator_account_index=6,
         max_perps_taker_fee=0,
         max_perps_maker_fee=0,
         max_spot_taker_fee=0,
         max_spot_maker_fee=0,
-        approval_expiry=0,
+        approval_expiry=APPROVAL_EXPIRY,
     )
     print(tx_info, response, err)
 

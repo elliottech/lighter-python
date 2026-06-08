@@ -1,15 +1,18 @@
 import asyncio
-from utils import default_example_setup
+from examples.utils import default_example_setup
+
+
+CONFIG_FILE = "../api_key_config.json"
 
 
 async def main():
-    client, api_client, _ = default_example_setup()
+    client, api_client, _ = default_example_setup(CONFIG_FILE)
     client.check_client()
 
     # Note: change this to 2048 to trade spot ETH. Make sure you have at least 0.1 ETH to trade spot.
     market_index = 2048
     # integrator_account_index = 6
-    integrator_account_index = 281474976710647
+    integrator_account_index = 281474976710649
     integrator_taker_fee = 1000
     integrator_maker_fee = 500
 
