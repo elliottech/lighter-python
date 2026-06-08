@@ -3,7 +3,6 @@ import os
 import time
 from examples.utils import default_example_setup
 
-
 CONFIG = os.path.join(os.path.dirname(__file__), "..", "api_key_config.json")
 approval_expiry = int(time.time() * 1000) + 90 * 24 * 60 * 60 * 1000  # now + 90 days, in ms
 
@@ -16,16 +15,14 @@ async def main():
         print(f"CheckClient error: {err}")
         return
 
-    # L2-only approve: no eth_private_key, signed with the API (L2) key only.
-    # integrator_account_index must be a SUB-ACCOUNT under your own master account (same L1 owner).
-    # This is what lets the approve go through with L2 sig only (no eth_private_key).
+    # Revoke = all fees 0 + expiry 0. No eth_private_key required, L2 sig only.
     tx_info, response, err = await client.approve_integrator(
         integrator_account_index=6,
-        max_perps_taker_fee=1000,
-        max_perps_maker_fee=1000,
-        max_spot_taker_fee=1000,
-        max_spot_maker_fee=1000,
-        approval_expiry=approval_expiry,
+        max_perps_taker_fee=0,
+        max_perps_maker_fee=0,
+        max_spot_taker_fee=0,
+        max_spot_maker_fee=0,
+        approval_expiry=0,
     )
     print(tx_info, response, err)
 
