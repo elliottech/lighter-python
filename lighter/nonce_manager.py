@@ -9,7 +9,7 @@ from lighter.errors import ValidationError
 
 
 def get_nonce_from_api(client: ApiClient, account_index: int, api_key: int) -> int:
-    #  uses request to avoid async initialization
+    # uses requests to avoid async initialization
     req = requests.get(
         client.configuration.host + "/api/v1/nextNonce",
         params={"account_index": account_index, "api_key_index": api_key},

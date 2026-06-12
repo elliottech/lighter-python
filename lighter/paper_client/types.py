@@ -51,7 +51,7 @@ class PaperHealthStatus(IntEnum):
     # in real Lighter, accounts pass through TAV < MMR and TAV < COMR states,
     # but the paper sim collapses them. Liquidation runs atomically with every
     # mark update, so any position whose mark crosses liquidation_price is wiped
-    # in the same tick.    
+    # in the same tick.
     BANKRUPTCY = 4
 
 def utc_now() -> datetime:
