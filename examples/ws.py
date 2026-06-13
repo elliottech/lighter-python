@@ -5,19 +5,23 @@ import lighter
 logging.basicConfig(level=logging.INFO)
 
 
-def on_order_book_update(market_id, order_book):
-    logging.info(f"Order book {market_id}:\n{json.dumps(order_book, indent=2)}")
+def on_order_book(message):
+    logging.info(
+        f"Order book {message['channel']}:\n"
+        f"{json.dumps(message.get('order_book'), indent=2)}"
+    )
 
 
-def on_account_update(account_id, account):
-    logging.info(f"Account {account_id}:\n{json.dumps(account, indent=2)}")
+def on_account(message):
+    logging.info(
+        f"Account {message['channel']}:\n{json.dumps(message, indent=2)}"
+    )
 
 
-client = lighter.WsClient(
-    order_book_ids=[0, 1],
-    account_ids=[1, 2],
-    on_order_book_update=on_order_book_update,
-    on_account_update=on_account_update,
-)
+client = lighter.WsClient()
+for market_id in [0, 1]:
+    client.subscribe(f"order_book/{market_id}", on_update=on_order_book)
+for account_id in [1, 2]:
+    client.subscribe(f"account_all/{account_id}", on_update=on_account)
 
 client.run()

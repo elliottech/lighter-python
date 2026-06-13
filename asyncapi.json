@@ -1,0 +1,3177 @@
+{
+  "asyncapi": "3.0.0",
+  "info": {
+    "title": "Lighter WebSocket API",
+    "version": "1.0.0",
+    "description": "Real-time market data, account state, and transaction submission for the zkLighter exchange. Hand-mirrored from https://apidocs.lighter.xyz/docs/websocket-reference. The schemas are intentionally permissive (`additionalProperties: true`, all channel-specific fields optional) so server-side additions do not invalidate generated clients.",
+    "contact": {
+      "name": "Lighter API docs",
+      "url": "https://apidocs.lighter.xyz/docs/websocket-reference"
+    }
+  },
+  "defaultContentType": "application/json",
+  "servers": {
+    "mainnet": {
+      "host": "mainnet.zklighter.elliot.ai",
+      "pathname": "/stream",
+      "protocol": "wss",
+      "description": "Mainnet WebSocket gateway. Append `?readonly=true` to bypass IP region restrictions for read-only data."
+    },
+    "testnet": {
+      "host": "testnet.zklighter.elliot.ai",
+      "pathname": "/stream",
+      "protocol": "wss",
+      "description": "Testnet WebSocket gateway."
+    }
+  },
+  "channels": {
+    "order_book": {
+      "address": "order_book/{market_id}",
+      "title": "Order Book",
+      "description": "Order book snapshots and diffs for a given market. Snapshots ship on subscribe; subsequent messages are price-level diffs.",
+      "messages": {
+        "OrderBookSubscribed": {
+          "$ref": "#/components/messages/OrderBookSubscribed"
+        },
+        "OrderBookUpdate": {
+          "$ref": "#/components/messages/OrderBookUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index."
+        }
+      }
+    },
+    "ticker": {
+      "address": "ticker/{market_id}",
+      "title": "Best Bid and Offer (BBO)",
+      "description": "Best bid/offer updates for a given market.",
+      "messages": {
+        "TickerSubscribed": {
+          "$ref": "#/components/messages/TickerSubscribed"
+        },
+        "TickerUpdate": {
+          "$ref": "#/components/messages/TickerUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index."
+        }
+      }
+    },
+    "market_stats": {
+      "address": "market_stats/{market_id}",
+      "title": "Market Stats",
+      "description": "Per-market rolling stats (volume, price change, etc.). Pass `all` as the market id to receive every market on one subscription.",
+      "messages": {
+        "MarketStatsSubscribed": {
+          "$ref": "#/components/messages/MarketStatsSubscribed"
+        },
+        "MarketStatsUpdate": {
+          "$ref": "#/components/messages/MarketStatsUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index, or the literal string `all` to receive stats for every market."
+        }
+      }
+    },
+    "spot_market_stats": {
+      "address": "spot_market_stats/{market_id}",
+      "title": "Spot Market Stats",
+      "description": "Per-spot-market rolling stats. Pass `all` to receive every spot market on one subscription.",
+      "messages": {
+        "SpotMarketStatsSubscribed": {
+          "$ref": "#/components/messages/SpotMarketStatsSubscribed"
+        },
+        "SpotMarketStatsUpdate": {
+          "$ref": "#/components/messages/SpotMarketStatsUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Spot market index, or the literal string `all`."
+        }
+      }
+    },
+    "trade": {
+      "address": "trade/{market_id}",
+      "title": "Trade",
+      "description": "Public trade stream for a given market.",
+      "messages": {
+        "TradeSubscribed": {
+          "$ref": "#/components/messages/TradeSubscribed"
+        },
+        "TradeUpdate": {
+          "$ref": "#/components/messages/TradeUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index."
+        }
+      }
+    },
+    "candle": {
+      "address": "candle/{market_id}/{resolution}",
+      "title": "Candlesticks",
+      "description": "Candlestick stream for a (market, resolution) pair.",
+      "messages": {
+        "CandleSubscribed": {
+          "$ref": "#/components/messages/CandleSubscribed"
+        },
+        "CandleUpdate": {
+          "$ref": "#/components/messages/CandleUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index."
+        },
+        "resolution": {
+          "description": "Candle resolution, e.g. `1m`, `5m`, `1h`, `1d`."
+        }
+      }
+    },
+    "height": {
+      "address": "height",
+      "title": "Height",
+      "description": "Latest L2 block height.",
+      "messages": {
+        "HeightSubscribed": {
+          "$ref": "#/components/messages/HeightSubscribed"
+        },
+        "HeightUpdate": {
+          "$ref": "#/components/messages/HeightUpdate"
+        }
+      }
+    },
+    "account_all": {
+      "address": "account_all/{account_id}",
+      "title": "Account All",
+      "description": "Combined account stream: orders, positions, trades, funding histories/rates, and pool shares.",
+      "messages": {
+        "AccountAllSubscribed": {
+          "$ref": "#/components/messages/AccountAllSubscribed"
+        },
+        "AccountAllUpdate": {
+          "$ref": "#/components/messages/AccountAllUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_market": {
+      "address": "account_market/{market_id}/{account_id}",
+      "title": "Account Market",
+      "description": "Per-market view of a specific account (orders, positions, trades restricted to one market).",
+      "messages": {
+        "AccountMarketSubscribed": {
+          "$ref": "#/components/messages/AccountMarketSubscribed"
+        },
+        "AccountMarketUpdate": {
+          "$ref": "#/components/messages/AccountMarketUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index."
+        },
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "user_stats": {
+      "address": "user_stats/{account_id}",
+      "title": "Account Stats",
+      "description": "Aggregate stats for an account (collateral, portfolio value, etc.).",
+      "messages": {
+        "UserStatsSubscribed": {
+          "$ref": "#/components/messages/UserStatsSubscribed"
+        },
+        "UserStatsUpdate": {
+          "$ref": "#/components/messages/UserStatsUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_tx": {
+      "address": "account_tx/{account_id}",
+      "title": "Account Tx",
+      "description": "Transaction history for a specific account.",
+      "messages": {
+        "AccountTxSubscribed": {
+          "$ref": "#/components/messages/AccountTxSubscribed"
+        },
+        "AccountTxUpdate": {
+          "$ref": "#/components/messages/AccountTxUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_all_orders": {
+      "address": "account_all_orders/{account_id}",
+      "title": "Account All Orders",
+      "description": "All orders across markets for an account.",
+      "messages": {
+        "AccountAllOrdersSubscribed": {
+          "$ref": "#/components/messages/AccountAllOrdersSubscribed"
+        },
+        "AccountAllOrdersUpdate": {
+          "$ref": "#/components/messages/AccountAllOrdersUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_orders": {
+      "address": "account_orders/{market_id}/{account_id}",
+      "title": "Account Orders",
+      "description": "Orders for an account scoped to a single market.",
+      "messages": {
+        "AccountOrdersSubscribed": {
+          "$ref": "#/components/messages/AccountOrdersSubscribed"
+        },
+        "AccountOrdersUpdate": {
+          "$ref": "#/components/messages/AccountOrdersUpdate"
+        }
+      },
+      "parameters": {
+        "market_id": {
+          "description": "Market index."
+        },
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_all_trades": {
+      "address": "account_all_trades/{account_id}",
+      "title": "Account All Trades",
+      "description": "All trades for an account across markets. Snapshot keys trades by market index; updates may emit a flat list.",
+      "messages": {
+        "AccountAllTradesSubscribed": {
+          "$ref": "#/components/messages/AccountAllTradesSubscribed"
+        },
+        "AccountAllTradesUpdate": {
+          "$ref": "#/components/messages/AccountAllTradesUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_all_positions": {
+      "address": "account_all_positions/{account_id}",
+      "title": "Account All Positions",
+      "description": "All positions for an account, keyed by market index.",
+      "messages": {
+        "AccountAllPositionsSubscribed": {
+          "$ref": "#/components/messages/AccountAllPositionsSubscribed"
+        },
+        "AccountAllPositionsUpdate": {
+          "$ref": "#/components/messages/AccountAllPositionsUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_all_assets": {
+      "address": "account_all_assets/{account_id}",
+      "title": "Account All Assets",
+      "description": "Per-asset balances for all spot markets for a specific account. `balance` is in coin terms, not USDC.",
+      "messages": {
+        "AccountAllAssetsSubscribed": {
+          "$ref": "#/components/messages/AccountAllAssetsSubscribed"
+        },
+        "AccountAllAssetsUpdate": {
+          "$ref": "#/components/messages/AccountAllAssetsUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "account_spot_avg_entry_prices": {
+      "address": "account_spot_avg_entry_prices/{account_id}",
+      "title": "Average Entry Prices",
+      "description": "Spot avg-entry-price stream. Each event accounts as a buy/sell at the index price; `last_trade_id` confirms the validity horizon.",
+      "messages": {
+        "AccountSpotAvgEntryPricesSubscribed": {
+          "$ref": "#/components/messages/AccountSpotAvgEntryPricesSubscribed"
+        },
+        "AccountSpotAvgEntryPricesUpdate": {
+          "$ref": "#/components/messages/AccountSpotAvgEntryPricesUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "notification": {
+      "address": "notification/{account_id}",
+      "title": "Notification",
+      "description": "Per-account notification stream.",
+      "messages": {
+        "NotificationSubscribed": {
+          "$ref": "#/components/messages/NotificationSubscribed"
+        },
+        "NotificationUpdate": {
+          "$ref": "#/components/messages/NotificationUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Account index."
+        }
+      }
+    },
+    "pool_data": {
+      "address": "pool_data/{account_id}",
+      "title": "Pool Data",
+      "description": "Live data for a public pool account.",
+      "messages": {
+        "PoolDataSubscribed": {
+          "$ref": "#/components/messages/PoolDataSubscribed"
+        },
+        "PoolDataUpdate": {
+          "$ref": "#/components/messages/PoolDataUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Pool account index."
+        }
+      }
+    },
+    "pool_info": {
+      "address": "pool_info/{account_id}",
+      "title": "Pool Info",
+      "description": "Public pool metadata.",
+      "messages": {
+        "PoolInfoSubscribed": {
+          "$ref": "#/components/messages/PoolInfoSubscribed"
+        },
+        "PoolInfoUpdate": {
+          "$ref": "#/components/messages/PoolInfoUpdate"
+        }
+      },
+      "parameters": {
+        "account_id": {
+          "description": "Pool account index."
+        }
+      }
+    },
+    "_control": {
+      "address": "(connection)",
+      "title": "Connection control plane",
+      "description": "Frames not tied to a subscription address: client \u2192 server `subscribe`/`unsubscribe`/`ping`/`jsonapi/sendtx`/`jsonapi/sendtxbatch`, and server \u2192 client `connected`/`error`/`pong`/`jsonapi/*` responses.",
+      "messages": {
+        "SubscribeRequest": {
+          "$ref": "#/components/messages/SubscribeRequest"
+        },
+        "UnsubscribeRequest": {
+          "$ref": "#/components/messages/UnsubscribeRequest"
+        },
+        "Ping": {
+          "$ref": "#/components/messages/Ping"
+        },
+        "SendTx": {
+          "$ref": "#/components/messages/SendTx"
+        },
+        "SendTxBatch": {
+          "$ref": "#/components/messages/SendTxBatch"
+        },
+        "Connected": {
+          "$ref": "#/components/messages/Connected"
+        },
+        "ServerError": {
+          "$ref": "#/components/messages/ServerError"
+        },
+        "Pong": {
+          "$ref": "#/components/messages/Pong"
+        },
+        "TxResponse": {
+          "$ref": "#/components/messages/TxResponse"
+        }
+      }
+    }
+  },
+  "operations": {
+    "subscribe_order_book": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/order_book"
+      },
+      "summary": "Subscribe to `order_book/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_order_book": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/order_book"
+      },
+      "summary": "Receive snapshot + updates for `order_book/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/order_book/messages/OrderBookSubscribed"
+        },
+        {
+          "$ref": "#/channels/order_book/messages/OrderBookUpdate"
+        }
+      ]
+    },
+    "subscribe_ticker": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/ticker"
+      },
+      "summary": "Subscribe to `ticker/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_ticker": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/ticker"
+      },
+      "summary": "Receive snapshot + updates for `ticker/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/ticker/messages/TickerSubscribed"
+        },
+        {
+          "$ref": "#/channels/ticker/messages/TickerUpdate"
+        }
+      ]
+    },
+    "subscribe_market_stats": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/market_stats"
+      },
+      "summary": "Subscribe to `market_stats/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_market_stats": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/market_stats"
+      },
+      "summary": "Receive snapshot + updates for `market_stats/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/market_stats/messages/MarketStatsSubscribed"
+        },
+        {
+          "$ref": "#/channels/market_stats/messages/MarketStatsUpdate"
+        }
+      ]
+    },
+    "subscribe_spot_market_stats": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/spot_market_stats"
+      },
+      "summary": "Subscribe to `spot_market_stats/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_spot_market_stats": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/spot_market_stats"
+      },
+      "summary": "Receive snapshot + updates for `spot_market_stats/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/spot_market_stats/messages/SpotMarketStatsSubscribed"
+        },
+        {
+          "$ref": "#/channels/spot_market_stats/messages/SpotMarketStatsUpdate"
+        }
+      ]
+    },
+    "subscribe_trade": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/trade"
+      },
+      "summary": "Subscribe to `trade/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_trade": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/trade"
+      },
+      "summary": "Receive snapshot + updates for `trade/{market_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/trade/messages/TradeSubscribed"
+        },
+        {
+          "$ref": "#/channels/trade/messages/TradeUpdate"
+        }
+      ]
+    },
+    "subscribe_candle": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/candle"
+      },
+      "summary": "Subscribe to `candle/{market_id}/{resolution}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_candle": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/candle"
+      },
+      "summary": "Receive snapshot + updates for `candle/{market_id}/{resolution}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/candle/messages/CandleSubscribed"
+        },
+        {
+          "$ref": "#/channels/candle/messages/CandleUpdate"
+        }
+      ]
+    },
+    "subscribe_height": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/height"
+      },
+      "summary": "Subscribe to `height`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_height": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/height"
+      },
+      "summary": "Receive snapshot + updates for `height`.",
+      "messages": [
+        {
+          "$ref": "#/channels/height/messages/HeightSubscribed"
+        },
+        {
+          "$ref": "#/channels/height/messages/HeightUpdate"
+        }
+      ]
+    },
+    "subscribe_account_all": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_all"
+      },
+      "summary": "Subscribe to `account_all/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_account_all": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_all"
+      },
+      "summary": "Receive snapshot + updates for `account_all/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_all/messages/AccountAllSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_all/messages/AccountAllUpdate"
+        }
+      ]
+    },
+    "subscribe_account_market": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_market"
+      },
+      "summary": "Subscribe to `account_market/{market_id}/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_account_market": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_market"
+      },
+      "summary": "Receive snapshot + updates for `account_market/{market_id}/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_market/messages/AccountMarketSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_market/messages/AccountMarketUpdate"
+        }
+      ]
+    },
+    "subscribe_user_stats": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/user_stats"
+      },
+      "summary": "Subscribe to `user_stats/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_user_stats": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/user_stats"
+      },
+      "summary": "Receive snapshot + updates for `user_stats/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/user_stats/messages/UserStatsSubscribed"
+        },
+        {
+          "$ref": "#/channels/user_stats/messages/UserStatsUpdate"
+        }
+      ]
+    },
+    "subscribe_account_tx": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_tx"
+      },
+      "summary": "Subscribe to `account_tx/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_account_tx": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_tx"
+      },
+      "summary": "Receive snapshot + updates for `account_tx/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_tx/messages/AccountTxSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_tx/messages/AccountTxUpdate"
+        }
+      ]
+    },
+    "subscribe_account_all_orders": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_all_orders"
+      },
+      "summary": "Subscribe to `account_all_orders/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_account_all_orders": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_all_orders"
+      },
+      "summary": "Receive snapshot + updates for `account_all_orders/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_all_orders/messages/AccountAllOrdersSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_all_orders/messages/AccountAllOrdersUpdate"
+        }
+      ]
+    },
+    "subscribe_account_orders": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_orders"
+      },
+      "summary": "Subscribe to `account_orders/{market_id}/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_account_orders": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_orders"
+      },
+      "summary": "Receive snapshot + updates for `account_orders/{market_id}/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_orders/messages/AccountOrdersSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_orders/messages/AccountOrdersUpdate"
+        }
+      ]
+    },
+    "subscribe_account_all_trades": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_all_trades"
+      },
+      "summary": "Subscribe to `account_all_trades/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_account_all_trades": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_all_trades"
+      },
+      "summary": "Receive snapshot + updates for `account_all_trades/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_all_trades/messages/AccountAllTradesSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_all_trades/messages/AccountAllTradesUpdate"
+        }
+      ]
+    },
+    "subscribe_account_all_positions": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_all_positions"
+      },
+      "summary": "Subscribe to `account_all_positions/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ]
+    },
+    "receive_account_all_positions": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_all_positions"
+      },
+      "summary": "Receive snapshot + updates for `account_all_positions/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_all_positions/messages/AccountAllPositionsSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_all_positions/messages/AccountAllPositionsUpdate"
+        }
+      ]
+    },
+    "subscribe_account_all_assets": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_all_assets"
+      },
+      "summary": "Subscribe to `account_all_assets/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_account_all_assets": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_all_assets"
+      },
+      "summary": "Receive snapshot + updates for `account_all_assets/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_all_assets/messages/AccountAllAssetsSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_all_assets/messages/AccountAllAssetsUpdate"
+        }
+      ]
+    },
+    "subscribe_account_spot_avg_entry_prices": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/account_spot_avg_entry_prices"
+      },
+      "summary": "Subscribe to `account_spot_avg_entry_prices/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_account_spot_avg_entry_prices": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/account_spot_avg_entry_prices"
+      },
+      "summary": "Receive snapshot + updates for `account_spot_avg_entry_prices/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/account_spot_avg_entry_prices/messages/AccountSpotAvgEntryPricesSubscribed"
+        },
+        {
+          "$ref": "#/channels/account_spot_avg_entry_prices/messages/AccountSpotAvgEntryPricesUpdate"
+        }
+      ]
+    },
+    "subscribe_notification": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/notification"
+      },
+      "summary": "Subscribe to `notification/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_notification": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/notification"
+      },
+      "summary": "Receive snapshot + updates for `notification/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/notification/messages/NotificationSubscribed"
+        },
+        {
+          "$ref": "#/channels/notification/messages/NotificationUpdate"
+        }
+      ]
+    },
+    "subscribe_pool_data": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/pool_data"
+      },
+      "summary": "Subscribe to `pool_data/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_pool_data": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/pool_data"
+      },
+      "summary": "Receive snapshot + updates for `pool_data/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/pool_data/messages/PoolDataSubscribed"
+        },
+        {
+          "$ref": "#/channels/pool_data/messages/PoolDataUpdate"
+        }
+      ]
+    },
+    "subscribe_pool_info": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/pool_info"
+      },
+      "summary": "Subscribe to `pool_info/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SubscribeRequest"
+        }
+      ],
+      "security": [
+        {
+          "$ref": "#/components/securitySchemes/bearerToken"
+        }
+      ]
+    },
+    "receive_pool_info": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/pool_info"
+      },
+      "summary": "Receive snapshot + updates for `pool_info/{account_id}`.",
+      "messages": [
+        {
+          "$ref": "#/channels/pool_info/messages/PoolInfoSubscribed"
+        },
+        {
+          "$ref": "#/channels/pool_info/messages/PoolInfoUpdate"
+        }
+      ]
+    },
+    "unsubscribe": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Cancel an existing subscription.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/UnsubscribeRequest"
+        }
+      ]
+    },
+    "ping": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Application-level heartbeat (server replies with `Pong`).",
+      "messages": [
+        {
+          "$ref": "#/components/messages/Ping"
+        }
+      ]
+    },
+    "send_tx": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Submit a single signed transaction.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SendTx"
+        }
+      ]
+    },
+    "send_tx_batch": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Submit up to 15 signed transactions in a single frame.",
+      "messages": [
+        {
+          "$ref": "#/components/messages/SendTxBatch"
+        }
+      ]
+    },
+    "receive_connected": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Connection welcome frame.",
+      "messages": [
+        {
+          "$ref": "#/channels/_control/messages/Connected"
+        }
+      ]
+    },
+    "receive_error": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Server error frame.",
+      "messages": [
+        {
+          "$ref": "#/channels/_control/messages/ServerError"
+        }
+      ]
+    },
+    "receive_pong": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Reply to a client `Ping`.",
+      "messages": [
+        {
+          "$ref": "#/channels/_control/messages/Pong"
+        }
+      ]
+    },
+    "receive_tx_response": {
+      "action": "receive",
+      "channel": {
+        "$ref": "#/channels/_control"
+      },
+      "summary": "Reply to `jsonapi/sendtx` or `jsonapi/sendtxbatch` (success or error).",
+      "messages": [
+        {
+          "$ref": "#/channels/_control/messages/TxResponse"
+        }
+      ]
+    }
+  },
+  "components": {
+    "messages": {
+      "OrderBookSubscribed": {
+        "name": "OrderBookSubscribed",
+        "title": "Order Book snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `order_book/{market_id}`.",
+        "x-message-type": "subscribed/order_book",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "order_book": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "asks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "bids": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "offset": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "OrderBookUpdate": {
+        "name": "OrderBookUpdate",
+        "title": "Order Book update",
+        "summary": "Live update for an existing subscription to `order_book/{market_id}`.",
+        "x-message-type": "update/order_book",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "order_book": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "asks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "bids": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "offset": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "TickerSubscribed": {
+        "name": "TickerSubscribed",
+        "title": "Best Bid and Offer (BBO) snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `ticker/{market_id}`.",
+        "x-message-type": "subscribed/ticker",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "ticker": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "TickerUpdate": {
+        "name": "TickerUpdate",
+        "title": "Best Bid and Offer (BBO) update",
+        "summary": "Live update for an existing subscription to `ticker/{market_id}`.",
+        "x-message-type": "update/ticker",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "ticker": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "MarketStatsSubscribed": {
+        "name": "MarketStatsSubscribed",
+        "title": "Market Stats snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `market_stats/{market_id}`.",
+        "x-message-type": "subscribed/market_stats",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "market_stats": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "MarketStatsUpdate": {
+        "name": "MarketStatsUpdate",
+        "title": "Market Stats update",
+        "summary": "Live update for an existing subscription to `market_stats/{market_id}`.",
+        "x-message-type": "update/market_stats",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "market_stats": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "SpotMarketStatsSubscribed": {
+        "name": "SpotMarketStatsSubscribed",
+        "title": "Spot Market Stats snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `spot_market_stats/{market_id}`.",
+        "x-message-type": "subscribed/spot_market_stats",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "spot_market_stats": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "SpotMarketStatsUpdate": {
+        "name": "SpotMarketStatsUpdate",
+        "title": "Spot Market Stats update",
+        "summary": "Live update for an existing subscription to `spot_market_stats/{market_id}`.",
+        "x-message-type": "update/spot_market_stats",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "spot_market_stats": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "TradeSubscribed": {
+        "name": "TradeSubscribed",
+        "title": "Trade snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `trade/{market_id}`.",
+        "x-message-type": "subscribed/trade",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "trades": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            }
+          }
+        }
+      },
+      "TradeUpdate": {
+        "name": "TradeUpdate",
+        "title": "Trade update",
+        "summary": "Live update for an existing subscription to `trade/{market_id}`.",
+        "x-message-type": "update/trade",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "trades": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            }
+          }
+        }
+      },
+      "CandleSubscribed": {
+        "name": "CandleSubscribed",
+        "title": "Candlesticks snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `candle/{market_id}/{resolution}`.",
+        "x-message-type": "subscribed/candle",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "candle": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "resolution": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CandleUpdate": {
+        "name": "CandleUpdate",
+        "title": "Candlesticks update",
+        "summary": "Live update for an existing subscription to `candle/{market_id}/{resolution}`.",
+        "x-message-type": "update/candle",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "candle": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "resolution": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "HeightSubscribed": {
+        "name": "HeightSubscribed",
+        "title": "Height snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `height`.",
+        "x-message-type": "subscribed/height",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "height": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "HeightUpdate": {
+        "name": "HeightUpdate",
+        "title": "Height update",
+        "summary": "Live update for an existing subscription to `height`.",
+        "x-message-type": "update/height",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "height": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "AccountAllSubscribed": {
+        "name": "AccountAllSubscribed",
+        "title": "Account All snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_all/{account_id}`.",
+        "x-message-type": "subscribed/account_all",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "positions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Position"
+              }
+            },
+            "trades": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            },
+            "funding_histories": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PositionFunding"
+              }
+            },
+            "funding_rates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "shares": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PoolShares"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllUpdate": {
+        "name": "AccountAllUpdate",
+        "title": "Account All update",
+        "summary": "Live update for an existing subscription to `account_all/{account_id}`.",
+        "x-message-type": "update/account_all",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "positions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Position"
+              }
+            },
+            "trades": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            },
+            "funding_histories": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PositionFunding"
+              }
+            },
+            "funding_rates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "shares": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/PoolShares"
+              }
+            }
+          }
+        }
+      },
+      "AccountMarketSubscribed": {
+        "name": "AccountMarketSubscribed",
+        "title": "Account Market snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_market/{market_id}/{account_id}`.",
+        "x-message-type": "subscribed/account_market",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "market_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "positions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Position"
+              }
+            },
+            "trades": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            }
+          }
+        }
+      },
+      "AccountMarketUpdate": {
+        "name": "AccountMarketUpdate",
+        "title": "Account Market update",
+        "summary": "Live update for an existing subscription to `account_market/{market_id}/{account_id}`.",
+        "x-message-type": "update/account_market",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "market_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "positions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Position"
+              }
+            },
+            "trades": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Trade"
+              }
+            }
+          }
+        }
+      },
+      "UserStatsSubscribed": {
+        "name": "UserStatsSubscribed",
+        "title": "Account Stats snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `user_stats/{account_id}`.",
+        "x-message-type": "subscribed/user_stats",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "stats": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "UserStatsUpdate": {
+        "name": "UserStatsUpdate",
+        "title": "Account Stats update",
+        "summary": "Live update for an existing subscription to `user_stats/{account_id}`.",
+        "x-message-type": "update/user_stats",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "stats": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "AccountTxSubscribed": {
+        "name": "AccountTxSubscribed",
+        "title": "Account Tx snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_tx/{account_id}`.",
+        "x-message-type": "subscribed/account_tx",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "txs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Transaction"
+              }
+            }
+          }
+        }
+      },
+      "AccountTxUpdate": {
+        "name": "AccountTxUpdate",
+        "title": "Account Tx update",
+        "summary": "Live update for an existing subscription to `account_tx/{account_id}`.",
+        "x-message-type": "update/account_tx",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "txs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Transaction"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllOrdersSubscribed": {
+        "name": "AccountAllOrdersSubscribed",
+        "title": "Account All Orders snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_all_orders/{account_id}`.",
+        "x-message-type": "subscribed/account_all_orders",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllOrdersUpdate": {
+        "name": "AccountAllOrdersUpdate",
+        "title": "Account All Orders update",
+        "summary": "Live update for an existing subscription to `account_all_orders/{account_id}`.",
+        "x-message-type": "update/account_all_orders",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          }
+        }
+      },
+      "AccountOrdersSubscribed": {
+        "name": "AccountOrdersSubscribed",
+        "title": "Account Orders snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_orders/{market_id}/{account_id}`.",
+        "x-message-type": "subscribed/account_orders",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "market_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          }
+        }
+      },
+      "AccountOrdersUpdate": {
+        "name": "AccountOrdersUpdate",
+        "title": "Account Orders update",
+        "summary": "Live update for an existing subscription to `account_orders/{market_id}/{account_id}`.",
+        "x-message-type": "update/account_orders",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "market_id": {
+              "type": "integer"
+            },
+            "orders": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllTradesSubscribed": {
+        "name": "AccountAllTradesSubscribed",
+        "title": "Account All Trades snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_all_trades/{account_id}`.",
+        "x-message-type": "subscribed/account_all_trades",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "trades": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trade"
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Trade"
+                    }
+                  }
+                }
+              ]
+            },
+            "total_volume": {
+              "type": "number"
+            },
+            "monthly_volume": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "AccountAllTradesUpdate": {
+        "name": "AccountAllTradesUpdate",
+        "title": "Account All Trades update",
+        "summary": "Live update for an existing subscription to `account_all_trades/{account_id}`.",
+        "x-message-type": "update/account_all_trades",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "trades": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trade"
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Trade"
+                    }
+                  }
+                }
+              ]
+            },
+            "total_volume": {
+              "type": "number"
+            },
+            "monthly_volume": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "AccountAllPositionsSubscribed": {
+        "name": "AccountAllPositionsSubscribed",
+        "title": "Account All Positions snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_all_positions/{account_id}`.",
+        "x-message-type": "subscribed/account_all_positions",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "positions": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/Position"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllPositionsUpdate": {
+        "name": "AccountAllPositionsUpdate",
+        "title": "Account All Positions update",
+        "summary": "Live update for an existing subscription to `account_all_positions/{account_id}`.",
+        "x-message-type": "update/account_all_positions",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "positions": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/Position"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllAssetsSubscribed": {
+        "name": "AccountAllAssetsSubscribed",
+        "title": "Account All Assets snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_all_assets/{account_id}`.",
+        "x-message-type": "subscribed/account_all_assets",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "assets": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            }
+          }
+        }
+      },
+      "AccountAllAssetsUpdate": {
+        "name": "AccountAllAssetsUpdate",
+        "title": "Account All Assets update",
+        "summary": "Live update for an existing subscription to `account_all_assets/{account_id}`.",
+        "x-message-type": "update/account_all_assets",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "assets": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/Asset"
+              }
+            }
+          }
+        }
+      },
+      "AccountSpotAvgEntryPricesSubscribed": {
+        "name": "AccountSpotAvgEntryPricesSubscribed",
+        "title": "Average Entry Prices snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `account_spot_avg_entry_prices/{account_id}`.",
+        "x-message-type": "subscribed/account_spot_avg_entry_prices",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "avg_entry_prices": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "asset_id": {
+                    "type": "integer"
+                  },
+                  "avg_entry_price": {
+                    "type": "string"
+                  },
+                  "asset_size": {
+                    "type": "string"
+                  },
+                  "last_trade_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "AccountSpotAvgEntryPricesUpdate": {
+        "name": "AccountSpotAvgEntryPricesUpdate",
+        "title": "Average Entry Prices update",
+        "summary": "Live update for an existing subscription to `account_spot_avg_entry_prices/{account_id}`.",
+        "x-message-type": "update/account_spot_avg_entry_prices",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "avg_entry_prices": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "asset_id": {
+                    "type": "integer"
+                  },
+                  "avg_entry_price": {
+                    "type": "string"
+                  },
+                  "asset_size": {
+                    "type": "string"
+                  },
+                  "last_trade_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotificationSubscribed": {
+        "name": "NotificationSubscribed",
+        "title": "Notification snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `notification/{account_id}`.",
+        "x-message-type": "subscribed/notification",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "notifications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "NotificationUpdate": {
+        "name": "NotificationUpdate",
+        "title": "Notification update",
+        "summary": "Live update for an existing subscription to `notification/{account_id}`.",
+        "x-message-type": "update/notification",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "notifications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "PoolDataSubscribed": {
+        "name": "PoolDataSubscribed",
+        "title": "Pool Data snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `pool_data/{account_id}`.",
+        "x-message-type": "subscribed/pool_data",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "PoolDataUpdate": {
+        "name": "PoolDataUpdate",
+        "title": "Pool Data update",
+        "summary": "Live update for an existing subscription to `pool_data/{account_id}`.",
+        "x-message-type": "update/pool_data",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "PoolInfoSubscribed": {
+        "name": "PoolInfoSubscribed",
+        "title": "Pool Info snapshot",
+        "summary": "Initial snapshot delivered after a successful `subscribe` to `pool_info/{account_id}`.",
+        "x-message-type": "subscribed/pool_info",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "PoolInfoUpdate": {
+        "name": "PoolInfoUpdate",
+        "title": "Pool Info update",
+        "summary": "Live update for an existing subscription to `pool_info/{account_id}`.",
+        "x-message-type": "update/pool_info",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "Connected": {
+        "name": "Connected",
+        "title": "Connection welcome",
+        "summary": "Sent once when the WebSocket connection is established.",
+        "x-message-type": "connected",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "connected"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "name": "ServerError",
+        "title": "Server error",
+        "summary": "Server-emitted error frame.",
+        "x-message-type": "error",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "error"
+            },
+            "message": {
+              "type": "string"
+            },
+            "code": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "Pong": {
+        "name": "Pong",
+        "title": "Application-level pong",
+        "summary": "Reply to a client-sent `ping` frame.",
+        "x-message-type": "pong",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "pong"
+            }
+          }
+        }
+      },
+      "TxResponse": {
+        "name": "TxResponse",
+        "title": "Transaction submission response",
+        "summary": "Reply to `jsonapi/sendtx` or `jsonapi/sendtxbatch`.",
+        "x-message-type": "jsonapi/sendtx",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            },
+            "tx_hash": {
+              "type": "string"
+            },
+            "tx_hashes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "error": {}
+          }
+        }
+      },
+      "SubscribeRequest": {
+        "name": "SubscribeRequest",
+        "title": "Subscribe",
+        "summary": "Open a subscription on a channel.",
+        "x-message-type": "subscribe",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type",
+            "channel"
+          ],
+          "properties": {
+            "type": {
+              "const": "subscribe"
+            },
+            "channel": {
+              "type": "string",
+              "description": "Channel address. Use `/` as the path separator (e.g. `order_book/0`)."
+            },
+            "auth": {
+              "type": "string",
+              "description": "Bearer token. Required for the channels listed under `securitySchemes.bearerToken`."
+            }
+          }
+        }
+      },
+      "UnsubscribeRequest": {
+        "name": "UnsubscribeRequest",
+        "title": "Unsubscribe",
+        "summary": "Cancel an existing subscription.",
+        "x-message-type": "unsubscribe",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type",
+            "channel"
+          ],
+          "properties": {
+            "type": {
+              "const": "unsubscribe"
+            },
+            "channel": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Ping": {
+        "name": "Ping",
+        "title": "Application-level ping",
+        "summary": "Heartbeat frame. The server replies with a `Pong`. Either WebSocket-level ping frames or this application-level frame satisfy the 2-minute idle requirement.",
+        "x-message-type": "ping",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "ping"
+            }
+          }
+        }
+      },
+      "SendTx": {
+        "name": "SendTx",
+        "title": "Send transaction",
+        "summary": "Submit a single signed transaction over the socket.",
+        "x-message-type": "jsonapi/sendtx",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type",
+            "data"
+          ],
+          "properties": {
+            "type": {
+              "const": "jsonapi/sendtx"
+            },
+            "data": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "tx_type",
+                "tx_info"
+              ],
+              "properties": {
+                "tx_type": {
+                  "type": "integer"
+                },
+                "tx_info": {
+                  "description": "Signed payload produced by SignerClient. Usually a JSON-encoded string."
+                }
+              }
+            }
+          }
+        }
+      },
+      "SendTxBatch": {
+        "name": "SendTxBatch",
+        "title": "Send transaction batch",
+        "summary": "Submit up to 15 signed transactions in one message. `tx_infos` is a JSON-encoded list of JSON-encoded `tx_info` strings (double-encoded).",
+        "x-message-type": "jsonapi/sendtxbatch",
+        "contentType": "application/json",
+        "payload": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "type",
+            "data"
+          ],
+          "properties": {
+            "type": {
+              "const": "jsonapi/sendtxbatch"
+            },
+            "data": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "tx_types",
+                "tx_infos"
+              ],
+              "properties": {
+                "tx_types": {
+                  "type": "string",
+                  "description": "JSON-encoded list of integer tx types, e.g. `\"[14,14]\"`."
+                },
+                "tx_infos": {
+                  "type": "string",
+                  "description": "JSON-encoded list of JSON-encoded tx_info strings."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Transaction": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Transaction as emitted on the `account_tx` channel.",
+        "properties": {
+          "hash": {
+            "type": "string"
+          },
+          "type": {
+            "type": "integer"
+          },
+          "info": {
+            "type": "string",
+            "description": "JSON object encoded as string; shape depends on tx type."
+          },
+          "event_info": {
+            "type": "string",
+            "description": "JSON object encoded as string; shape depends on tx type."
+          },
+          "status": {
+            "type": "integer"
+          },
+          "transaction_index": {
+            "type": "integer"
+          },
+          "l1_address": {
+            "type": "string"
+          },
+          "account_index": {
+            "type": "integer"
+          },
+          "nonce": {
+            "type": "integer"
+          },
+          "expire_at": {
+            "type": "integer"
+          },
+          "block_height": {
+            "type": "integer"
+          },
+          "queued_at": {
+            "type": "integer"
+          },
+          "executed_at": {
+            "type": "integer"
+          },
+          "sequence_index": {
+            "type": "integer"
+          },
+          "parent_hash": {
+            "type": "string"
+          },
+          "api_key_index": {
+            "type": "integer"
+          },
+          "transaction_time": {
+            "type": "integer"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "order_index": {
+            "type": "integer"
+          },
+          "client_order_index": {
+            "type": "integer"
+          },
+          "order_id": {
+            "type": "string"
+          },
+          "client_order_id": {
+            "type": "string"
+          },
+          "market_index": {
+            "type": "integer"
+          },
+          "owner_account_index": {
+            "type": "integer"
+          },
+          "initial_base_amount": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "nonce": {
+            "type": "integer"
+          },
+          "remaining_base_amount": {
+            "type": "string"
+          },
+          "is_ask": {
+            "type": "boolean"
+          },
+          "base_size": {
+            "type": "integer"
+          },
+          "base_price": {
+            "type": "integer"
+          },
+          "filled_base_amount": {
+            "type": "string"
+          },
+          "filled_quote_amount": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "limit",
+              "market",
+              "stop-loss",
+              "stop-loss-limit",
+              "take-profit",
+              "take-profit-limit",
+              "twap",
+              "twap-sub",
+              "liquidation"
+            ]
+          },
+          "time_in_force": {
+            "type": "string",
+            "enum": [
+              "good-till-time",
+              "immediate-or-cancel",
+              "post-only",
+              "Unknown"
+            ]
+          },
+          "reduce_only": {
+            "type": "boolean"
+          },
+          "trigger_price": {
+            "type": "string"
+          },
+          "order_expiry": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "trigger_status": {
+            "type": "string"
+          },
+          "trigger_time": {
+            "type": "integer"
+          },
+          "parent_order_index": {
+            "type": "integer"
+          },
+          "parent_order_id": {
+            "type": "string"
+          },
+          "to_trigger_order_id_0": {
+            "type": "string"
+          },
+          "to_trigger_order_id_1": {
+            "type": "string"
+          },
+          "to_cancel_order_id_0": {
+            "type": "string"
+          },
+          "integrator_fee_collector_index": {
+            "type": "string"
+          },
+          "integrator_taker_fee": {
+            "type": "string"
+          },
+          "integrator_maker_fee": {
+            "type": "string"
+          },
+          "block_height": {
+            "type": "integer"
+          }
+        }
+      },
+      "Trade": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "trade_id": {
+            "type": "integer"
+          },
+          "market_id": {
+            "type": "integer"
+          },
+          "size": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "usd_amount": {
+            "type": "string"
+          },
+          "ask_id": {
+            "type": "integer"
+          },
+          "ask_account_id": {
+            "type": "integer"
+          },
+          "bid_id": {
+            "type": "integer"
+          },
+          "bid_account_id": {
+            "type": "integer"
+          },
+          "is_maker_ask": {
+            "type": "boolean"
+          },
+          "block_height": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "Position": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "market_id": {
+            "type": "integer"
+          },
+          "sign": {
+            "type": "integer"
+          },
+          "position": {
+            "type": "string"
+          },
+          "avg_entry_price": {
+            "type": "string"
+          },
+          "position_value": {
+            "type": "string"
+          },
+          "unrealized_pnl": {
+            "type": "string"
+          },
+          "realized_pnl": {
+            "type": "string"
+          },
+          "margin_mode": {
+            "type": "integer"
+          },
+          "allocated_margin": {
+            "type": "string"
+          },
+          "liquidation_price": {
+            "type": "string"
+          }
+        }
+      },
+      "PoolShares": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "pool_account_index": {
+            "type": "integer"
+          },
+          "owner_account_index": {
+            "type": "integer"
+          },
+          "shares_amount": {
+            "type": "string"
+          },
+          "entry_usdc_amount": {
+            "type": "string"
+          }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "asset_id": {
+            "type": "integer"
+          },
+          "balance": {
+            "type": "string"
+          },
+          "locked_balance": {
+            "type": "string"
+          }
+        }
+      },
+      "PositionFunding": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "timestamp": {
+            "type": "integer"
+          },
+          "market_id": {
+            "type": "integer"
+          },
+          "funding_id": {
+            "type": "integer"
+          },
+          "change": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "string"
+          },
+          "position_size": {
+            "type": "string"
+          },
+          "position_side": {
+            "type": "string",
+            "enum": [
+              "long",
+              "short"
+            ]
+          },
+          "discount": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Per-channel auth token passed in the `auth` field of the `subscribe` message. Required for channels whose subscribe operation lists this scheme under `security`. See the `apikeys` REST endpoint for token generation."
+      }
+    }
+  }
+}
