@@ -50,6 +50,26 @@ def default_example_setup(config_file="./api_key_config.json", nonce_management_
     return client, api_client, websockets.connect(f"{base_url.replace('https', 'wss')}/stream")
 
 
+async def default_example_setup_async(config_file="./api_key_config.json", nonce_management_type=lighter.nonce_manager.NonceManagerType.OPTIMISTIC) -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
+    logging.basicConfig(level=logging.DEBUG)
+
+    base_url, account_index, private_keys = get_api_key_config(config_file)
+    api_client = lighter.ApiClient(configuration=lighter.Configuration(host=base_url))
+    client = await lighter.SignerClient.create_async(
+        url=base_url,
+        account_index=account_index,
+        api_private_keys=private_keys,
+        nonce_management_type=nonce_management_type,
+    )
+
+    err = client.check_client()
+    if err is not None:
+        print(f"CheckClient error: {trim_exception(err)}")
+        return
+
+    return client, api_client, websockets.connect(f"{base_url.replace('https', 'wss')}/stream")
+
+
 async def ws_ping(ws_client: websockets.ClientConnection):
     await ws_client.send(json.dumps({"type": "pong"}))
 
