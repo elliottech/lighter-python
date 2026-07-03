@@ -221,7 +221,7 @@ def process_api_key_and_nonce(func):
         api_key_index = bound_args.arguments.get("api_key_index", 255)
         nonce = bound_args.arguments.get("nonce", -1)
         if api_key_index == 255 and nonce == -1:
-            api_key_index, nonce = self.nonce_manager.next_nonce()
+            api_key_index, nonce = await self.nonce_manager.async_next_nonce()
 
         # Call the original function with modified kwargs
         ret: TxHash
@@ -232,7 +232,7 @@ def process_api_key_and_nonce(func):
                 self.nonce_manager.acknowledge_failure(api_key_index)
         except lighter.exceptions.BadRequestException as e:
             if "invalid nonce" in str(e):
-                self.nonce_manager.hard_refresh_nonce(api_key_index)
+                await self.nonce_manager.async_hard_refresh_nonce(api_key_index)
                 return None, None, trim_exc(str(e))
             else:
                 self.nonce_manager.acknowledge_failure(api_key_index)
@@ -333,6 +333,7 @@ class SignerClient:
             account_index,
             api_private_keys: Dict[int, str],
             nonce_management_type=nonce_manager.NonceManagerType.OPTIMISTIC,
+            fetch_initial_nonce: bool = True,
     ):
         self.url = url
         self.chain_id = 304 if ("mainnet" in url or "api" in url) else 300
@@ -350,9 +351,28 @@ class SignerClient:
             account_index=account_index,
             api_client=self.api_client,
             api_keys_list=list(api_private_keys.keys()),
+            fetch_initial_nonce=fetch_initial_nonce,
         )
         for api_key_index in api_private_keys.keys():
             self.create_client(api_key_index)
+
+    @classmethod
+    async def create_async(
+            cls,
+            url,
+            account_index,
+            api_private_keys: Dict[int, str],
+            nonce_management_type=nonce_manager.NonceManagerType.OPTIMISTIC,
+    ):
+        client = cls(
+            url=url,
+            account_index=account_index,
+            api_private_keys=api_private_keys,
+            nonce_management_type=nonce_management_type,
+            fetch_initial_nonce=False,
+        )
+        await client.nonce_manager.async_initialize()
+        return client
 
     # === signer helpers ===
     @staticmethod
