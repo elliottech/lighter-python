@@ -4,11 +4,13 @@ import time
 import eth_account
 import lighter
 from utils import save_api_key_config
+from lighter import get_endpoint_profile
 
 logging.basicConfig(level=logging.DEBUG)
 
 # this is a dummy private key registered on Testnet.
 # It serves as a good example
+ENDPOINT_PROFILE = get_endpoint_profile["TESTNET"]
 BASE_URL = "https://testnet.zklighter.elliot.ai"
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
 API_KEY_INDEX = 3
@@ -21,7 +23,9 @@ ACCOUNT_INDEX = None
 
 async def main():
     # verify that the account exists & fetch account index
-    api_client = lighter.ApiClient(configuration=lighter.Configuration(host=BASE_URL))
+    api_client = lighter.ApiClient(
+        configuration=lighter.Configuration(host=ENDPOINT_PROFILE.api_url)
+    )
     eth_acc = eth_account.Account.from_key(ETH_PRIVATE_KEY)
     eth_address = eth_acc.address
 
@@ -63,9 +67,10 @@ async def main():
         private_keys[API_KEY_INDEX + i] = private_key
 
     tx_client = lighter.SignerClient(
-        url=BASE_URL,
+        url=ENDPOINT_PROFILE.api_url,
         account_index=account_index,
         api_private_keys=private_keys,
+        chain_id=ENDPOINT_PROFILE.chain_id,
     )
 
     # change all API keys
@@ -73,7 +78,7 @@ async def main():
         response, err = await tx_client.change_api_key(
             eth_private_key=ETH_PRIVATE_KEY,
             new_pubkey=public_keys[i],
-            api_key_index=API_KEY_INDEX + i
+            api_key_index=API_KEY_INDEX + i,
         )
         if err is not None:
             raise Exception(err)
@@ -86,7 +91,7 @@ async def main():
     if err is not None:
         raise Exception(err)
 
-    save_api_key_config(BASE_URL, account_index, private_keys)
+    save_api_key_config(ENDPOINT_PROFILE, account_index, private_keys)
 
     await tx_client.close()
     await api_client.close()

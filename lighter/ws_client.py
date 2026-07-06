@@ -2,6 +2,7 @@ import json
 from websockets.sync.client import connect
 from websockets.client import connect as connect_async
 from lighter.configuration import Configuration
+from lighter.endpoint_profiles import join_url
 
 class WsClient:
     def __init__(
@@ -12,11 +13,14 @@ class WsClient:
         account_ids=[],
         on_order_book_update=print,
         on_account_update=print,
+        ws_url=None,
     ):
-        if host is None:
-            host = Configuration.get_default().host.replace("https://", "")
-
-        self.base_url = f"wss://{host}{path}"
+        if ws_url is not None:
+            self.base_url = ws_url.rstrip("/")
+        else:
+            if host is None:
+                host = Configuration.get_default().host.replace("https://", "")
+            self.base_url = join_url(f"wss://{host}", path)
 
         self.subscriptions = {
             "order_books": order_book_ids,
