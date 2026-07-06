@@ -22,6 +22,8 @@ from lighter.models.resp_send_tx_batch import RespSendTxBatch
 from lighter.transactions import CreateOrder, CancelOrder, Withdraw, CreateGroupedOrders
 
 CODE_OK = 200
+DEFAULT_NONCE = -1
+DEFAULT_API_KEY_INDEX = 255
 
 
 class ApiKeyResponse(ctypes.Structure):
@@ -208,44 +210,59 @@ def trim_exc(exception_body: str):
     return exception_body.strip().split("\n")[-1]
 
 
+def extract_tx_args(func, self, args, kwargs):
+    """Bind the call arguments and split out nonce and api_key_index."""
+    bound = inspect.signature(func).bind(self, *args, **kwargs)
+    bound.apply_defaults()
+    api_key_index = bound.arguments.get("api_key_index", DEFAULT_API_KEY_INDEX)
+    nonce = bound.arguments.get("nonce", DEFAULT_NONCE)
+    send_args = {k: v for k, v in bound.arguments.items() if k not in ("self", "nonce", "api_key_index")}
+    return send_args, api_key_index, nonce
+
+
 def process_api_key_and_nonce(func):
+    """
+    Fills in nonce and api_key_index for transaction methods.
+
+    If the caller provides nonce/api_key_index explicitly, the transaction is
+    sent as-is and the nonce manager is not involved.
+
+    Otherwise an api key is picked round-robin and that key's lock is held from
+    nonce assignment through the send, so transactions on the same key reach
+    the sequencer in nonce order (one in-flight transaction per key; different
+    keys send in parallel). Failure accounting happens inside the same critical
+    section: a rejected transaction rolls its nonce back for reuse, and an
+    "invalid nonce" error re-syncs the nonce from the API.
+    """
     @wraps(func)
     async def wrapper(self, *args, **kwargs):
-        # Get the signature
-        sig = inspect.signature(func)
+        send_args, api_key_index, nonce = extract_tx_args(func, self, args, kwargs)
 
-        # Bind args and kwargs to the function's signature
-        bound_args = sig.bind(self, *args, **kwargs)
-        bound_args.apply_defaults()
-        # Extract api_key_index and nonce from kwargs or use defaults
-        api_key_index = bound_args.arguments.get("api_key_index", 255)
-        nonce = bound_args.arguments.get("nonce", -1)
-        partial_arguments = {k: v for k, v in bound_args.arguments.items() if k not in ("self", "nonce", "api_key_index")}
-
-        if not (api_key_index == 255 and nonce == -1):
-            # The caller manages nonces explicitly; the nonce manager is not involved.
+        caller_manages_nonce = api_key_index != DEFAULT_API_KEY_INDEX or nonce != DEFAULT_NONCE
+        if caller_manages_nonce:
             try:
-                return await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
+                return await func(self, **send_args, nonce=nonce, api_key_index=api_key_index)
             except lighter.exceptions.BadRequestException as e:
                 return None, None, trim_exc(str(e))
 
-        # Pick the key outside the lock so concurrent calls spread across keys,
-        # then hold the key's lock through the send so transactions on the same
-        # key reach the sequencer in nonce order.
-        api_key_index = self.nonce_manager.rotate_key()
+        nonce_manager = self.nonce_manager
+        api_key_index = nonce_manager.rotate_key()
+
         ret: TxHash
-        async with self.nonce_manager.lock(api_key_index):
-            _, nonce = await self.nonce_manager.async_next_nonce(api_key_index)
+        async with nonce_manager.lock(api_key_index):
+            _, nonce = await nonce_manager.async_next_nonce(api_key_index)
             try:
-                created_tx, ret, err = await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
-                if (ret is None and err) or (ret and ret.code != CODE_OK):
-                    self.nonce_manager.acknowledge_failure(api_key_index)
+                created_tx, ret, err = await func(self, **send_args, nonce=nonce, api_key_index=api_key_index)
             except lighter.exceptions.BadRequestException as e:
                 if "invalid nonce" in str(e):
-                    await self.nonce_manager.async_hard_refresh_nonce(api_key_index)
+                    await nonce_manager.async_hard_refresh_nonce(api_key_index)
                 else:
-                    self.nonce_manager.acknowledge_failure(api_key_index)
+                    nonce_manager.acknowledge_failure(api_key_index)
                 return None, None, trim_exc(str(e))
+
+            tx_rejected = (ret is None and err) or (ret is not None and ret.code != CODE_OK)
+            if tx_rejected:
+                nonce_manager.acknowledge_failure(api_key_index)
 
         return created_tx, ret, err
 
@@ -253,8 +270,8 @@ def process_api_key_and_nonce(func):
 
 
 class SignerClient:
-    DEFAULT_NONCE = -1
-    DEFAULT_API_KEY_INDEX = 255
+    DEFAULT_NONCE = DEFAULT_NONCE
+    DEFAULT_API_KEY_INDEX = DEFAULT_API_KEY_INDEX
     
     SKIP_NONCE_OFF = 0
     SKIP_NONCE_ON = 1
