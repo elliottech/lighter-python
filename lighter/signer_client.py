@@ -220,22 +220,31 @@ def process_api_key_and_nonce(func):
         # Extract api_key_index and nonce from kwargs or use defaults
         api_key_index = bound_args.arguments.get("api_key_index", 255)
         nonce = bound_args.arguments.get("nonce", -1)
-        if api_key_index == 255 and nonce == -1:
-            api_key_index, nonce = self.nonce_manager.next_nonce()
+        partial_arguments = {k: v for k, v in bound_args.arguments.items() if k not in ("self", "nonce", "api_key_index")}
 
-        # Call the original function with modified kwargs
-        ret: TxHash
-        try:
-            partial_arguments = {k: v for k, v in bound_args.arguments.items() if k not in ("self", "nonce", "api_key_index")}
-            created_tx, ret, err = await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
-            if (ret is None and err) or (ret and ret.code != CODE_OK):
-                self.nonce_manager.acknowledge_failure(api_key_index)
-        except lighter.exceptions.BadRequestException as e:
-            if "invalid nonce" in str(e):
-                self.nonce_manager.hard_refresh_nonce(api_key_index)
+        if not (api_key_index == 255 and nonce == -1):
+            # The caller manages nonces explicitly; the nonce manager is not involved.
+            try:
+                return await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
+            except lighter.exceptions.BadRequestException as e:
                 return None, None, trim_exc(str(e))
-            else:
-                self.nonce_manager.acknowledge_failure(api_key_index)
+
+        # Pick the key outside the lock so concurrent calls spread across keys,
+        # then hold the key's lock through the send so transactions on the same
+        # key reach the sequencer in nonce order.
+        api_key_index = self.nonce_manager.rotate_key()
+        ret: TxHash
+        async with self.nonce_manager.lock(api_key_index):
+            _, nonce = await self.nonce_manager.async_next_nonce(api_key_index)
+            try:
+                created_tx, ret, err = await func(self, **partial_arguments, nonce=nonce, api_key_index=api_key_index)
+                if (ret is None and err) or (ret and ret.code != CODE_OK):
+                    self.nonce_manager.acknowledge_failure(api_key_index)
+            except lighter.exceptions.BadRequestException as e:
+                if "invalid nonce" in str(e):
+                    await self.nonce_manager.async_hard_refresh_nonce(api_key_index)
+                else:
+                    self.nonce_manager.acknowledge_failure(api_key_index)
                 return None, None, trim_exc(str(e))
 
         return created_tx, ret, err
@@ -428,17 +437,6 @@ class SignerClient:
     @staticmethod
     def create_api_key(self):
         return create_api_key()
-
-    def get_api_key_nonce(self, api_key_index: int, nonce: int) -> Tuple[int, int]:
-        if api_key_index != self.DEFAULT_API_KEY_INDEX and nonce != self.DEFAULT_NONCE:
-            return api_key_index, nonce
-
-        if nonce != self.DEFAULT_NONCE:
-            if len(self.api_key_dict) == 1:
-                return self.nonce_manager.next_nonce()
-            else:
-                raise Exception("ambiguous api key")
-        return self.nonce_manager.next_nonce()
 
     def create_auth_token_with_expiry(self, deadline: int = DEFAULT_10_MIN_AUTH_EXPIRY, *, timestamp: int = None, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if deadline == SignerClient.DEFAULT_10_MIN_AUTH_EXPIRY:
