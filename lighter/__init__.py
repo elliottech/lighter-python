@@ -170,7 +170,7 @@ from lighter.models.validator_info import ValidatorInfo
 from lighter.models.withdraw_history import WithdrawHistory
 from lighter.models.withdraw_history_item import WithdrawHistoryItem
 from lighter.models.zk_lighter_info import ZkLighterInfo
-from lighter.endpoint_profiles import  (EndpointProfile, MAINNET, ROBINHOOD, DEFAULT_ENDPOINT_PROFILE, ENDPOINT_PROFILES, get_endpoint_profile)
+from lighter.endpoint_profiles import  (EndpointProfile, MAINNET, ROBINHOOD, TESTNET, DEFAULT_ENDPOINT_PROFILE, ENDPOINT_PROFILES, get_endpoint_profile)
 
 # manual additions
 from lighter.ws_client import WsClient

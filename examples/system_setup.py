@@ -4,13 +4,13 @@ import time
 import eth_account
 import lighter
 from utils import save_api_key_config
-from lighter import get_endpoint_profile
+from lighter import get_endpoint_profile, MAINNET, ROBINHOOD, TESTNET
 
 logging.basicConfig(level=logging.DEBUG)
 
 # this is a dummy private key registered on Testnet.
 # It serves as a good example
-ENDPOINT_PROFILE = get_endpoint_profile["TESTNET"]
+ENDPOINT_PROFILE = TESTNET
 BASE_URL = "https://testnet.zklighter.elliot.ai"
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
 API_KEY_INDEX = 3
