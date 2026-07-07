@@ -337,7 +337,10 @@ class SignerClient:
     ):
         self.url = url
         self.chain_id = chain_id if chain_id is not None else (
-            304 if ("mainnet" in self.url or "api" in self.url) else 300
+            304 if ("mainnet.zklighter" in self.url) else
+            300 if ("testnet.zklighter" in self.url) else
+            466324 if ("api.rh.lighter" in self.url) else
+            304
         )
         self.validate_api_private_keys(api_private_keys)
         self.api_key_dict = api_private_keys
