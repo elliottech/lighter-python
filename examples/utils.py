@@ -37,7 +37,7 @@ def get_api_key_config(config_file="./api_key_config.json"):
             name="custom",
             api_url=base_url,
             ws_url=base_url.replace("https", "wss") + "/stream",
-            chain_id=304 if ("mainnet" in base_url or "api" in base_url) else 300,
+            chain_id=304 if ("mainnet" in base_url) else 466324 if ("api.rh.lighter" in base_url) else 300,
         )
 
     return profile, cfg["accountIndex"], private_key
