@@ -34,7 +34,7 @@ ROBINHOOD = EndpointProfile(
     name="robinhood",
     api_url="https://api.rh.lighter.xyz",
     ws_url="wss://api.rh.lighter.xyz/stream",
-    chain_id=304,
+    chain_id=4663,
 )
 
 
