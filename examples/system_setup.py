@@ -4,7 +4,7 @@ import time
 import eth_account
 import lighter
 from utils import save_api_key_config
-from lighter import get_endpoint_profile, MAINNET, ROBINHOOD, TESTNET
+from lighter import get_endpoint_profile, MAINNET, ROBINHOOD, TESTNET, ROBINHOOD_TESTNET
 
 logging.basicConfig(level=logging.DEBUG)
 

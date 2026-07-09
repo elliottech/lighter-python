@@ -340,6 +340,7 @@ class SignerClient:
             304 if ("mainnet.zklighter" in self.url) else
             300 if ("testnet.zklighter" in self.url) else
             466324 if ("api.rh.lighter" in self.url) else
+            300 if ("api.rh-testnet.lighter" in self.url) else
             304
         )
         self.validate_api_private_keys(api_private_keys)

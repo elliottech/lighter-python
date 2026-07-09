@@ -30,6 +30,13 @@ MAINNET = EndpointProfile(
     chain_id=304,
 )
 
+TESTNET = EndpointProfile(
+    name="testnet",
+    api_url="https://testnet.zklighter.elliot.ai",
+    ws_url="wss://testnet.zklighter.elliot.ai/stream",
+    chain_id=300,
+)
+
 ROBINHOOD = EndpointProfile(
     name="robinhood",
     api_url="https://api.rh.lighter.xyz",
@@ -38,10 +45,10 @@ ROBINHOOD = EndpointProfile(
 )
 
 
-TESTNET = EndpointProfile(
-    name="testnet",
-    api_url="https://testnet.zklighter.elliot.ai",
-    ws_url="wss://testnet.zklighter.elliot.ai/stream",
+ROBINHOOD_TESTNET = EndpointProfile(
+    name="robinhood_testnet",
+    api_url="https://api.rh-testnet.lighter.xyz",
+    ws_url="wss://api.rh-testnet.lighter.xyz/stream",
     chain_id=300,
 )
 
@@ -51,6 +58,7 @@ ENDPOINT_PROFILES = {
     MAINNET.name: MAINNET,
     ROBINHOOD.name: ROBINHOOD,
     TESTNET.name: TESTNET,
+    ROBINHOOD_TESTNET.name: ROBINHOOD_TESTNET,
 }
 
 
