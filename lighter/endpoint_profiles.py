@@ -67,3 +67,6 @@ def get_endpoint_profile(name: str) -> EndpointProfile:
         return ENDPOINT_PROFILES[name]
     except KeyError as exc:
         raise ValueError(f"Unknown endpoint profile: {name}") from exc
+
+def construct_end_point_profile(name: str, api_url: str, ws_url: str, chain_id: int) -> EndpointProfile:
+    return EndpointProfile(name, api_url, ws_url, chain_id)
