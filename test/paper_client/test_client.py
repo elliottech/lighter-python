@@ -1,5 +1,7 @@
 import unittest
 
+from lighter.api_client import ApiClient
+from lighter.configuration import Configuration
 from lighter.paper_client.accounting import apply_fill
 from lighter.paper_client import (
     AccountTier,
@@ -13,6 +15,54 @@ from test.paper_client.helpers import FakeOrderApi, book, default_detail
 
 
 class TestPaperClient(unittest.IsolatedAsyncioTestCase):
+    async def test_paper_client_rest_requests_include_readonly(self) -> None:
+        api_client = ApiClient(Configuration(host="https://example.test"))
+        client = PaperClient(api_client, 5000.0)
+
+        try:
+            _, orders_url, _, _, _ = client.order_api._order_book_orders_serialize(
+                0, 100, None, None, None, 0
+            )
+            _, details_url, _, _, _ = client.order_api._order_book_details_serialize(
+                0, None, None, None, None, 0
+            )
+        finally:
+            await api_client.close()
+
+        self.assertEqual(
+            orders_url,
+            "https://example.test/api/v1/orderBookOrders"
+            "?market_id=0&limit=100&readonly=true",
+        )
+        self.assertEqual(
+            details_url,
+            "https://example.test/api/v1/orderBookDetails"
+            "?market_id=0&readonly=true",
+        )
+
+    def test_paper_client_ws_url_includes_readonly(self) -> None:
+        client = PaperClient(
+            None,
+            5000.0,
+            order_api=FakeOrderApi(),
+            ws_url="wss://example.test/stream",
+        )
+        self.assertEqual(
+            client.ws_url,
+            "wss://example.test/stream?encoding=json&readonly=true",
+        )
+
+        client = PaperClient(
+            None,
+            5000.0,
+            order_api=FakeOrderApi(),
+            ws_url="wss://example.test/stream?readonly=true",
+        )
+        self.assertEqual(
+            client.ws_url,
+            "wss://example.test/stream?readonly=true&encoding=json",
+        )
+
     async def test_track_market_snapshot_and_market_buy_then_sell(self) -> None:
         order_api = FakeOrderApi()
         order_api.books[0] = book(
