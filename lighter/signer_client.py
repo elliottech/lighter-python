@@ -32,7 +32,7 @@ class ApiKeyResponse(ctypes.Structure):
 
 class CreateOrderTxReq(ctypes.Structure):
     _fields_ = [
-        ("MarketIndex", ctypes.c_int),
+        ("MarketIndex", ctypes.c_int16),
         ("ClientOrderIndex", ctypes.c_longlong),
         ("BaseAmount", ctypes.c_longlong),
         ("Price", ctypes.c_uint32),
