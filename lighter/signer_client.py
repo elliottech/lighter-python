@@ -58,6 +58,8 @@ class SignedTxResponse(ctypes.Structure):
 
 
 __signer = None
+__native_free = None
+__native_allocator = None
 
 
 def __get_shared_library():
@@ -87,20 +89,46 @@ def __get_shared_library():
         )
 
 
+def __get_native_free():
+    global __native_free, __native_allocator
+    if __native_free is not None:
+        return __native_free
+
+    if os.name == "posix":
+        # Go's C.CString allocates with C.malloc. On POSIX there is one process
+        # allocator, so calling free directly avoids an expensive Python -> Go
+        # transition for every returned string.
+        try:
+            __native_allocator = ctypes.CDLL(None)
+            native_free = __native_allocator.free
+            native_free.argtypes = [ctypes.c_void_p]
+            native_free.restype = None
+            __native_free = native_free
+        except (AttributeError, OSError):
+            __native_free = get_signer().Free
+    else:
+        # Windows can have multiple CRT heaps. Keep using the signer's exported
+        # Free function so allocation and deallocation use the same runtime.
+        __native_free = get_signer().Free
+
+    return __native_free
+
+
+def free_pointer(ptr: Any) -> None:
+    if ptr:
+        __get_native_free()(ptr)
+
+
 def decode_and_free(ptr: Any) -> Optional[str]:
     if not ptr:
         return None
     try:
-        # Read the string from the pointer
-        c_str = ctypes.cast(ptr, ctypes.c_char_p).value
+        c_str = ctypes.string_at(ptr)
         if c_str is not None:
             return c_str.decode('utf-8')
         return None
     finally:
-        # Free the memory using the signer's own Free function to ensure
-        # the same C runtime that allocated the memory also frees it.
-        # This is critical on Windows where different CRTs have separate heaps.
-        __signer.Free(ptr)
+        free_pointer(ptr)
 
 
 def __populate_shared_library_functions(signer):
@@ -376,7 +404,7 @@ class SignerClient:
         err_str = decode_and_free(result.err)
         tx_info_str = decode_and_free(result.txInfo)
         tx_hash_str = decode_and_free(result.txHash)
-        decode_and_free(result.messageToSign)
+        free_pointer(result.messageToSign)
 
         if err_str:
             return None, None, None, err_str
