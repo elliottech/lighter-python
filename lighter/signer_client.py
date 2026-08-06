@@ -6,6 +6,8 @@ import json
 import platform
 import logging
 import os
+import struct
+import threading
 import time
 from typing import Dict, List, Optional, Union, Tuple, Any
 
@@ -57,7 +59,23 @@ class SignedTxResponse(ctypes.Structure):
     ]
 
 
+class SignedTxBatchResponse(ctypes.Structure):
+    _fields_ = [
+        ('data', ctypes.c_void_p),
+        ('length', ctypes.c_int64),
+        ('err', ctypes.c_void_p),
+    ]
+
+
+_SIGNED_TX_BATCH_PREFIX = struct.Struct('<I')
+_SIGNED_TX_BATCH_HEADER = struct.Struct('<B3xIII')
+_MAX_CREATE_ORDER_BATCH = 10_000
+_MAX_PREPARED_NONCES = 10_000
+_MAX_SIGNER_NONCE = (1 << 63) - 1
+
+
 __signer = None
+__signer_lock = threading.Lock()
 __native_free = None
 __native_allocator = None
 
@@ -131,7 +149,78 @@ def decode_and_free(ptr: Any) -> Optional[str]:
         free_pointer(ptr)
 
 
+def decode_signed_tx_batch(data: bytes):
+    if len(data) < _SIGNED_TX_BATCH_PREFIX.size:
+        raise ValueError("packed signer response is missing its count")
+
+    count, = _SIGNED_TX_BATCH_PREFIX.unpack_from(data)
+    if count > _MAX_CREATE_ORDER_BATCH:
+        raise ValueError(
+            "packed signer response count exceeds "
+            f"{_MAX_CREATE_ORDER_BATCH}"
+        )
+
+    offset = _SIGNED_TX_BATCH_PREFIX.size
+    decoded = []
+    for _ in range(count):
+        if offset + _SIGNED_TX_BATCH_HEADER.size > len(data):
+            raise ValueError("packed signer response has a truncated header")
+        tx_type, tx_info_length, tx_hash_length, error_length = (
+            _SIGNED_TX_BATCH_HEADER.unpack_from(data, offset)
+        )
+        offset += _SIGNED_TX_BATCH_HEADER.size
+        payload_length = tx_info_length + tx_hash_length + error_length
+        if payload_length > len(data) - offset:
+            raise ValueError("packed signer response has a truncated payload")
+
+        tx_info_end = offset + tx_info_length
+        tx_hash_end = tx_info_end + tx_hash_length
+        error_end = tx_hash_end + error_length
+        tx_info = data[offset:tx_info_end].decode('utf-8') or None
+        tx_hash = data[tx_info_end:tx_hash_end].decode('utf-8') or None
+        error = data[tx_hash_end:error_end].decode('utf-8') or None
+        offset = error_end
+        if error:
+            decoded.append((None, None, None, error))
+        else:
+            decoded.append((tx_type, tx_info, tx_hash, None))
+
+    if offset != len(data):
+        raise ValueError("packed signer response has trailing data")
+    return decoded
+
+
+def _copy_and_free_signed_tx_batch(response: SignedTxBatchResponse):
+    try:
+        error = (
+            ctypes.string_at(response.err).decode('utf-8')
+            if response.err else None
+        )
+        packed = (
+            ctypes.string_at(response.data, response.length)
+            if response.data else b''
+        )
+    finally:
+        free_pointer(response.data)
+        free_pointer(response.err)
+    return packed, error
+
+
+def _enable_stack_bound_cache(signer) -> bool:
+    """Enable the optional private-Go-hook callback optimization."""
+    stack_bound_cache = getattr(signer, "FastEnableStackBoundCache", None)
+    if stack_bound_cache is None:
+        return False
+    stack_bound_cache.argtypes = []
+    stack_bound_cache.restype = ctypes.c_int
+    return bool(stack_bound_cache())
+
+
 def __populate_shared_library_functions(signer):
+    if not _enable_stack_bound_cache(signer):
+        logging.getLogger(__name__).debug(
+            "native signer stack-bound cache is unavailable")
+
     signer.GenerateAPIKey.argtypes = []
     signer.GenerateAPIKey.restype = ApiKeyResponse
 
@@ -147,6 +236,19 @@ def __populate_shared_library_functions(signer):
     signer.SignCreateOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
                                             ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateOrder.restype = SignedTxResponse
+
+    if hasattr(signer, "SignCreateOrdersBatch"):
+        signer.SignCreateOrdersBatch.argtypes = [
+            ctypes.POINTER(CreateOrderTxReq), ctypes.c_int,
+            ctypes.c_longlong, ctypes.c_int, ctypes.c_int,
+            ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8,
+            ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong,
+        ]
+        signer.SignCreateOrdersBatch.restype = SignedTxBatchResponse
+
+    if hasattr(signer, "PrepareSignerNonces"):
+        signer.PrepareSignerNonces.argtypes = [ctypes.c_int]
+        signer.PrepareSignerNonces.restype = ctypes.c_void_p
 
     signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateGroupedOrders.restype = SignedTxResponse
@@ -213,14 +315,18 @@ def __populate_shared_library_functions(signer):
 
 
 def get_signer():
-    # check if singleton exists already
     global __signer
     if __signer is not None:
         return __signer
 
-    # create shared library & populate methods
-    __signer = __get_shared_library()
-    __populate_shared_library_functions(__signer)
+    # Publish only a fully configured library. This prevents another thread
+    # from calling a function while ctypes signatures and the runtime hook are
+    # still being initialized.
+    with __signer_lock:
+        if __signer is None:
+            signer = __get_shared_library()
+            __populate_shared_library_functions(signer)
+            __signer = signer
     return __signer
 
 
@@ -546,6 +652,111 @@ class SignerClient:
             api_key_index,
             self.account_index,
         ))
+
+    def prepare_signer_nonces(self, count: int) -> None:
+        """Precompute one-use Schnorr commitments for a later signing burst.
+
+        Prepared nonces are held in a process-global in-memory pool until any
+        signer consumes them. They must not be persisted, serialized, or
+        shared across a process fork.
+        """
+        if count < 0 or count > _MAX_PREPARED_NONCES:
+            raise ValueError(
+                "prepared nonce count must be between 0 and "
+                f"{_MAX_PREPARED_NONCES}"
+            )
+        prepare = getattr(self.signer, "PrepareSignerNonces", None)
+        if prepare is None:
+            raise RuntimeError(
+                "the loaded signer does not support prepared nonces"
+            )
+        error = decode_and_free(prepare(count))
+        if error:
+            raise RuntimeError(error)
+
+    def sign_create_orders_batch(
+            self,
+            orders: List[CreateOrderTxReq],
+            first_nonce: int,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            self_trade_behavior_mode: int = 0,
+            self_trade_equality_mode: int = 0,
+            skip_nonce: int = SKIP_NONCE_OFF,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+    ):
+        """Sign independent create-order transactions with consecutive
+        nonces.
+        """
+        if not orders:
+            return []
+        if len(orders) > _MAX_CREATE_ORDER_BATCH:
+            raise ValueError(
+                "create-order batch cannot exceed "
+                f"{_MAX_CREATE_ORDER_BATCH} orders"
+            )
+        if first_nonce < 0:
+            raise ValueError(
+                "batch signing requires an explicit non-negative first nonce; "
+                "it does not perform network I/O"
+            )
+        if first_nonce > _MAX_SIGNER_NONCE - (len(orders) - 1):
+            raise ValueError("create-order batch nonce range overflows int64")
+
+        batch_signer = getattr(self.signer, "SignCreateOrdersBatch", None)
+        if batch_signer is None:
+            return [
+                self.sign_create_order(
+                    order.MarketIndex,
+                    order.ClientOrderIndex,
+                    order.BaseAmount,
+                    order.Price,
+                    order.IsAsk,
+                    order.Type,
+                    order.TimeInForce,
+                    order.ReduceOnly,
+                    order.TriggerPrice,
+                    order.OrderExpiry,
+                    integrator_account_index=integrator_account_index,
+                    integrator_taker_fee=integrator_taker_fee,
+                    integrator_maker_fee=integrator_maker_fee,
+                    self_trade_behavior_mode=self_trade_behavior_mode,
+                    self_trade_equality_mode=self_trade_equality_mode,
+                    skip_nonce=skip_nonce,
+                    nonce=first_nonce + index,
+                    api_key_index=api_key_index,
+                )
+                for index, order in enumerate(orders)
+            ]
+
+        orders_type = CreateOrderTxReq * len(orders)
+        orders_array = orders_type(*orders)
+        response = batch_signer(
+            orders_array,
+            len(orders),
+            integrator_account_index,
+            integrator_taker_fee,
+            integrator_maker_fee,
+            self_trade_behavior_mode,
+            self_trade_equality_mode,
+            skip_nonce,
+            first_nonce,
+            api_key_index,
+            self.account_index,
+        )
+        packed, error = _copy_and_free_signed_tx_batch(response)
+
+        if error:
+            raise RuntimeError(error)
+        decoded = decode_signed_tx_batch(packed)
+        if len(decoded) != len(orders):
+            raise RuntimeError(
+                "native signer returned "
+                f"{len(decoded)} results for {len(orders)} orders"
+            )
+        return decoded
 
     def sign_create_grouped_orders(
             self,
