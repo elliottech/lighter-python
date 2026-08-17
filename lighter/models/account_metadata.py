@@ -19,6 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
+from lighter.models.sub_account_metadata import SubAccountMetadata
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -34,8 +35,9 @@ class AccountMetadata(BaseModel):
     created_at: StrictInt
     can_rfq: StrictBool
     can_rfq_market_ids: List[StrictStr]
+    metadata: SubAccountMetadata
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "can_rfq", "can_rfq_market_ids"]
+    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "can_rfq", "can_rfq_market_ids", "metadata"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -78,6 +80,9 @@ class AccountMetadata(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of metadata
+        if self.metadata:
+            _dict['metadata'] = self.metadata.to_dict()
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -102,7 +107,8 @@ class AccountMetadata(BaseModel):
             "referral_points_percentage": obj.get("referral_points_percentage"),
             "created_at": obj.get("created_at"),
             "can_rfq": obj.get("can_rfq"),
-            "can_rfq_market_ids": obj.get("can_rfq_market_ids")
+            "can_rfq_market_ids": obj.get("can_rfq_market_ids"),
+            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -9,7 +9,6 @@ Name | Type | Description | Notes
 **target_account_index** | **int** |  | 
 **api_key_index** | **int** |  | 
 **metadata** | **str** |  | 
-**auth** | **str** |  | [optional] 
 
 ## Example
 

@@ -6,6 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**account_active_orders**](OrderApi.md#account_active_orders) | **GET** /api/v1/accountActiveOrders | accountActiveOrders
 [**account_inactive_orders**](OrderApi.md#account_inactive_orders) | **GET** /api/v1/accountInactiveOrders | accountInactiveOrders
+[**account_orders**](OrderApi.md#account_orders) | **GET** /api/v1/accountOrders | accountOrders
 [**asset_details**](OrderApi.md#asset_details) | **GET** /api/v1/assetDetails | assetDetails
 [**exchange_metrics**](OrderApi.md#exchange_metrics) | **GET** /api/v1/exchangeMetrics | exchangeMetrics
 [**exchange_stats**](OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
@@ -153,6 +154,79 @@ Name | Type | Description  | Notes
  **between_timestamps** | **str**|  | [optional] 
  **cursor** | **str**|  | [optional] 
  **market_type** | **str**|  | [optional] [default to all]
+
+### Return type
+
+[**Orders**](Orders.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **account_orders**
+> Orders account_orders(authorization, client_order_indexes, account_index=account_index)
+
+accountOrders
+
+Get account orders by client order indexes. Account index defaults to the authorization token's account. Supports the last 10K active orders (with no time limits), or the last 1K inactive orders (in the last 24 hours).
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.orders import Orders
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    authorization = 'authorization_example' # str | 
+    client_order_indexes = 'client_order_indexes_example' # str |  comma-separated int64s, e.g. \"123,456\", with a limit of 20.
+    account_index = 56 # int |  (optional)
+
+    try:
+        # accountOrders
+        api_response = await api_instance.account_orders(authorization, client_order_indexes, account_index=account_index)
+        print("The response of OrderApi->account_orders:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->account_orders: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **authorization** | **str**|  | 
+ **client_order_indexes** | **str**|  comma-separated int64s, e.g. \&quot;123,456\&quot;, with a limit of 20. | 
+ **account_index** | **int**|  | [optional] 
 
 ### Return type
 
@@ -455,7 +529,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **export**
-> ExportData export(authorization, type, account_index=account_index, market_id=market_id, start_timestamp=start_timestamp, end_timestamp=end_timestamp, side=side, role=role, trade_type=trade_type)
+> ExportData export(authorization, type, account_index=account_index, market_id=market_id, start_timestamp=start_timestamp, end_timestamp=end_timestamp, side=side, role=role, trade_type=trade_type, aggregate=aggregate)
 
 export
 
@@ -490,10 +564,11 @@ async with lighter.ApiClient(configuration) as api_client:
     side = all # str |  (optional) (default to all)
     role = all # str |  (optional) (default to all)
     trade_type = all # str |  (optional) (default to all)
+    aggregate = False # bool |  (optional) (default to False)
 
     try:
         # export
-        api_response = await api_instance.export(authorization, type, account_index=account_index, market_id=market_id, start_timestamp=start_timestamp, end_timestamp=end_timestamp, side=side, role=role, trade_type=trade_type)
+        api_response = await api_instance.export(authorization, type, account_index=account_index, market_id=market_id, start_timestamp=start_timestamp, end_timestamp=end_timestamp, side=side, role=role, trade_type=trade_type, aggregate=aggregate)
         print("The response of OrderApi->export:\n")
         pprint(api_response)
     except Exception as e:
@@ -516,6 +591,7 @@ Name | Type | Description  | Notes
  **side** | **str**|  | [optional] [default to all]
  **role** | **str**|  | [optional] [default to all]
  **trade_type** | **str**|  | [optional] [default to all]
+ **aggregate** | **bool**|  | [optional] [default to False]
 
 ### Return type
 

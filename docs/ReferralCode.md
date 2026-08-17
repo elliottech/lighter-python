@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **referral_code** | **str** |  | 
-**remaining_usage** | **int** |  | 
 
 ## Example
 

@@ -8,7 +8,7 @@ Method | HTTP request | Description
 
 
 # **notification_ack**
-> ResultCode notification_ack(notif_id, account_index, authorization=authorization, auth=auth)
+> ResultCode notification_ack(notif_id, account_index, authorization=authorization)
 
 notification_ack
 
@@ -36,12 +36,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.NotificationApi(api_client)
     notif_id = 'notif_id_example' # str | 
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # notification_ack
-        api_response = await api_instance.notification_ack(notif_id, account_index, authorization=authorization, auth=auth)
+        api_response = await api_instance.notification_ack(notif_id, account_index, authorization=authorization)
         print("The response of NotificationApi->notification_ack:\n")
         pprint(api_response)
     except Exception as e:
@@ -57,8 +56,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **notif_id** | **str**|  | 
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 

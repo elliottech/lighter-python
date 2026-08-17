@@ -20,6 +20,7 @@ import json
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.referral import Referral
+from lighter.models.referral_totals import ReferralTotals
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -32,8 +33,9 @@ class UserReferrals(BaseModel):
     cursor: StrictStr
     referrals: List[Referral]
     used_code: StrictStr
+    totals: ReferralTotals
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "cursor", "referrals", "used_code"]
+    __properties: ClassVar[List[str]] = ["code", "message", "cursor", "referrals", "used_code", "totals"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -83,6 +85,9 @@ class UserReferrals(BaseModel):
                 if _item:
                     _items.append(_item.to_dict())
             _dict['referrals'] = _items
+        # override the default output from pydantic by calling `to_dict()` of totals
+        if self.totals:
+            _dict['totals'] = self.totals.to_dict()
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -104,7 +109,8 @@ class UserReferrals(BaseModel):
             "message": obj.get("message"),
             "cursor": obj.get("cursor"),
             "referrals": [Referral.from_dict(_item) for _item in obj["referrals"]] if obj.get("referrals") is not None else None,
-            "used_code": obj.get("used_code")
+            "used_code": obj.get("used_code"),
+            "totals": ReferralTotals.from_dict(obj["totals"]) if obj.get("totals") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

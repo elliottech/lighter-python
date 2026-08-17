@@ -6,6 +6,8 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**candles**](CandlestickApi.md#candles) | **GET** /api/v1/candles | candles
 [**fundings**](CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
+[**mark_price_candles**](CandlestickApi.md#mark_price_candles) | **GET** /api/v1/markPriceCandles | markPriceCandles
+[**market_price_charts**](CandlestickApi.md#market_price_charts) | **GET** /api/v1/marketPriceCharts | marketPriceCharts
 
 
 # **candles**
@@ -92,7 +94,7 @@ No authorization required
 
 fundings
 
-Get fundings
+Get fundings. Maximum 750 fundings will be returned per call. `count_back` indicates the number of fundings you would like to be returned, starting from `start_timestamp`, if set to 0, all fundings will be returned.
 
 ### Example
 
@@ -145,6 +147,152 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**Fundings**](Fundings.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **mark_price_candles**
+> MarkPriceCandles mark_price_candles(market_id, resolution, start_timestamp, end_timestamp, count_back)
+
+markPriceCandles
+
+Get mark price candles
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.mark_price_candles import MarkPriceCandles
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.CandlestickApi(api_client)
+    market_id = 56 # int | 
+    resolution = 'resolution_example' # str | 
+    start_timestamp = 56 # int | 
+    end_timestamp = 56 # int | 
+    count_back = 56 # int | 
+
+    try:
+        # markPriceCandles
+        api_response = await api_instance.mark_price_candles(market_id, resolution, start_timestamp, end_timestamp, count_back)
+        print("The response of CandlestickApi->mark_price_candles:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling CandlestickApi->mark_price_candles: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **market_id** | **int**|  | 
+ **resolution** | **str**|  | 
+ **start_timestamp** | **int**|  | 
+ **end_timestamp** | **int**|  | 
+ **count_back** | **int**|  | 
+
+### Return type
+
+[**MarkPriceCandles**](MarkPriceCandles.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **market_price_charts**
+> MarketPriceCharts market_price_charts(market_ids=market_ids)
+
+marketPriceCharts
+
+Get last 24h hourly prices for all markets (mark price for perps, index price for spot)
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.market_price_charts import MarketPriceCharts
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.CandlestickApi(api_client)
+    market_ids = [56] # List[int] |  (optional)
+
+    try:
+        # marketPriceCharts
+        api_response = await api_instance.market_price_charts(market_ids=market_ids)
+        print("The response of CandlestickApi->market_price_charts:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling CandlestickApi->market_price_charts: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **market_ids** | [**List[int]**](int.md)|  | [optional] 
+
+### Return type
+
+[**MarketPriceCharts**](MarketPriceCharts.md)
 
 ### Authorization
 

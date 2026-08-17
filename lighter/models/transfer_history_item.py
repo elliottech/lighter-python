@@ -45,8 +45,8 @@ class TransferHistoryItem(BaseModel):
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer', 'L2StakeAssetInflow', 'L2StakeAssetOutflow', 'L2UnstakeAssetInflow', 'L2UnstakeAssetOutflow', 'L2ForceBurnSharesInflow', 'L2ForceBurnSharesOutflow']):
-            raise ValueError("must be one of enum values ('L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer', 'L2StakeAssetInflow', 'L2StakeAssetOutflow', 'L2UnstakeAssetInflow', 'L2UnstakeAssetOutflow', 'L2ForceBurnSharesInflow', 'L2ForceBurnSharesOutflow')")
+        if value not in set(['L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer', 'L2StakeAssetInflow', 'L2StakeAssetOutflow', 'L2UnstakeAssetInflow', 'L2UnstakeAssetOutflow', 'L2ForceBurnSharesInflow', 'L2ForceBurnSharesOutflow', 'L1BurnSharesInflow', 'L1BurnSharesOutflow', 'L1UnstakeAssetInflow', 'L1UnstakeAssetOutflow', 'L2CreatePublicPoolInflow', 'L2CreatePublicPoolOutflow', 'L2CreateStakingPoolInflow', 'L2CreateStakingPoolOutflow']):
+            raise ValueError("must be one of enum values ('L2TransferInflow', 'L2TransferOutflow', 'L2BurnSharesInflow', 'L2BurnSharesOutflow', 'L2MintSharesInflow', 'L2MintSharesOutflow', 'L2SelfTransfer', 'L2StakeAssetInflow', 'L2StakeAssetOutflow', 'L2UnstakeAssetInflow', 'L2UnstakeAssetOutflow', 'L2ForceBurnSharesInflow', 'L2ForceBurnSharesOutflow', 'L1BurnSharesInflow', 'L1BurnSharesOutflow', 'L1UnstakeAssetInflow', 'L1UnstakeAssetOutflow', 'L2CreatePublicPoolInflow', 'L2CreatePublicPoolOutflow', 'L2CreateStakingPoolInflow', 'L2CreateStakingPoolOutflow')")
         return value
 
     @field_validator('from_route')

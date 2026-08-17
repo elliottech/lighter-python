@@ -54,8 +54,7 @@ class TransactionApi:
         by: StrictStr,
         value: StrictStr,
         index: Optional[StrictInt] = None,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         types: Optional[List[StrictInt]] = None,
         _request_timeout: Union[
             None,
@@ -82,10 +81,8 @@ class TransactionApi:
         :type value: str
         :param index:
         :type index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param types:
         :type types: List[int]
         :param _request_timeout: timeout setting for this request. If one
@@ -116,7 +113,6 @@ class TransactionApi:
             value=value,
             index=index,
             authorization=authorization,
-            auth=auth,
             types=types,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -145,8 +141,7 @@ class TransactionApi:
         by: StrictStr,
         value: StrictStr,
         index: Optional[StrictInt] = None,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         types: Optional[List[StrictInt]] = None,
         _request_timeout: Union[
             None,
@@ -173,10 +168,8 @@ class TransactionApi:
         :type value: str
         :param index:
         :type index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param types:
         :type types: List[int]
         :param _request_timeout: timeout setting for this request. If one
@@ -207,7 +200,6 @@ class TransactionApi:
             value=value,
             index=index,
             authorization=authorization,
-            auth=auth,
             types=types,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -236,8 +228,7 @@ class TransactionApi:
         by: StrictStr,
         value: StrictStr,
         index: Optional[StrictInt] = None,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         types: Optional[List[StrictInt]] = None,
         _request_timeout: Union[
             None,
@@ -264,10 +255,8 @@ class TransactionApi:
         :type value: str
         :param index:
         :type index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param types:
         :type types: List[int]
         :param _request_timeout: timeout setting for this request. If one
@@ -298,7 +287,6 @@ class TransactionApi:
             value=value,
             index=index,
             authorization=authorization,
-            auth=auth,
             types=types,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -324,7 +312,6 @@ class TransactionApi:
         value,
         index,
         authorization,
-        auth,
         types,
         _request_auth,
         _content_type,
@@ -362,10 +349,6 @@ class TransactionApi:
         if value is not None:
             
             _query_params.append(('value', value))
-            
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
             
         if types is not None:
             

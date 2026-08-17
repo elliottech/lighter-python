@@ -37,6 +37,7 @@ Name | Type | Description | Notes
 **cross_initial_margin_requirement** | **str** |  | 
 **cross_maintenance_margin_requirement** | **str** |  | 
 **can_rfq_market_ids** | **List[str]** |  | 
+**metadata** | [**SubAccountMetadata**](SubAccountMetadata.md) |  | 
 
 ## Example
 

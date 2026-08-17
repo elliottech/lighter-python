@@ -8,6 +8,8 @@ Name | Type | Description | Notes
 **l1_address** | **str** |  | 
 **can_invite** | **bool** |  | 
 **referral_points_percentage** | **str** |  | 
+**referral_program_kickback** | **str** |  | 
+**referral_program_kickback_history** | [**List[ReferralProgramKickback]**](ReferralProgramKickback.md) |  | 
 
 ## Example
 

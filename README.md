@@ -42,10 +42,10 @@ if __name__ == "__main__":
 The [`examples/`](examples) directory contains end-to-end scripts for the
 common flows. A few starting points:
 
-- [Read public REST endpoints](examples/market-data/get_info.py)
-- [Stream order books and account state over websocket](examples/websocket/ws.py)
-- [Create / modify / cancel an order over HTTP](examples/orders/create_modify_cancel_order_http.py)
-- [Create / modify / cancel an order over websocket](examples/orders/create_modify_cancel_order_ws.py)
+- [Read public REST endpoints](examples/get_info.py)
+- [Stream order books and account state over websocket](examples/ws.py)
+- [Create / modify / cancel an order over HTTP](examples/create_modify_cancel_order_http.py)
+- [Create / modify / cancel an order over websocket](examples/create_modify_cancel_order_ws.py)
 - [System setup (API key, signer)](examples/system_setup.py)
 
 See [`examples/README.md`](examples/README.md) for the full annotated list.
@@ -63,6 +63,7 @@ Class | Method | HTTP request | Description
 *AccountApi* | [**change_account_tier**](docs/AccountApi.md#change_account_tier) | **POST** /api/v1/changeAccountTier | changeAccountTier
 *AccountApi* | [**get_maker_only_api_keys**](docs/AccountApi.md#get_maker_only_api_keys) | **GET** /api/v1/getMakerOnlyApiKeys | getMakerOnlyApiKeys
 *AccountApi* | [**l1_metadata**](docs/AccountApi.md#l1_metadata) | **GET** /api/v1/l1Metadata | l1Metadata
+*AccountApi* | [**leaderboard**](docs/AccountApi.md#leaderboard) | **GET** /api/v1/leaderboard | leaderboard
 *AccountApi* | [**lease_options**](docs/AccountApi.md#lease_options) | **GET** /api/v1/leaseOptions | leaseOptions
 *AccountApi* | [**leases**](docs/AccountApi.md#leases) | **GET** /api/v1/leases | leases
 *AccountApi* | [**liquidations**](docs/AccountApi.md#liquidations) | **GET** /api/v1/liquidations | liquidations
@@ -93,15 +94,19 @@ Class | Method | HTTP request | Description
 *BridgeApi* | [**fastwithdraw_info**](docs/BridgeApi.md#fastwithdraw_info) | **GET** /api/v1/fastwithdraw/info | fastwithdraw_info
 *CandlestickApi* | [**candles**](docs/CandlestickApi.md#candles) | **GET** /api/v1/candles | candles
 *CandlestickApi* | [**fundings**](docs/CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
+*CandlestickApi* | [**mark_price_candles**](docs/CandlestickApi.md#mark_price_candles) | **GET** /api/v1/markPriceCandles | markPriceCandles
+*CandlestickApi* | [**market_price_charts**](docs/CandlestickApi.md#market_price_charts) | **GET** /api/v1/marketPriceCharts | marketPriceCharts
 *FundingApi* | [**funding_rates**](docs/FundingApi.md#funding_rates) | **GET** /api/v1/funding-rates | funding-rates
 *InfoApi* | [**layer1_basic_info**](docs/InfoApi.md#layer1_basic_info) | **GET** /api/v1/layer1BasicInfo | layer1BasicInfo
 *InfoApi* | [**synthetic_spot_info**](docs/InfoApi.md#synthetic_spot_info) | **GET** /api/v1/syntheticSpotInfo | syntheticSpotInfo
 *InfoApi* | [**system_config**](docs/InfoApi.md#system_config) | **GET** /api/v1/systemConfig | systemConfig
 *InfoApi* | [**transfer_fee_info**](docs/InfoApi.md#transfer_fee_info) | **GET** /api/v1/transferFeeInfo | transferFeeInfo
 *InfoApi* | [**withdrawal_delay**](docs/InfoApi.md#withdrawal_delay) | **GET** /api/v1/withdrawalDelay | withdrawalDelay
+*LivepointsApi* | [**live_points_total**](docs/LivepointsApi.md#live_points_total) | **GET** /api/v1/livePoints/total | livePoints_total
 *NotificationApi* | [**notification_ack**](docs/NotificationApi.md#notification_ack) | **POST** /api/v1/notification/ack | notification_ack
 *OrderApi* | [**account_active_orders**](docs/OrderApi.md#account_active_orders) | **GET** /api/v1/accountActiveOrders | accountActiveOrders
 *OrderApi* | [**account_inactive_orders**](docs/OrderApi.md#account_inactive_orders) | **GET** /api/v1/accountInactiveOrders | accountInactiveOrders
+*OrderApi* | [**account_orders**](docs/OrderApi.md#account_orders) | **GET** /api/v1/accountOrders | accountOrders
 *OrderApi* | [**asset_details**](docs/OrderApi.md#asset_details) | **GET** /api/v1/assetDetails | assetDetails
 *OrderApi* | [**exchange_metrics**](docs/OrderApi.md#exchange_metrics) | **GET** /api/v1/exchangeMetrics | exchangeMetrics
 *OrderApi* | [**exchange_stats**](docs/OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
@@ -178,13 +183,20 @@ Class | Method | HTTP request | Description
  - [L1Metadata](docs/L1Metadata.md)
  - [L1ProviderInfo](docs/L1ProviderInfo.md)
  - [Layer1BasicInfo](docs/Layer1BasicInfo.md)
+ - [Leaderboard](docs/Leaderboard.md)
+ - [LeaderboardEntry](docs/LeaderboardEntry.md)
  - [LeaseEntry](docs/LeaseEntry.md)
  - [LeaseOptionEntry](docs/LeaseOptionEntry.md)
  - [LiqTrade](docs/LiqTrade.md)
  - [Liquidation](docs/Liquidation.md)
  - [LiquidationInfo](docs/LiquidationInfo.md)
  - [LiquidationInfos](docs/LiquidationInfos.md)
+ - [LivePointsTotal](docs/LivePointsTotal.md)
+ - [MarkPriceCandle](docs/MarkPriceCandle.md)
+ - [MarkPriceCandles](docs/MarkPriceCandles.md)
  - [MarketConfig](docs/MarketConfig.md)
+ - [MarketPriceChart](docs/MarketPriceChart.md)
+ - [MarketPriceCharts](docs/MarketPriceCharts.md)
  - [NextNonce](docs/NextNonce.md)
  - [Order](docs/Order.md)
  - [OrderBook](docs/OrderBook.md)
@@ -209,6 +221,8 @@ Class | Method | HTTP request | Description
  - [ReferralCode](docs/ReferralCode.md)
  - [ReferralPointEntry](docs/ReferralPointEntry.md)
  - [ReferralPoints](docs/ReferralPoints.md)
+ - [ReferralProgramKickback](docs/ReferralProgramKickback.md)
+ - [ReferralTotals](docs/ReferralTotals.md)
  - [ReqSetAccountMetadata](docs/ReqSetAccountMetadata.md)
  - [RespChangeAccountTier](docs/RespChangeAccountTier.md)
  - [RespCreateRFQ](docs/RespCreateRFQ.md)
@@ -243,6 +257,7 @@ Class | Method | HTTP request | Description
  - [SpotOrderBookDetail](docs/SpotOrderBookDetail.md)
  - [Status](docs/Status.md)
  - [Strategy](docs/Strategy.md)
+ - [SubAccountMetadata](docs/SubAccountMetadata.md)
  - [SubAccounts](docs/SubAccounts.md)
  - [SystemConfig](docs/SystemConfig.md)
  - [Token](docs/Token.md)

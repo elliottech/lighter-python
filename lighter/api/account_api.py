@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from pydantic import Field, StrictBool, StrictInt, StrictStr, field_validator
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated
 from lighter.models.account_api_keys import AccountApiKeys
 from lighter.models.account_limits import AccountLimits
@@ -25,6 +25,7 @@ from lighter.models.account_metadatas import AccountMetadatas
 from lighter.models.account_pn_l import AccountPnL
 from lighter.models.detailed_accounts import DetailedAccounts
 from lighter.models.l1_metadata import L1Metadata
+from lighter.models.leaderboard import Leaderboard
 from lighter.models.liquidation_infos import LiquidationInfos
 from lighter.models.partner_stats import PartnerStats
 from lighter.models.position_fundings import PositionFundings
@@ -1517,8 +1518,7 @@ class AccountApi:
         self,
         account_index: StrictInt,
         new_tier: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1540,10 +1540,8 @@ class AccountApi:
         :type account_index: int
         :param new_tier: (required)
         :type new_tier: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1570,7 +1568,6 @@ class AccountApi:
             account_index=account_index,
             new_tier=new_tier,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1596,8 +1593,7 @@ class AccountApi:
         self,
         account_index: StrictInt,
         new_tier: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1619,10 +1615,8 @@ class AccountApi:
         :type account_index: int
         :param new_tier: (required)
         :type new_tier: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1649,7 +1643,6 @@ class AccountApi:
             account_index=account_index,
             new_tier=new_tier,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1675,8 +1668,7 @@ class AccountApi:
         self,
         account_index: StrictInt,
         new_tier: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1698,10 +1690,8 @@ class AccountApi:
         :type account_index: int
         :param new_tier: (required)
         :type new_tier: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1728,7 +1718,6 @@ class AccountApi:
             account_index=account_index,
             new_tier=new_tier,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1751,7 +1740,6 @@ class AccountApi:
         account_index,
         new_tier,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -1776,8 +1764,6 @@ class AccountApi:
         if authorization is not None:
             _header_params['authorization'] = authorization
         # process the form parameters
-        if auth is not None:
-            _form_params.append(('auth', auth))
         if account_index is not None:
             _form_params.append(('account_index', account_index))
         if new_tier is not None:
@@ -2379,6 +2365,315 @@ class AccountApi:
 
 
 
+    async def leaderboard(
+        self,
+        type: StrictStr,
+        authorization: Optional[StrictStr] = None,
+        l1_address: Optional[StrictStr] = None,
+        competition_id: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> Leaderboard:
+        """leaderboard
+
+        Get points leaderboard. Type should be all.
+
+        :param type: (required)
+        :type type: str
+        :param authorization:
+        :type authorization: str
+        :param l1_address:
+        :type l1_address: str
+        :param competition_id:
+        :type competition_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._leaderboard_serialize(
+            type=type,
+            authorization=authorization,
+            l1_address=l1_address,
+            competition_id=competition_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Leaderboard",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def leaderboard_with_http_info(
+        self,
+        type: StrictStr,
+        authorization: Optional[StrictStr] = None,
+        l1_address: Optional[StrictStr] = None,
+        competition_id: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[Leaderboard]:
+        """leaderboard
+
+        Get points leaderboard. Type should be all.
+
+        :param type: (required)
+        :type type: str
+        :param authorization:
+        :type authorization: str
+        :param l1_address:
+        :type l1_address: str
+        :param competition_id:
+        :type competition_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._leaderboard_serialize(
+            type=type,
+            authorization=authorization,
+            l1_address=l1_address,
+            competition_id=competition_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Leaderboard",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def leaderboard_without_preload_content(
+        self,
+        type: StrictStr,
+        authorization: Optional[StrictStr] = None,
+        l1_address: Optional[StrictStr] = None,
+        competition_id: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """leaderboard
+
+        Get points leaderboard. Type should be all.
+
+        :param type: (required)
+        :type type: str
+        :param authorization:
+        :type authorization: str
+        :param l1_address:
+        :type l1_address: str
+        :param competition_id:
+        :type competition_id: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._leaderboard_serialize(
+            type=type,
+            authorization=authorization,
+            l1_address=l1_address,
+            competition_id=competition_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "Leaderboard",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _leaderboard_serialize(
+        self,
+        type,
+        authorization,
+        l1_address,
+        competition_id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if type is not None:
+            
+            _query_params.append(('type', type))
+            
+        if l1_address is not None:
+            
+            _query_params.append(('l1_address', l1_address))
+            
+        if competition_id is not None:
+            
+            _query_params.append(('competition_id', competition_id))
+            
+        # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/leaderboard',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
     async def lease_options(
         self,
         _request_timeout: Union[
@@ -2628,7 +2923,6 @@ class AccountApi:
         authorization: Annotated[Optional[StrictStr], Field(description="API token authorization")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Pagination cursor from a previous response")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Number of results to return (1–100, default 20)")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description="Read-only auth (alternative to header authorization)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2654,8 +2948,6 @@ class AccountApi:
         :type cursor: str
         :param limit: Number of results to return (1–100, default 20)
         :type limit: int
-        :param auth: Read-only auth (alternative to header authorization)
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2683,7 +2975,6 @@ class AccountApi:
             authorization=authorization,
             cursor=cursor,
             limit=limit,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2711,7 +3002,6 @@ class AccountApi:
         authorization: Annotated[Optional[StrictStr], Field(description="API token authorization")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Pagination cursor from a previous response")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Number of results to return (1–100, default 20)")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description="Read-only auth (alternative to header authorization)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2737,8 +3027,6 @@ class AccountApi:
         :type cursor: str
         :param limit: Number of results to return (1–100, default 20)
         :type limit: int
-        :param auth: Read-only auth (alternative to header authorization)
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2766,7 +3054,6 @@ class AccountApi:
             authorization=authorization,
             cursor=cursor,
             limit=limit,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2794,7 +3081,6 @@ class AccountApi:
         authorization: Annotated[Optional[StrictStr], Field(description="API token authorization")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Pagination cursor from a previous response")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Number of results to return (1–100, default 20)")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description="Read-only auth (alternative to header authorization)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2820,8 +3106,6 @@ class AccountApi:
         :type cursor: str
         :param limit: Number of results to return (1–100, default 20)
         :type limit: int
-        :param auth: Read-only auth (alternative to header authorization)
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2849,7 +3133,6 @@ class AccountApi:
             authorization=authorization,
             cursor=cursor,
             limit=limit,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2873,7 +3156,6 @@ class AccountApi:
         authorization,
         cursor,
         limit,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -2905,10 +3187,6 @@ class AccountApi:
         if limit is not None:
             
             _query_params.append(('limit', limit))
-            
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
             
         # process the header parameters
         if authorization is not None:
@@ -3595,6 +3873,7 @@ class AccountApi:
         account_index: StrictInt,
         start_timestamp: Optional[StrictInt] = None,
         end_timestamp: Optional[StrictInt] = None,
+        period: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3618,6 +3897,8 @@ class AccountApi:
         :type start_timestamp: int
         :param end_timestamp:
         :type end_timestamp: int
+        :param period:
+        :type period: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3644,6 +3925,7 @@ class AccountApi:
             account_index=account_index,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
+            period=period,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3670,6 +3952,7 @@ class AccountApi:
         account_index: StrictInt,
         start_timestamp: Optional[StrictInt] = None,
         end_timestamp: Optional[StrictInt] = None,
+        period: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3693,6 +3976,8 @@ class AccountApi:
         :type start_timestamp: int
         :param end_timestamp:
         :type end_timestamp: int
+        :param period:
+        :type period: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3719,6 +4004,7 @@ class AccountApi:
             account_index=account_index,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
+            period=period,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3745,6 +4031,7 @@ class AccountApi:
         account_index: StrictInt,
         start_timestamp: Optional[StrictInt] = None,
         end_timestamp: Optional[StrictInt] = None,
+        period: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3768,6 +4055,8 @@ class AccountApi:
         :type start_timestamp: int
         :param end_timestamp:
         :type end_timestamp: int
+        :param period:
+        :type period: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3794,6 +4083,7 @@ class AccountApi:
             account_index=account_index,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
+            period=period,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3816,6 +4106,7 @@ class AccountApi:
         account_index,
         start_timestamp,
         end_timestamp,
+        period,
         _request_auth,
         _content_type,
         _headers,
@@ -3847,6 +4138,10 @@ class AccountApi:
         if end_timestamp is not None:
             
             _query_params.append(('end_timestamp', end_timestamp))
+            
+        if period is not None:
+            
+            _query_params.append(('period', period))
             
         # process the header parameters
         # process the form parameters
@@ -4266,11 +4561,11 @@ class AccountApi:
         account_index: StrictInt,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
         authorization: Optional[StrictStr] = None,
-        market_id: Optional[StrictInt] = None,
         cursor: Optional[StrictStr] = None,
         side: Optional[StrictStr] = None,
         start_timestamp: Optional[StrictInt] = None,
         end_timestamp: Optional[StrictInt] = None,
+        market_ids: Annotated[Optional[List[StrictInt]], Field(description="comma-separated int64s, e.g. \"1,2\"")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -4294,8 +4589,6 @@ class AccountApi:
         :type limit: int
         :param authorization:
         :type authorization: str
-        :param market_id:
-        :type market_id: int
         :param cursor:
         :type cursor: str
         :param side:
@@ -4304,6 +4597,8 @@ class AccountApi:
         :type start_timestamp: int
         :param end_timestamp:
         :type end_timestamp: int
+        :param market_ids: comma-separated int64s, e.g. \"1,2\"
+        :type market_ids: List[int]
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -4330,11 +4625,11 @@ class AccountApi:
             account_index=account_index,
             limit=limit,
             authorization=authorization,
-            market_id=market_id,
             cursor=cursor,
             side=side,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
+            market_ids=market_ids,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -4361,11 +4656,11 @@ class AccountApi:
         account_index: StrictInt,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
         authorization: Optional[StrictStr] = None,
-        market_id: Optional[StrictInt] = None,
         cursor: Optional[StrictStr] = None,
         side: Optional[StrictStr] = None,
         start_timestamp: Optional[StrictInt] = None,
         end_timestamp: Optional[StrictInt] = None,
+        market_ids: Annotated[Optional[List[StrictInt]], Field(description="comma-separated int64s, e.g. \"1,2\"")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -4389,8 +4684,6 @@ class AccountApi:
         :type limit: int
         :param authorization:
         :type authorization: str
-        :param market_id:
-        :type market_id: int
         :param cursor:
         :type cursor: str
         :param side:
@@ -4399,6 +4692,8 @@ class AccountApi:
         :type start_timestamp: int
         :param end_timestamp:
         :type end_timestamp: int
+        :param market_ids: comma-separated int64s, e.g. \"1,2\"
+        :type market_ids: List[int]
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -4425,11 +4720,11 @@ class AccountApi:
             account_index=account_index,
             limit=limit,
             authorization=authorization,
-            market_id=market_id,
             cursor=cursor,
             side=side,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
+            market_ids=market_ids,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -4456,11 +4751,11 @@ class AccountApi:
         account_index: StrictInt,
         limit: Annotated[int, Field(le=100, strict=True, ge=1)],
         authorization: Optional[StrictStr] = None,
-        market_id: Optional[StrictInt] = None,
         cursor: Optional[StrictStr] = None,
         side: Optional[StrictStr] = None,
         start_timestamp: Optional[StrictInt] = None,
         end_timestamp: Optional[StrictInt] = None,
+        market_ids: Annotated[Optional[List[StrictInt]], Field(description="comma-separated int64s, e.g. \"1,2\"")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -4484,8 +4779,6 @@ class AccountApi:
         :type limit: int
         :param authorization:
         :type authorization: str
-        :param market_id:
-        :type market_id: int
         :param cursor:
         :type cursor: str
         :param side:
@@ -4494,6 +4787,8 @@ class AccountApi:
         :type start_timestamp: int
         :param end_timestamp:
         :type end_timestamp: int
+        :param market_ids: comma-separated int64s, e.g. \"1,2\"
+        :type market_ids: List[int]
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -4520,11 +4815,11 @@ class AccountApi:
             account_index=account_index,
             limit=limit,
             authorization=authorization,
-            market_id=market_id,
             cursor=cursor,
             side=side,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
+            market_ids=market_ids,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -4547,11 +4842,11 @@ class AccountApi:
         account_index,
         limit,
         authorization,
-        market_id,
         cursor,
         side,
         start_timestamp,
         end_timestamp,
+        market_ids,
         _request_auth,
         _content_type,
         _headers,
@@ -4561,6 +4856,7 @@ class AccountApi:
         _host = None
 
         _collection_formats: Dict[str, str] = {
+            'market_ids': 'multi',
         }
 
         _path_params: Dict[str, str] = {}
@@ -4575,10 +4871,6 @@ class AccountApi:
         if account_index is not None:
             
             _query_params.append(('account_index', account_index))
-            
-        if market_id is not None:
-            
-            _query_params.append(('market_id', market_id))
             
         if cursor is not None:
             
@@ -4599,6 +4891,10 @@ class AccountApi:
         if end_timestamp is not None:
             
             _query_params.append(('end_timestamp', end_timestamp))
+            
+        if market_ids is not None:
+            
+            _query_params.append(('market_ids', market_ids))
             
         # process the header parameters
         if authorization is not None:
@@ -4969,10 +5265,10 @@ class AccountApi:
         l1_address: StrictStr,
         authorization: Optional[StrictStr] = None,
         cursor: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         stats_start_timestamp: Optional[StrictInt] = None,
         stats_end_timestamp: Optional[StrictInt] = None,
         limit: Optional[Annotated[int, Field(le=300, strict=True, ge=1)]] = None,
+        is_eligible: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -4996,14 +5292,14 @@ class AccountApi:
         :type authorization: str
         :param cursor:
         :type cursor: str
-        :param auth:
-        :type auth: str
         :param stats_start_timestamp:
         :type stats_start_timestamp: int
         :param stats_end_timestamp:
         :type stats_end_timestamp: int
         :param limit:
         :type limit: int
+        :param is_eligible:
+        :type is_eligible: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -5030,10 +5326,10 @@ class AccountApi:
             l1_address=l1_address,
             authorization=authorization,
             cursor=cursor,
-            auth=auth,
             stats_start_timestamp=stats_start_timestamp,
             stats_end_timestamp=stats_end_timestamp,
             limit=limit,
+            is_eligible=is_eligible,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -5060,10 +5356,10 @@ class AccountApi:
         l1_address: StrictStr,
         authorization: Optional[StrictStr] = None,
         cursor: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         stats_start_timestamp: Optional[StrictInt] = None,
         stats_end_timestamp: Optional[StrictInt] = None,
         limit: Optional[Annotated[int, Field(le=300, strict=True, ge=1)]] = None,
+        is_eligible: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -5087,14 +5383,14 @@ class AccountApi:
         :type authorization: str
         :param cursor:
         :type cursor: str
-        :param auth:
-        :type auth: str
         :param stats_start_timestamp:
         :type stats_start_timestamp: int
         :param stats_end_timestamp:
         :type stats_end_timestamp: int
         :param limit:
         :type limit: int
+        :param is_eligible:
+        :type is_eligible: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -5121,10 +5417,10 @@ class AccountApi:
             l1_address=l1_address,
             authorization=authorization,
             cursor=cursor,
-            auth=auth,
             stats_start_timestamp=stats_start_timestamp,
             stats_end_timestamp=stats_end_timestamp,
             limit=limit,
+            is_eligible=is_eligible,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -5151,10 +5447,10 @@ class AccountApi:
         l1_address: StrictStr,
         authorization: Optional[StrictStr] = None,
         cursor: Optional[StrictStr] = None,
-        auth: Optional[StrictStr] = None,
         stats_start_timestamp: Optional[StrictInt] = None,
         stats_end_timestamp: Optional[StrictInt] = None,
         limit: Optional[Annotated[int, Field(le=300, strict=True, ge=1)]] = None,
+        is_eligible: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -5178,14 +5474,14 @@ class AccountApi:
         :type authorization: str
         :param cursor:
         :type cursor: str
-        :param auth:
-        :type auth: str
         :param stats_start_timestamp:
         :type stats_start_timestamp: int
         :param stats_end_timestamp:
         :type stats_end_timestamp: int
         :param limit:
         :type limit: int
+        :param is_eligible:
+        :type is_eligible: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -5212,10 +5508,10 @@ class AccountApi:
             l1_address=l1_address,
             authorization=authorization,
             cursor=cursor,
-            auth=auth,
             stats_start_timestamp=stats_start_timestamp,
             stats_end_timestamp=stats_end_timestamp,
             limit=limit,
+            is_eligible=is_eligible,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -5238,10 +5534,10 @@ class AccountApi:
         l1_address,
         authorization,
         cursor,
-        auth,
         stats_start_timestamp,
         stats_end_timestamp,
         limit,
+        is_eligible,
         _request_auth,
         _content_type,
         _headers,
@@ -5270,10 +5566,6 @@ class AccountApi:
             
             _query_params.append(('cursor', cursor))
             
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
-            
         if stats_start_timestamp is not None:
             
             _query_params.append(('stats_start_timestamp', stats_start_timestamp))
@@ -5285,6 +5577,10 @@ class AccountApi:
         if limit is not None:
             
             _query_params.append(('limit', limit))
+            
+        if is_eligible is not None:
+            
+            _query_params.append(('is_eligible', is_eligible))
             
         # process the header parameters
         if authorization is not None:
@@ -5347,7 +5643,7 @@ class AccountApi:
     ) -> RespCreateRFQ:
         """rfq_create
 
-        Create RFQ
+        Create RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
         :param authorization: (required)
         :type authorization: str
@@ -5434,7 +5730,7 @@ class AccountApi:
     ) -> ApiResponse[RespCreateRFQ]:
         """rfq_create
 
-        Create RFQ
+        Create RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
         :param authorization: (required)
         :type authorization: str
@@ -5521,7 +5817,7 @@ class AccountApi:
     ) -> RESTResponseType:
         """rfq_create
 
-        Create RFQ
+        Create RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
         :param authorization: (required)
         :type authorization: str
@@ -6291,7 +6587,7 @@ class AccountApi:
     ) -> RespRespondToRFQ:
         """rfq_respond
 
-        Respond to RFQ
+        Respond to RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
         :param authorization: (required)
         :type authorization: str
@@ -6366,7 +6662,7 @@ class AccountApi:
     ) -> ApiResponse[RespRespondToRFQ]:
         """rfq_respond
 
-        Respond to RFQ
+        Respond to RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
         :param authorization: (required)
         :type authorization: str
@@ -6441,7 +6737,7 @@ class AccountApi:
     ) -> RESTResponseType:
         """rfq_respond
 
-        Respond to RFQ
+        Respond to RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
         :param authorization: (required)
         :type authorization: str
@@ -6878,7 +7174,6 @@ class AccountApi:
         authorization: StrictStr,
         account_index: StrictInt,
         api_key_indexes: Annotated[StrictStr, Field(description="JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions.")],
-        auth: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -6902,8 +7197,6 @@ class AccountApi:
         :type account_index: int
         :param api_key_indexes: JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions. (required)
         :type api_key_indexes: str
-        :param auth:
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -6930,7 +7223,6 @@ class AccountApi:
             authorization=authorization,
             account_index=account_index,
             api_key_indexes=api_key_indexes,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -6957,7 +7249,6 @@ class AccountApi:
         authorization: StrictStr,
         account_index: StrictInt,
         api_key_indexes: Annotated[StrictStr, Field(description="JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions.")],
-        auth: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -6981,8 +7272,6 @@ class AccountApi:
         :type account_index: int
         :param api_key_indexes: JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions. (required)
         :type api_key_indexes: str
-        :param auth:
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -7009,7 +7298,6 @@ class AccountApi:
             authorization=authorization,
             account_index=account_index,
             api_key_indexes=api_key_indexes,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -7036,7 +7324,6 @@ class AccountApi:
         authorization: StrictStr,
         account_index: StrictInt,
         api_key_indexes: Annotated[StrictStr, Field(description="JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions.")],
-        auth: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -7060,8 +7347,6 @@ class AccountApi:
         :type account_index: int
         :param api_key_indexes: JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions. (required)
         :type api_key_indexes: str
-        :param auth:
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -7088,7 +7373,6 @@ class AccountApi:
             authorization=authorization,
             account_index=account_index,
             api_key_indexes=api_key_indexes,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -7111,7 +7395,6 @@ class AccountApi:
         authorization,
         account_index,
         api_key_indexes,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -7140,8 +7423,6 @@ class AccountApi:
             _form_params.append(('account_index', account_index))
         if api_key_indexes is not None:
             _form_params.append(('api_key_indexes', api_key_indexes))
-        if auth is not None:
-            _form_params.append(('auth', auth))
         # process the body parameter
 
 
@@ -7193,7 +7474,7 @@ class AccountApi:
     async def tokens(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -7213,7 +7494,7 @@ class AccountApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -7264,7 +7545,7 @@ class AccountApi:
     async def tokens_with_http_info(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -7284,7 +7565,7 @@ class AccountApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -7335,7 +7616,7 @@ class AccountApi:
     async def tokens_without_preload_content(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -7355,7 +7636,7 @@ class AccountApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

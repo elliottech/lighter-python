@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,9 +30,8 @@ class ReqSetAccountMetadata(BaseModel):
     target_account_index: StrictInt
     api_key_index: StrictInt
     metadata: StrictStr
-    auth: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["master_account_index", "target_account_index", "api_key_index", "metadata", "auth"]
+    __properties: ClassVar[List[str]] = ["master_account_index", "target_account_index", "api_key_index", "metadata"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -95,8 +94,7 @@ class ReqSetAccountMetadata(BaseModel):
             "master_account_index": obj.get("master_account_index"),
             "target_account_index": obj.get("target_account_index"),
             "api_key_index": obj.get("api_key_index"),
-            "metadata": obj.get("metadata"),
-            "auth": obj.get("auth")
+            "metadata": obj.get("metadata")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

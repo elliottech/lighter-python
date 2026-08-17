@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **requested_max_slippage** | **str** |  | 
 **requested_slippage** | **str** |  | 
 **worst_price** | **str** |  | 
+**mark_price** | **str** |  | 
 
 ## Example
 

@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 
 # **referral_create**
-> ReferralCode referral_create(account_index, authorization=authorization, auth=auth)
+> ReferralCode referral_create(account_index, authorization=authorization)
 
 referral_create
 
@@ -40,12 +40,11 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.ReferralApi(api_client)
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # referral_create
-        api_response = await api_instance.referral_create(account_index, authorization=authorization, auth=auth)
+        api_response = await api_instance.referral_create(account_index, authorization=authorization)
         print("The response of ReferralApi->referral_create:\n")
         pprint(api_response)
     except Exception as e:
@@ -60,8 +59,7 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 
@@ -86,7 +84,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **referral_get**
-> ReferralCode referral_get(account_index, authorization=authorization, auth=auth)
+> ReferralCode referral_get(account_index, authorization=authorization)
 
 referral_get
 
@@ -113,12 +111,11 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.ReferralApi(api_client)
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # referral_get
-        api_response = await api_instance.referral_get(account_index, authorization=authorization, auth=auth)
+        api_response = await api_instance.referral_get(account_index, authorization=authorization)
         print("The response of ReferralApi->referral_get:\n")
         pprint(api_response)
     except Exception as e:
@@ -133,8 +130,7 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 
@@ -159,7 +155,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **referral_kickback_update**
-> RespUpdateKickback referral_kickback_update(account_index, kickback_percentage, authorization=authorization, auth=auth)
+> RespUpdateKickback referral_kickback_update(account_index, kickback_percentage, authorization=authorization)
 
 referral_kickback_update
 
@@ -187,12 +183,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.ReferralApi(api_client)
     account_index = 56 # int | 
     kickback_percentage = 3.4 # float | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # referral_kickback_update
-        api_response = await api_instance.referral_kickback_update(account_index, kickback_percentage, authorization=authorization, auth=auth)
+        api_response = await api_instance.referral_kickback_update(account_index, kickback_percentage, authorization=authorization)
         print("The response of ReferralApi->referral_kickback_update:\n")
         pprint(api_response)
     except Exception as e:
@@ -208,8 +203,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
  **kickback_percentage** | **float**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 
@@ -305,7 +299,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **referral_update**
-> RespUpdateReferralCode referral_update(account_index, new_referral_code, authorization=authorization, auth=auth)
+> RespUpdateReferralCode referral_update(account_index, new_referral_code, authorization=authorization)
 
 referral_update
 
@@ -333,12 +327,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.ReferralApi(api_client)
     account_index = 56 # int | 
     new_referral_code = 'new_referral_code_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # referral_update
-        api_response = await api_instance.referral_update(account_index, new_referral_code, authorization=authorization, auth=auth)
+        api_response = await api_instance.referral_update(account_index, new_referral_code, authorization=authorization)
         print("The response of ReferralApi->referral_update:\n")
         pprint(api_response)
     except Exception as e:
@@ -354,8 +347,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
  **new_referral_code** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 
@@ -380,7 +372,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **referral_use**
-> ResultCode referral_use(l1_address, referral_code, x, authorization=authorization, auth=auth, discord=discord, telegram=telegram, signature=signature)
+> ResultCode referral_use(l1_address, referral_code, authorization=authorization, discord=discord, telegram=telegram, x=x, signature=signature)
 
 referral_use
 
@@ -408,16 +400,15 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.ReferralApi(api_client)
     l1_address = 'l1_address_example' # str | 
     referral_code = 'referral_code_example' # str | 
-    x = 'x_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
     discord = 'discord_example' # str |  (optional)
     telegram = 'telegram_example' # str |  (optional)
+    x = 'x_example' # str |  (optional)
     signature = 'signature_example' # str |  (optional)
 
     try:
         # referral_use
-        api_response = await api_instance.referral_use(l1_address, referral_code, x, authorization=authorization, auth=auth, discord=discord, telegram=telegram, signature=signature)
+        api_response = await api_instance.referral_use(l1_address, referral_code, authorization=authorization, discord=discord, telegram=telegram, x=x, signature=signature)
         print("The response of ReferralApi->referral_use:\n")
         pprint(api_response)
     except Exception as e:
@@ -433,11 +424,10 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **l1_address** | **str**|  | 
  **referral_code** | **str**|  | 
- **x** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
  **discord** | **str**|  | [optional] 
  **telegram** | **str**|  | [optional] 
+ **x** | **str**|  | [optional] 
  **signature** | **str**|  | [optional] 
 
 ### Return type

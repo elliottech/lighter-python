@@ -470,16 +470,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "auth",
-            "in": "query",
-            "required": false,
-            "description": " made optional to support header auth clients",
             "schema": {
               "type": "string"
             }
@@ -906,8 +896,7 @@
                 "1h",
                 "4h",
                 "12h",
-                "1d",
-                "1w"
+                "1d"
               ]
             }
           },
@@ -990,7 +979,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -1288,6 +1276,16 @@
               ],
               "default": "all"
             }
+          },
+          {
+            "name": "aggregate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "format": "boolean",
+              "default": "false"
+            }
           }
         ],
         "responses": {
@@ -1385,7 +1383,7 @@
         "tags": [
           "candlestick"
         ],
-        "description": "Get fundings",
+        "description": "Get fundings. Maximum 750 fundings will be returned per call. `count_back` indicates the number of fundings you would like to be returned, starting from `start_timestamp`, if set to 0, all fundings will be returned.",
         "parameters": [
           {
             "name": "market_id",
@@ -1659,7 +1657,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -2015,16 +2012,6 @@
             }
           },
           {
-            "name": "market_id",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int16",
-              "default": "255"
-            }
-          },
-          {
             "name": "cursor",
             "in": "query",
             "required": false,
@@ -2073,6 +2060,19 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "market_ids",
+            "in": "query",
+            "required": false,
+            "description": "comma-separated int64s, e.g. \"1,2\"",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int16"
+              }
             }
           }
         ],
@@ -2630,7 +2630,12 @@
                   "L2MintShares",
                   "L2BurnShares",
                   "L2StakeAssets",
-                  "L2UnstakeAssets"
+                  "L2UnstakeAssets",
+                  "L2CreatePublicPool",
+                  "L2CreateStakingPool",
+                  "L1BurnShares",
+                  "L1UnstakeAssets",
+                  "ReferralProgramPayout"
                 ]
               }
             }
@@ -3020,7 +3025,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -3124,7 +3128,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -3483,7 +3486,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -3534,18 +3536,8 @@
         "parameters": [
           {
             "name": "authorization",
-            "in": "query",
+            "in": "header",
             "required": false,
-            "description": " make required after integ is done",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "auth",
-            "in": "query",
-            "required": false,
-            "description": " made optional to support header auth clients",
             "schema": {
               "type": "string"
             }
@@ -3597,7 +3589,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -3650,7 +3641,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -3703,7 +3693,6 @@
             "name": "authorization",
             "in": "header",
             "required": false,
-            "description": " make required after integ is done",
             "schema": {
               "type": "string"
             }
@@ -3874,15 +3863,6 @@
               "maximum": 100
             },
             "description": "Number of results to return (1–100, default 20)"
-          },
-          {
-            "name": "auth",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Read-only auth (alternative to header authorization)"
           }
         ],
         "responses": {
@@ -3996,14 +3976,6 @@
             }
           },
           {
-            "name": "auth",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "stats_start_timestamp",
             "in": "query",
             "required": false,
@@ -4030,6 +4002,16 @@
               "format": "int64",
               "minimum": 1,
               "maximum": 300
+            }
+          },
+          {
+            "name": "is_eligible",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "format": "boolean",
+              "default": "false"
             }
           }
         ],
@@ -4316,6 +4298,14 @@
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4433,7 +4423,7 @@
         "tags": [
           "account"
         ],
-        "description": "Respond to RFQ",
+        "description": "Respond to RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.",
         "parameters": [
           {
             "name": "authorization",
@@ -4619,7 +4609,7 @@
         "tags": [
           "account"
         ],
-        "description": "Create RFQ",
+        "description": "Create RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.",
         "parameters": [
           {
             "name": "authorization",
@@ -4699,6 +4689,327 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RespUpdateRFQ"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/markPriceCandles": {
+      "get": {
+        "summary": "markPriceCandles",
+        "operationId": "markPriceCandles",
+        "tags": [
+          "candlestick"
+        ],
+        "description": "Get mark price candles",
+        "parameters": [
+          {
+            "name": "market_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int16"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1m",
+                "5m",
+                "15m",
+                "30m",
+                "1h",
+                "4h",
+                "12h",
+                "1d"
+              ]
+            }
+          },
+          {
+            "name": "start_timestamp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0,
+              "maximum": 5000000000000
+            }
+          },
+          {
+            "name": "end_timestamp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0,
+              "maximum": 5000000000000
+            }
+          },
+          {
+            "name": "count_back",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkPriceCandles"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accountOrders": {
+      "get": {
+        "summary": "accountOrders",
+        "operationId": "accountOrders",
+        "tags": [
+          "order"
+        ],
+        "description": "Get account orders by client order indexes. Account index defaults to the authorization token's account. Supports the last 10K active orders (with no time limits), or the last 1K inactive orders (in the last 24 hours).",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "account_index",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": "281474976710655"
+            }
+          },
+          {
+            "name": "client_order_indexes",
+            "in": "query",
+            "description": " comma-separated int64s, e.g. \"123,456\", with a limit of 20.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Orders"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/marketPriceCharts": {
+      "get": {
+        "summary": "marketPriceCharts",
+        "operationId": "marketPriceCharts",
+        "tags": [
+          "candlestick"
+        ],
+        "description": "Get last 24h hourly prices for all markets (mark price for perps, index price for spot)",
+        "parameters": [
+          {
+            "name": "market_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int16"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketPriceCharts"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/livePoints/total": {
+      "get": {
+        "summary": "livePoints_total",
+        "operationId": "livePoints_total",
+        "tags": [
+          "livepoints"
+        ],
+        "description": "Get live points total for an account",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "account_index",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivePointsTotal"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/leaderboard": {
+      "get": {
+        "summary": "leaderboard",
+        "operationId": "leaderboard",
+        "tags": [
+          "account"
+        ],
+        "description": "Get points leaderboard. Type should be all.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "weekly",
+                "all",
+                "competition"
+              ]
+            }
+          },
+          {
+            "name": "l1_address",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "competition_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboard"
                 }
               }
             }
@@ -4849,6 +5160,10 @@
               "enabled",
               "disabled"
             ]
+          },
+          "multiplier": {
+            "type": "string",
+            "example": "1.000000000000000000"
           }
         },
         "title": "AccountAsset",
@@ -4857,8 +5172,9 @@
           "asset_id",
           "balance",
           "locked_balance",
+          "margin_mode",
           "margin_balance",
-          "margin_mode"
+          "multiplier"
         ]
       },
       "AccountApiKeys": {
@@ -4990,6 +5306,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/SubAccountMetadata"
           }
         },
         "title": "AccountMetadata",
@@ -5001,7 +5320,8 @@
           "referral_points_percentage",
           "can_rfq",
           "can_rfq_market_ids",
-          "created_at"
+          "created_at",
+          "metadata"
         ]
       },
       "AccountMetadatas": {
@@ -5135,6 +5455,11 @@
           },
           "total_discount": {
             "type": "string"
+          },
+          "margin_set_flag": {
+            "type": "integer",
+            "format": "int32",
+            "example": "1"
           }
         },
         "title": "AccountPosition",
@@ -5153,6 +5478,7 @@
           "realized_pnl",
           "liquidation_price",
           "margin_mode",
+          "margin_set_flag",
           "allocated_margin",
           "total_discount"
         ]
@@ -5285,6 +5611,10 @@
           "liquidation_factor": {
             "type": "string",
             "example": "0.9"
+          },
+          "multiplier": {
+            "type": "string",
+            "example": "1.000000000000000000"
           }
         },
         "title": "Asset",
@@ -5305,7 +5635,8 @@
           "liquidation_fee",
           "global_supply_cap",
           "user_supply_cap",
-          "total_supplied"
+          "total_supplied",
+          "multiplier"
         ]
       },
       "AssetDetails": {
@@ -5889,6 +6220,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/SubAccountMetadata"
           }
         },
         "title": "DetailedAccount",
@@ -5913,6 +6247,7 @@
           "can_rfq",
           "can_rfq_market_ids",
           "created_at",
+          "metadata",
           "positions",
           "assets",
           "total_asset_value",
@@ -6275,13 +6610,25 @@
           },
           "referral_points_percentage": {
             "type": "string"
+          },
+          "referral_program_kickback": {
+            "type": "string",
+            "example": "10.0"
+          },
+          "referral_program_kickback_history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralProgramKickback"
+            }
           }
         },
         "title": "L1Metadata",
         "required": [
           "l1_address",
           "can_invite",
-          "referral_points_percentage"
+          "referral_points_percentage",
+          "referral_program_kickback",
+          "referral_program_kickback_history"
         ]
       },
       "L1ProviderInfo": {
@@ -6731,6 +7078,11 @@
           },
           "integrator_taker_fee": {
             "type": "string"
+          },
+          "order_flags": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
           }
         },
         "title": "Order",
@@ -6764,13 +7116,14 @@
           "to_trigger_order_id_0",
           "to_trigger_order_id_1",
           "to_cancel_order_id_0",
+          "integrator_fee_collector_index",
+          "integrator_taker_fee",
+          "integrator_maker_fee",
+          "order_flags",
           "block_height",
           "timestamp",
           "created_at",
           "updated_at",
-          "integrator_fee_collector_index",
-          "integrator_maker_fee",
-          "integrator_taker_fee",
           "transaction_time"
         ]
       },
@@ -6858,6 +7211,14 @@
           "is_taker_fee_enabled": {
             "type": "boolean",
             "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "1640995200000"
+          },
+          "multiplier": {
+            "type": "string",
+            "example": "1.000000000000000000"
           }
         },
         "title": "OrderBook",
@@ -6878,7 +7239,9 @@
           "order_quote_limit",
           "supported_size_decimals",
           "supported_price_decimals",
-          "supported_quote_decimals"
+          "supported_quote_decimals",
+          "created_at",
+          "multiplier"
         ]
       },
       "PerpsOrderBookDetail": {
@@ -7067,6 +7430,31 @@
           "base_interest_rate": {
             "type": "string",
             "example": "0.0001"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "1640995200000"
+          },
+          "mark_price": {
+            "type": "string",
+            "example": "3024.66"
+          },
+          "index_price": {
+            "type": "string",
+            "example": "3024.66"
+          },
+          "multiplier": {
+            "type": "string",
+            "example": "1.000000000000000000"
+          },
+          "market_flags": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "funding_premium_multiplier": {
+            "type": "integer",
+            "format": "uin16",
+            "example": "100"
           }
         },
         "title": "PerpsOrderBookDetail",
@@ -7088,6 +7476,7 @@
           "supported_size_decimals",
           "supported_price_decimals",
           "supported_quote_decimals",
+          "created_at",
           "size_decimals",
           "price_decimals",
           "quote_multiplier",
@@ -7279,6 +7668,14 @@
           "is_taker_fee_enabled": {
             "type": "boolean",
             "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "1640995200000"
+          },
+          "multiplier": {
+            "type": "string",
+            "example": "1.000000000000000000"
           }
         },
         "title": "SpotOrderBookDetail",
@@ -7300,6 +7697,8 @@
           "supported_size_decimals",
           "supported_price_decimals",
           "supported_quote_decimals",
+          "created_at",
+          "multiplier",
           "size_decimals",
           "price_decimals",
           "last_trade_price",
@@ -7928,10 +8327,6 @@
             "type": "string",
             "example": "'liq:17:5898'"
           },
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
-          },
           "account_index": {
             "type": "integer",
             "format": "int64"
@@ -7946,10 +8341,6 @@
       "ReqChangeAccountTier": {
         "type": "object",
         "properties": {
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
-          },
           "account_index": {
             "type": "integer",
             "format": "int64"
@@ -8001,9 +8392,6 @@
           "api_key_indexes": {
             "type": "string",
             "description": "JSON array string of API key indexes, e.g. \"[4,5]\". Use [] to clear all maker-only restrictions."
-          },
-          "auth": {
-            "type": "string"
           }
         },
         "required": [
@@ -8276,6 +8664,9 @@
           },
           "usdc_portfolio_value": {
             "type": "string"
+          },
+          "total_portfolio_value": {
+            "type": "string"
           }
         },
         "title": "RiskParameters",
@@ -8386,6 +8777,18 @@
           "status",
           "network_id",
           "timestamp"
+        ]
+      },
+      "SubAccountMetadata": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "string"
+          }
+        },
+        "title": "SubAccountMetadata",
+        "required": [
+          "color"
         ]
       },
       "SubAccounts": {
@@ -8625,6 +9028,16 @@
             "type": "integer",
             "format": "int64",
             "example": "250000000000000"
+          },
+          "bid_order_version": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "ask_order_version": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
           }
         },
         "title": "Trade",
@@ -8666,7 +9079,9 @@
           "taker_allocated_margin_usdc_before",
           "taker_allocated_margin_usdc_after",
           "maker_allocated_margin_usdc_before",
-          "maker_allocated_margin_usdc_after"
+          "maker_allocated_margin_usdc_after",
+          "ask_order_version",
+          "bid_order_version"
         ]
       },
       "Trades": {
@@ -8776,7 +9191,15 @@
               "L2UnstakeAssetInflow",
               "L2UnstakeAssetOutflow",
               "L2ForceBurnSharesInflow",
-              "L2ForceBurnSharesOutflow"
+              "L2ForceBurnSharesOutflow",
+              "L1BurnSharesInflow",
+              "L1BurnSharesOutflow",
+              "L1UnstakeAssetInflow",
+              "L1UnstakeAssetOutflow",
+              "L2CreatePublicPoolInflow",
+              "L2CreatePublicPoolOutflow",
+              "L2CreateStakingPoolInflow",
+              "L2CreateStakingPoolOutflow"
             ]
           },
           "from_l1_address": {
@@ -9111,10 +9534,6 @@
           },
           "to_address": {
             "type": "string"
-          },
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
           }
         },
         "title": "ReqFastwithdraw",
@@ -9356,10 +9775,6 @@
       "ReqUpdateReferralCode": {
         "type": "object",
         "properties": {
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
-          },
           "account_index": {
             "type": "integer",
             "format": "int64"
@@ -9421,10 +9836,6 @@
       "ReqUseReferralCode": {
         "type": "object",
         "properties": {
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
-          },
           "l1_address": {
             "type": "string"
           },
@@ -9447,8 +9858,7 @@
         "title": "ReqUseReferralCode",
         "required": [
           "l1_address",
-          "referral_code",
-          "x"
+          "referral_code"
         ]
       },
       "ReqCreateIntentAddress": {
@@ -9513,27 +9923,17 @@
           "referral_code": {
             "type": "string",
             "example": "5V24K3MJ"
-          },
-          "remaining_usage": {
-            "type": "integer",
-            "format": "int32",
-            "example": "3"
           }
         },
         "title": "ReferralCode",
         "required": [
           "code",
-          "referral_code",
-          "remaining_usage"
+          "referral_code"
         ]
       },
       "ReqCreateReferralCode": {
         "type": "object",
         "properties": {
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
-          },
           "account_index": {
             "type": "integer",
             "format": "int64"
@@ -9547,10 +9947,6 @@
       "ReqUpdateKickback": {
         "type": "object",
         "properties": {
-          "auth": {
-            "type": "string",
-            "description": " made optional to support header auth clients"
-          },
           "account_index": {
             "type": "integer",
             "format": "int64"
@@ -10063,13 +10459,17 @@
           },
           "used_code": {
             "type": "string"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/ReferralTotals"
           }
         },
         "required": [
           "code",
           "cursor",
-          "referrals",
-          "used_code"
+          "used_code",
+          "totals",
+          "referrals"
         ]
       },
       "ReqSetAccountMetadata": {
@@ -10088,9 +10488,6 @@
             "format": "uint8"
           },
           "metadata": {
-            "type": "string"
-          },
-          "auth": {
             "type": "string"
           }
         },
@@ -10229,6 +10626,24 @@
           },
           "mobile_browser_volume": {
             "type": "string"
+          },
+          "maker_fees_paid": {
+            "type": "string"
+          },
+          "non_free_taker_volume": {
+            "type": "string"
+          },
+          "non_free_maker_volume": {
+            "type": "string"
+          },
+          "free_taker_volume": {
+            "type": "string"
+          },
+          "taker_fees_paid": {
+            "type": "string"
+          },
+          "free_maker_volume": {
+            "type": "string"
           }
         },
         "title": "TradeStats",
@@ -10240,7 +10655,13 @@
           "mobile_app_count",
           "mobile_app_volume",
           "mobile_browser_count",
-          "mobile_browser_volume"
+          "mobile_browser_volume",
+          "free_maker_volume",
+          "free_taker_volume",
+          "non_free_maker_volume",
+          "non_free_taker_volume",
+          "maker_fees_paid",
+          "taker_fees_paid"
         ]
       },
       "ApprovedIntegrator": {
@@ -10604,6 +11025,9 @@
           },
           "worst_price": {
             "type": "string"
+          },
+          "mark_price": {
+            "type": "string"
           }
         },
         "title": "RFQMetadata",
@@ -10611,6 +11035,7 @@
           "requested_est_price",
           "requested_max_slippage",
           "requested_slippage",
+          "mark_price",
           "worst_price"
         ]
       },
@@ -10994,6 +11419,277 @@
           "responses",
           "created_at",
           "updated_at"
+        ]
+      },
+      "MarkPriceCandles": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "r": {
+            "type": "string",
+            "example": "15m",
+            "description": " resolution"
+          },
+          "c": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarkPriceCandle"
+            },
+            "description": " candles"
+          }
+        },
+        "title": "MarkPriceCandles",
+        "required": [
+          "code",
+          "r",
+          "c"
+        ]
+      },
+      "MarkPriceCandle": {
+        "type": "object",
+        "properties": {
+          "t": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1640995200",
+            "description": " timestamp"
+          },
+          "o": {
+            "type": "number",
+            "format": "double",
+            "example": "3024.66",
+            "description": " open"
+          },
+          "h": {
+            "type": "number",
+            "format": "double",
+            "example": "3034.66",
+            "description": " high"
+          },
+          "l": {
+            "type": "number",
+            "format": "double",
+            "example": "3014.66",
+            "description": " low"
+          },
+          "c": {
+            "type": "number",
+            "format": "double",
+            "example": "3024.66",
+            "description": " close"
+          },
+          "sc": {
+            "type": "integer",
+            "format": "int64",
+            "example": "42",
+            "description": " sample_count"
+          }
+        },
+        "title": "MarkPriceCandle",
+        "required": [
+          "t",
+          "o",
+          "h",
+          "l",
+          "c",
+          "sc"
+        ]
+      },
+      "MarketPriceCharts": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string",
+            "example": "1h"
+          },
+          "price_charts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketPriceChart"
+            }
+          }
+        },
+        "title": "MarketPriceCharts",
+        "required": [
+          "code",
+          "resolution",
+          "price_charts"
+        ]
+      },
+      "MarketPriceChart": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "integer",
+            "format": "int16"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "title": "MarketPriceChart",
+        "required": [
+          "market_id",
+          "prices"
+        ]
+      },
+      "LivePointsTotal": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "total_live_points": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "title": "LivePointsTotal",
+        "required": [
+          "code",
+          "total_live_points"
+        ]
+      },
+      "ReferralProgramKickback": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1785110400000"
+          },
+          "percentage": {
+            "type": "string",
+            "example": "10.0"
+          }
+        },
+        "title": "ReferralProgramKickback",
+        "required": [
+          "date",
+          "percentage"
+        ]
+      },
+      "ReferralTotals": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "volume": {
+            "type": "string"
+          },
+          "free_maker_volume": {
+            "type": "string"
+          },
+          "free_taker_volume": {
+            "type": "string"
+          },
+          "non_free_maker_volume": {
+            "type": "string"
+          },
+          "non_free_taker_volume": {
+            "type": "string"
+          },
+          "maker_fees_paid": {
+            "type": "string"
+          },
+          "taker_fees_paid": {
+            "type": "string"
+          },
+          "total_referrals": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "total_premium_referrals": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "title": "ReferralTotals",
+        "required": [
+          "count",
+          "volume",
+          "free_maker_volume",
+          "free_taker_volume",
+          "non_free_maker_volume",
+          "non_free_taker_volume",
+          "maker_fees_paid",
+          "taker_fees_paid",
+          "total_referrals",
+          "total_premium_referrals"
+        ]
+      },
+      "Leaderboard": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntry"
+            }
+          }
+        },
+        "title": "Leaderboard",
+        "required": [
+          "entries"
+        ]
+      },
+      "LeaderboardEntry": {
+        "type": "object",
+        "properties": {
+          "l1_address": {
+            "type": "string",
+            "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+          },
+          "points": {
+            "type": "number",
+            "format": "float",
+            "example": "1000.01"
+          },
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "entryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "metadata": {
+            "type": "string",
+            "example": "{}"
+          }
+        },
+        "title": "LeaderboardEntry",
+        "required": [
+          "l1_address",
+          "points",
+          "entry",
+          "entryId",
+          "metadata"
         ]
       }
     }

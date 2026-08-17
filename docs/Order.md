@@ -42,6 +42,7 @@ Name | Type | Description | Notes
 **integrator_fee_collector_index** | **str** |  | 
 **integrator_maker_fee** | **str** |  | 
 **integrator_taker_fee** | **str** |  | 
+**order_flags** | **int** |  | 
 
 ## Example
 

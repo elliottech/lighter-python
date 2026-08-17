@@ -32,8 +32,9 @@ class AccountAsset(BaseModel):
     locked_balance: StrictStr
     margin_balance: StrictStr
     margin_mode: StrictStr
+    multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "asset_id", "balance", "locked_balance", "margin_balance", "margin_mode"]
+    __properties: ClassVar[List[str]] = ["symbol", "asset_id", "balance", "locked_balance", "margin_balance", "margin_mode", "multiplier"]
 
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
@@ -105,7 +106,8 @@ class AccountAsset(BaseModel):
             "balance": obj.get("balance"),
             "locked_balance": obj.get("locked_balance"),
             "margin_balance": obj.get("margin_balance"),
-            "margin_mode": obj.get("margin_mode")
+            "margin_mode": obj.get("margin_mode"),
+            "multiplier": obj.get("multiplier")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

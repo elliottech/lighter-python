@@ -22,14 +22,13 @@ from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class PriceLevel(BaseModel):
+class SubAccountMetadata(BaseModel):
     """
-    PriceLevel
+    SubAccountMetadata
     """ # noqa: E501
-    price: StrictStr
-    size: StrictStr
+    color: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["price", "size"]
+    __properties: ClassVar[List[str]] = ["color"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +48,7 @@ class PriceLevel(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of PriceLevel from a JSON string"""
+        """Create an instance of SubAccountMetadata from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -81,7 +80,7 @@ class PriceLevel(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of PriceLevel from a dict"""
+        """Create an instance of SubAccountMetadata from a dict"""
         if obj is None:
             return None
 
@@ -89,8 +88,7 @@ class PriceLevel(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_construct(**{
-            "price": obj.get("price"),
-            "size": obj.get("size")
+            "color": obj.get("color")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

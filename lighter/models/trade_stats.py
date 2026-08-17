@@ -34,8 +34,14 @@ class TradeStats(BaseModel):
     mobile_app_volume: StrictStr
     mobile_browser_count: StrictInt
     mobile_browser_volume: StrictStr
+    maker_fees_paid: StrictStr
+    non_free_taker_volume: StrictStr
+    non_free_maker_volume: StrictStr
+    free_taker_volume: StrictStr
+    taker_fees_paid: StrictStr
+    free_maker_volume: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["count", "volume", "web_count", "web_volume", "mobile_app_count", "mobile_app_volume", "mobile_browser_count", "mobile_browser_volume"]
+    __properties: ClassVar[List[str]] = ["count", "volume", "web_count", "web_volume", "mobile_app_count", "mobile_app_volume", "mobile_browser_count", "mobile_browser_volume", "maker_fees_paid", "non_free_taker_volume", "non_free_maker_volume", "free_taker_volume", "taker_fees_paid", "free_maker_volume"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -102,7 +108,13 @@ class TradeStats(BaseModel):
             "mobile_app_count": obj.get("mobile_app_count"),
             "mobile_app_volume": obj.get("mobile_app_volume"),
             "mobile_browser_count": obj.get("mobile_browser_count"),
-            "mobile_browser_volume": obj.get("mobile_browser_volume")
+            "mobile_browser_volume": obj.get("mobile_browser_volume"),
+            "maker_fees_paid": obj.get("maker_fees_paid"),
+            "non_free_taker_volume": obj.get("non_free_taker_volume"),
+            "non_free_maker_volume": obj.get("non_free_maker_volume"),
+            "free_taker_volume": obj.get("free_taker_volume"),
+            "taker_fees_paid": obj.get("taker_fees_paid"),
+            "free_maker_volume": obj.get("free_maker_volume")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -43,8 +43,9 @@ class Asset(BaseModel):
     total_supplied: StrictStr
     user_supply_cap: StrictStr
     liquidation_factor: StrictStr
+    multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap", "liquidation_factor"]
+    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap", "liquidation_factor", "multiplier"]
 
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
@@ -127,7 +128,8 @@ class Asset(BaseModel):
             "price_decimals": obj.get("price_decimals"),
             "total_supplied": obj.get("total_supplied"),
             "user_supply_cap": obj.get("user_supply_cap"),
-            "liquidation_factor": obj.get("liquidation_factor")
+            "liquidation_factor": obj.get("liquidation_factor"),
+            "multiplier": obj.get("multiplier")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
