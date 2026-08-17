@@ -70,6 +70,7 @@ def default_detail(
             hidden=False,
             rfq_enabled=False,
         ),
+        created_at="0",
         strategy_index=0,
         is_maker_fee_enabled=True,
         is_taker_fee_enabled=True,
