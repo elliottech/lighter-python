@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **cursor** | **str** |  | 
 **referrals** | [**List[Referral]**](Referral.md) |  | 
 **used_code** | **str** |  | 
+**totals** | [**ReferralTotals**](ReferralTotals.md) |  | 
 
 ## Example
 

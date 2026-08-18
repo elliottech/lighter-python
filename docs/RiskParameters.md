@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **total_account_liquidation_threshold** | **str** |  | 
 **usdc_collateral_with_funding** | **str** |  | 
 **usdc_portfolio_value** | **str** |  | 
+**total_portfolio_value** | **str** |  | [optional] 
 
 ## Example
 

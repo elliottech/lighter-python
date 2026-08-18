@@ -1,8 +1,8 @@
 import unittest
 
-from lighter.models.order_book_depth import OrderBookDepth
+from lighter.paper_client.order_book_depth import OrderBookDepth
 from lighter.models.order_book_orders import OrderBookOrders
-from lighter.models.price_level import PriceLevel
+from lighter.paper_client.price_level import PriceLevel
 from lighter.models.simple_order import SimpleOrder
 from lighter.paper_client.order_book import InMemoryOrderBook
 

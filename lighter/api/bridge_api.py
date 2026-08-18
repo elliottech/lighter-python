@@ -16,9 +16,8 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from pydantic import Field, StrictBool, StrictInt, StrictStr
+from pydantic import StrictBool, StrictInt, StrictStr
 from typing import Optional
-from typing_extensions import Annotated
 from lighter.models.bridge_supported_networks import BridgeSupportedNetworks
 from lighter.models.create_intent_address_resp import CreateIntentAddressResp
 from lighter.models.deposit import Deposit
@@ -1110,8 +1109,7 @@ class BridgeApi:
         self,
         tx_info: StrictStr,
         to_address: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1133,10 +1131,8 @@ class BridgeApi:
         :type tx_info: str
         :param to_address: (required)
         :type to_address: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1163,7 +1159,6 @@ class BridgeApi:
             tx_info=tx_info,
             to_address=to_address,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1189,8 +1184,7 @@ class BridgeApi:
         self,
         tx_info: StrictStr,
         to_address: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1212,10 +1206,8 @@ class BridgeApi:
         :type tx_info: str
         :param to_address: (required)
         :type to_address: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1242,7 +1234,6 @@ class BridgeApi:
             tx_info=tx_info,
             to_address=to_address,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1268,8 +1259,7 @@ class BridgeApi:
         self,
         tx_info: StrictStr,
         to_address: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1291,10 +1281,8 @@ class BridgeApi:
         :type tx_info: str
         :param to_address: (required)
         :type to_address: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1321,7 +1309,6 @@ class BridgeApi:
             tx_info=tx_info,
             to_address=to_address,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1344,7 +1331,6 @@ class BridgeApi:
         tx_info,
         to_address,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -1373,8 +1359,6 @@ class BridgeApi:
             _form_params.append(('tx_info', tx_info))
         if to_address is not None:
             _form_params.append(('to_address', to_address))
-        if auth is not None:
-            _form_params.append(('auth', auth))
         # process the body parameter
 
 

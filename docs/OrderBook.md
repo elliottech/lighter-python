@@ -22,6 +22,8 @@ Name | Type | Description | Notes
 **order_quote_limit** | **str** |  | 
 **is_maker_fee_enabled** | **bool** |  | 
 **is_taker_fee_enabled** | **bool** |  | 
+**created_at** | **str** |  | 
+**multiplier** | **str** |  | 
 
 ## Example
 

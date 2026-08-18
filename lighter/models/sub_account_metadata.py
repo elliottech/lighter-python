@@ -17,24 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from lighter.models.price_level import PriceLevel
+from pydantic import BaseModel, ConfigDict, StrictStr
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class OrderBookDepth(BaseModel):
+class SubAccountMetadata(BaseModel):
     """
-    OrderBookDepth
+    SubAccountMetadata
     """ # noqa: E501
-    code: StrictInt
-    message: Optional[StrictStr] = None
-    asks: List[PriceLevel]
-    bids: List[PriceLevel]
-    offset: StrictInt
-    nonce: StrictInt
+    color: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "asks", "bids", "offset", "nonce"]
+    __properties: ClassVar[List[str]] = ["color"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -54,7 +48,7 @@ class OrderBookDepth(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of OrderBookDepth from a JSON string"""
+        """Create an instance of SubAccountMetadata from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -77,20 +71,6 @@ class OrderBookDepth(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in asks (list)
-        _items = []
-        if self.asks:
-            for _item in self.asks:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['asks'] = _items
-        # override the default output from pydantic by calling `to_dict()` of each item in bids (list)
-        _items = []
-        if self.bids:
-            for _item in self.bids:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['bids'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -100,7 +80,7 @@ class OrderBookDepth(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of OrderBookDepth from a dict"""
+        """Create an instance of SubAccountMetadata from a dict"""
         if obj is None:
             return None
 
@@ -108,12 +88,7 @@ class OrderBookDepth(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_construct(**{
-            "code": obj.get("code"),
-            "message": obj.get("message"),
-            "asks": [PriceLevel.from_dict(_item) for _item in obj["asks"]] if obj.get("asks") is not None else None,
-            "bids": [PriceLevel.from_dict(_item) for _item in obj["bids"]] if obj.get("bids") is not None else None,
-            "offset": obj.get("offset"),
-            "nonce": obj.get("nonce")
+            "color": obj.get("color")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -19,6 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr
 from typing import Any, ClassVar, Dict, List
+from lighter.models.referral_program_kickback import ReferralProgramKickback
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,8 +30,10 @@ class L1Metadata(BaseModel):
     l1_address: StrictStr
     can_invite: StrictBool
     referral_points_percentage: StrictStr
+    referral_program_kickback: StrictStr
+    referral_program_kickback_history: List[ReferralProgramKickback]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "can_invite", "referral_points_percentage"]
+    __properties: ClassVar[List[str]] = ["l1_address", "can_invite", "referral_points_percentage", "referral_program_kickback", "referral_program_kickback_history"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -73,6 +76,13 @@ class L1Metadata(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in referral_program_kickback_history (list)
+        _items = []
+        if self.referral_program_kickback_history:
+            for _item in self.referral_program_kickback_history:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['referral_program_kickback_history'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -92,7 +102,9 @@ class L1Metadata(BaseModel):
         _obj = cls.model_construct(**{
             "l1_address": obj.get("l1_address"),
             "can_invite": obj.get("can_invite"),
-            "referral_points_percentage": obj.get("referral_points_percentage")
+            "referral_points_percentage": obj.get("referral_points_percentage"),
+            "referral_program_kickback": obj.get("referral_program_kickback"),
+            "referral_program_kickback_history": [ReferralProgramKickback.from_dict(_item) for _item in obj["referral_program_kickback_history"]] if obj.get("referral_program_kickback_history") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

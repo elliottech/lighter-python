@@ -43,8 +43,10 @@ class OrderBook(BaseModel):
     order_quote_limit: StrictStr
     is_maker_fee_enabled: StrictBool
     is_taker_fee_enabled: StrictBool
+    created_at: StrictStr
+    multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "is_maker_fee_enabled", "is_taker_fee_enabled"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "is_maker_fee_enabled", "is_taker_fee_enabled", "created_at", "multiplier"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
@@ -134,7 +136,9 @@ class OrderBook(BaseModel):
             "supported_quote_decimals": obj.get("supported_quote_decimals"),
             "order_quote_limit": obj.get("order_quote_limit"),
             "is_maker_fee_enabled": obj.get("is_maker_fee_enabled"),
-            "is_taker_fee_enabled": obj.get("is_taker_fee_enabled")
+            "is_taker_fee_enabled": obj.get("is_taker_fee_enabled"),
+            "created_at": obj.get("created_at"),
+            "multiplier": obj.get("multiplier")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

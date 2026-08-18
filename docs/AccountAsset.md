@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **locked_balance** | **str** |  | 
 **margin_balance** | **str** |  | 
 **margin_mode** | **str** |  | 
+**multiplier** | **str** |  | 
 
 ## Example
 

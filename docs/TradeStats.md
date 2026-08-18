@@ -13,6 +13,12 @@ Name | Type | Description | Notes
 **mobile_app_volume** | **str** |  | 
 **mobile_browser_count** | **int** |  | 
 **mobile_browser_volume** | **str** |  | 
+**maker_fees_paid** | **str** |  | 
+**non_free_taker_volume** | **str** |  | 
+**non_free_maker_volume** | **str** |  | 
+**free_taker_volume** | **str** |  | 
+**taker_fees_paid** | **str** |  | 
+**free_maker_volume** | **str** |  | 
 
 ## Example
 

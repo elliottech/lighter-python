@@ -25,6 +25,7 @@ from lighter.models.approved_integrator import ApprovedIntegrator
 from lighter.models.pending_unlock import PendingUnlock
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_share import PublicPoolShare
+from lighter.models.sub_account_metadata import SubAccountMetadata
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -64,8 +65,9 @@ class DetailedAccount(BaseModel):
     cross_initial_margin_requirement: StrictStr
     cross_maintenance_margin_requirement: StrictStr
     can_rfq_market_ids: List[StrictStr]
+    metadata: SubAccountMetadata
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids", "metadata"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -146,6 +148,9 @@ class DetailedAccount(BaseModel):
                 if _item:
                     _items.append(_item.to_dict())
             _dict['approved_integrators'] = _items
+        # override the default output from pydantic by calling `to_dict()` of metadata
+        if self.metadata:
+            _dict['metadata'] = self.metadata.to_dict()
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -194,7 +199,8 @@ class DetailedAccount(BaseModel):
             "can_rfq": obj.get("can_rfq"),
             "cross_initial_margin_requirement": obj.get("cross_initial_margin_requirement"),
             "cross_maintenance_margin_requirement": obj.get("cross_maintenance_margin_requirement"),
-            "can_rfq_market_ids": obj.get("can_rfq_market_ids")
+            "can_rfq_market_ids": obj.get("can_rfq_market_ids"),
+            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

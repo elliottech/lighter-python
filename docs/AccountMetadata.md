@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **created_at** | **int** |  | 
 **can_rfq** | **bool** |  | 
 **can_rfq_market_ids** | **List[str]** |  | 
+**metadata** | [**SubAccountMetadata**](SubAccountMetadata.md) |  | 
 
 ## Example
 

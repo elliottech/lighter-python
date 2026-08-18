@@ -29,9 +29,8 @@ class ReferralCode(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     referral_code: StrictStr
-    remaining_usage: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "referral_code", "remaining_usage"]
+    __properties: ClassVar[List[str]] = ["code", "message", "referral_code"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -93,8 +92,7 @@ class ReferralCode(BaseModel):
         _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "referral_code": obj.get("referral_code"),
-            "remaining_usage": obj.get("remaining_usage")
+            "referral_code": obj.get("referral_code")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

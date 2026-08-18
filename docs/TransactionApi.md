@@ -19,7 +19,7 @@ Method | HTTP request | Description
 
 
 # **account_txs**
-> Txs account_txs(limit, by, value, index=index, authorization=authorization, auth=auth, types=types)
+> Txs account_txs(limit, by, value, index=index, authorization=authorization, types=types)
 
 accountTxs
 
@@ -49,13 +49,12 @@ async with lighter.ApiClient(configuration) as api_client:
     by = 'by_example' # str | 
     value = 'value_example' # str | 
     index = 56 # int |  (optional)
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
     types = [56] # List[int] |  (optional)
 
     try:
         # accountTxs
-        api_response = await api_instance.account_txs(limit, by, value, index=index, authorization=authorization, auth=auth, types=types)
+        api_response = await api_instance.account_txs(limit, by, value, index=index, authorization=authorization, types=types)
         print("The response of TransactionApi->account_txs:\n")
         pprint(api_response)
     except Exception as e:
@@ -73,8 +72,7 @@ Name | Type | Description  | Notes
  **by** | **str**|  | 
  **value** | **str**|  | 
  **index** | **int**|  | [optional] 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
  **types** | [**List[int]**](int.md)|  | [optional] 
 
 ### Return type

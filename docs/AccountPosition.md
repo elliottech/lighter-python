@@ -22,6 +22,7 @@ Name | Type | Description | Notes
 **margin_mode** | **int** |  | 
 **allocated_margin** | **str** |  | 
 **total_discount** | **str** |  | 
+**margin_set_flag** | **int** |  | 
 
 ## Example
 

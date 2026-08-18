@@ -22,6 +22,7 @@ Name | Type | Description | Notes
 **total_supplied** | **str** |  | 
 **user_supply_cap** | **str** |  | 
 **liquidation_factor** | **str** |  | 
+**multiplier** | **str** |  | 
 
 ## Example
 

@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from typing import Any, Iterable, List, Mapping, Optional, Tuple, Union
 
-from lighter.models.order_book_depth import OrderBookDepth
+from lighter.paper_client.order_book_depth import OrderBookDepth
 from lighter.models.order_book_orders import OrderBookOrders
-from lighter.models.price_level import PriceLevel
+from lighter.paper_client.price_level import PriceLevel
 from lighter.models.simple_order import SimpleOrder
 
 

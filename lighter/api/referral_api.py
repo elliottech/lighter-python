@@ -46,8 +46,7 @@ class ReferralApi:
     async def referral_create(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -67,10 +66,8 @@ class ReferralApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -96,7 +93,6 @@ class ReferralApi:
         _param = self._referral_create_serialize(
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -121,8 +117,7 @@ class ReferralApi:
     async def referral_create_with_http_info(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -142,10 +137,8 @@ class ReferralApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -171,7 +164,6 @@ class ReferralApi:
         _param = self._referral_create_serialize(
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -196,8 +188,7 @@ class ReferralApi:
     async def referral_create_without_preload_content(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -217,10 +208,8 @@ class ReferralApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -246,7 +235,6 @@ class ReferralApi:
         _param = self._referral_create_serialize(
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -268,7 +256,6 @@ class ReferralApi:
         self,
         account_index,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -293,8 +280,6 @@ class ReferralApi:
         if authorization is not None:
             _header_params['authorization'] = authorization
         # process the form parameters
-        if auth is not None:
-            _form_params.append(('auth', auth))
         if account_index is not None:
             _form_params.append(('account_index', account_index))
         # process the body parameter
@@ -347,8 +332,7 @@ class ReferralApi:
     async def referral_get(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -368,10 +352,8 @@ class ReferralApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -397,7 +379,6 @@ class ReferralApi:
         _param = self._referral_get_serialize(
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -422,8 +403,7 @@ class ReferralApi:
     async def referral_get_with_http_info(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -443,10 +423,8 @@ class ReferralApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -472,7 +450,6 @@ class ReferralApi:
         _param = self._referral_get_serialize(
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -497,8 +474,7 @@ class ReferralApi:
     async def referral_get_without_preload_content(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -518,10 +494,8 @@ class ReferralApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -547,7 +521,6 @@ class ReferralApi:
         _param = self._referral_get_serialize(
             account_index=account_index,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -569,7 +542,6 @@ class ReferralApi:
         self,
         account_index,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -590,19 +562,13 @@ class ReferralApi:
 
         # process the path parameters
         # process the query parameters
-        if authorization is not None:
-            
-            _query_params.append(('authorization', authorization))
-            
-        if auth is not None:
-            
-            _query_params.append(('auth', auth))
-            
         if account_index is not None:
             
             _query_params.append(('account_index', account_index))
             
         # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
         # process the form parameters
         # process the body parameter
 
@@ -642,8 +608,7 @@ class ReferralApi:
         self,
         account_index: StrictInt,
         kickback_percentage: Union[Annotated[float, Field(le=100, strict=True)], Annotated[int, Field(le=100, strict=True)]],
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -665,10 +630,8 @@ class ReferralApi:
         :type account_index: int
         :param kickback_percentage: (required)
         :type kickback_percentage: float
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -695,7 +658,6 @@ class ReferralApi:
             account_index=account_index,
             kickback_percentage=kickback_percentage,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -721,8 +683,7 @@ class ReferralApi:
         self,
         account_index: StrictInt,
         kickback_percentage: Union[Annotated[float, Field(le=100, strict=True)], Annotated[int, Field(le=100, strict=True)]],
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -744,10 +705,8 @@ class ReferralApi:
         :type account_index: int
         :param kickback_percentage: (required)
         :type kickback_percentage: float
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -774,7 +733,6 @@ class ReferralApi:
             account_index=account_index,
             kickback_percentage=kickback_percentage,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -800,8 +758,7 @@ class ReferralApi:
         self,
         account_index: StrictInt,
         kickback_percentage: Union[Annotated[float, Field(le=100, strict=True)], Annotated[int, Field(le=100, strict=True)]],
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -823,10 +780,8 @@ class ReferralApi:
         :type account_index: int
         :param kickback_percentage: (required)
         :type kickback_percentage: float
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -853,7 +808,6 @@ class ReferralApi:
             account_index=account_index,
             kickback_percentage=kickback_percentage,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -876,7 +830,6 @@ class ReferralApi:
         account_index,
         kickback_percentage,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -901,8 +854,6 @@ class ReferralApi:
         if authorization is not None:
             _header_params['authorization'] = authorization
         # process the form parameters
-        if auth is not None:
-            _form_params.append(('auth', auth))
         if account_index is not None:
             _form_params.append(('account_index', account_index))
         if kickback_percentage is not None:
@@ -1233,8 +1184,7 @@ class ReferralApi:
         self,
         account_index: StrictInt,
         new_referral_code: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1256,10 +1206,8 @@ class ReferralApi:
         :type account_index: int
         :param new_referral_code: (required)
         :type new_referral_code: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1286,7 +1234,6 @@ class ReferralApi:
             account_index=account_index,
             new_referral_code=new_referral_code,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1312,8 +1259,7 @@ class ReferralApi:
         self,
         account_index: StrictInt,
         new_referral_code: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1335,10 +1281,8 @@ class ReferralApi:
         :type account_index: int
         :param new_referral_code: (required)
         :type new_referral_code: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1365,7 +1309,6 @@ class ReferralApi:
             account_index=account_index,
             new_referral_code=new_referral_code,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1391,8 +1334,7 @@ class ReferralApi:
         self,
         account_index: StrictInt,
         new_referral_code: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1414,10 +1356,8 @@ class ReferralApi:
         :type account_index: int
         :param new_referral_code: (required)
         :type new_referral_code: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1444,7 +1384,6 @@ class ReferralApi:
             account_index=account_index,
             new_referral_code=new_referral_code,
             authorization=authorization,
-            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1467,7 +1406,6 @@ class ReferralApi:
         account_index,
         new_referral_code,
         authorization,
-        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -1492,8 +1430,6 @@ class ReferralApi:
         if authorization is not None:
             _header_params['authorization'] = authorization
         # process the form parameters
-        if auth is not None:
-            _form_params.append(('auth', auth))
         if account_index is not None:
             _form_params.append(('account_index', account_index))
         if new_referral_code is not None:
@@ -1549,11 +1485,10 @@ class ReferralApi:
         self,
         l1_address: StrictStr,
         referral_code: StrictStr,
-        x: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         discord: Optional[StrictStr] = None,
         telegram: Optional[StrictStr] = None,
+        x: Optional[StrictStr] = None,
         signature: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
@@ -1576,16 +1511,14 @@ class ReferralApi:
         :type l1_address: str
         :param referral_code: (required)
         :type referral_code: str
-        :param x: (required)
-        :type x: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param discord:
         :type discord: str
         :param telegram:
         :type telegram: str
+        :param x:
+        :type x: str
         :param signature:
         :type signature: str
         :param _request_timeout: timeout setting for this request. If one
@@ -1613,11 +1546,10 @@ class ReferralApi:
         _param = self._referral_use_serialize(
             l1_address=l1_address,
             referral_code=referral_code,
-            x=x,
             authorization=authorization,
-            auth=auth,
             discord=discord,
             telegram=telegram,
+            x=x,
             signature=signature,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1644,11 +1576,10 @@ class ReferralApi:
         self,
         l1_address: StrictStr,
         referral_code: StrictStr,
-        x: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         discord: Optional[StrictStr] = None,
         telegram: Optional[StrictStr] = None,
+        x: Optional[StrictStr] = None,
         signature: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
@@ -1671,16 +1602,14 @@ class ReferralApi:
         :type l1_address: str
         :param referral_code: (required)
         :type referral_code: str
-        :param x: (required)
-        :type x: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param discord:
         :type discord: str
         :param telegram:
         :type telegram: str
+        :param x:
+        :type x: str
         :param signature:
         :type signature: str
         :param _request_timeout: timeout setting for this request. If one
@@ -1708,11 +1637,10 @@ class ReferralApi:
         _param = self._referral_use_serialize(
             l1_address=l1_address,
             referral_code=referral_code,
-            x=x,
             authorization=authorization,
-            auth=auth,
             discord=discord,
             telegram=telegram,
+            x=x,
             signature=signature,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1739,11 +1667,10 @@ class ReferralApi:
         self,
         l1_address: StrictStr,
         referral_code: StrictStr,
-        x: StrictStr,
-        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
-        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        authorization: Optional[StrictStr] = None,
         discord: Optional[StrictStr] = None,
         telegram: Optional[StrictStr] = None,
+        x: Optional[StrictStr] = None,
         signature: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
@@ -1766,16 +1693,14 @@ class ReferralApi:
         :type l1_address: str
         :param referral_code: (required)
         :type referral_code: str
-        :param x: (required)
-        :type x: str
-        :param authorization:  make required after integ is done
+        :param authorization:
         :type authorization: str
-        :param auth:  made optional to support header auth clients
-        :type auth: str
         :param discord:
         :type discord: str
         :param telegram:
         :type telegram: str
+        :param x:
+        :type x: str
         :param signature:
         :type signature: str
         :param _request_timeout: timeout setting for this request. If one
@@ -1803,11 +1728,10 @@ class ReferralApi:
         _param = self._referral_use_serialize(
             l1_address=l1_address,
             referral_code=referral_code,
-            x=x,
             authorization=authorization,
-            auth=auth,
             discord=discord,
             telegram=telegram,
+            x=x,
             signature=signature,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1830,11 +1754,10 @@ class ReferralApi:
         self,
         l1_address,
         referral_code,
-        x,
         authorization,
-        auth,
         discord,
         telegram,
+        x,
         signature,
         _request_auth,
         _content_type,
@@ -1860,8 +1783,6 @@ class ReferralApi:
         if authorization is not None:
             _header_params['authorization'] = authorization
         # process the form parameters
-        if auth is not None:
-            _form_params.append(('auth', auth))
         if l1_address is not None:
             _form_params.append(('l1_address', l1_address))
         if referral_code is not None:

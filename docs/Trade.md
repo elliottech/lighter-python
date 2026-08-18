@@ -47,6 +47,8 @@ Name | Type | Description | Notes
 **taker_allocated_margin_usdc_after** | **int** |  | 
 **maker_allocated_margin_usdc_before** | **int** |  | 
 **maker_allocated_margin_usdc_after** | **int** |  | 
+**bid_order_version** | **int** |  | 
+**ask_order_version** | **int** |  | 
 
 ## Example
 

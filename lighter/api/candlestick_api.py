@@ -17,10 +17,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from pydantic import Field, StrictBool, StrictInt, StrictStr, field_validator
-from typing import Optional
+from typing import List, Optional
 from typing_extensions import Annotated
 from lighter.models.candles import Candles
 from lighter.models.fundings import Fundings
+from lighter.models.mark_price_candles import MarkPriceCandles
+from lighter.models.market_price_charts import MarketPriceCharts
 
 from lighter.api_client import ApiClient, RequestSerialized
 from lighter.api_response import ApiResponse
@@ -407,7 +409,7 @@ class CandlestickApi:
     ) -> Fundings:
         """fundings
 
-        Get fundings
+        Get fundings. Maximum 750 fundings will be returned per call. `count_back` indicates the number of fundings you would like to be returned, starting from `start_timestamp`, if set to 0, all fundings will be returned.
 
         :param market_id: (required)
         :type market_id: int
@@ -490,7 +492,7 @@ class CandlestickApi:
     ) -> ApiResponse[Fundings]:
         """fundings
 
-        Get fundings
+        Get fundings. Maximum 750 fundings will be returned per call. `count_back` indicates the number of fundings you would like to be returned, starting from `start_timestamp`, if set to 0, all fundings will be returned.
 
         :param market_id: (required)
         :type market_id: int
@@ -573,7 +575,7 @@ class CandlestickApi:
     ) -> RESTResponseType:
         """fundings
 
-        Get fundings
+        Get fundings. Maximum 750 fundings will be returned per call. `count_back` indicates the number of fundings you would like to be returned, starting from `start_timestamp`, if set to 0, all fundings will be returned.
 
         :param market_id: (required)
         :type market_id: int
@@ -698,6 +700,595 @@ class CandlestickApi:
         return self.api_client.param_serialize(
             method='GET',
             resource_path='/api/v1/fundings',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    async def mark_price_candles(
+        self,
+        market_id: StrictInt,
+        resolution: StrictStr,
+        start_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
+        end_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
+        count_back: StrictInt,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> MarkPriceCandles:
+        """markPriceCandles
+
+        Get mark price candles
+
+        :param market_id: (required)
+        :type market_id: int
+        :param resolution: (required)
+        :type resolution: str
+        :param start_timestamp: (required)
+        :type start_timestamp: int
+        :param end_timestamp: (required)
+        :type end_timestamp: int
+        :param count_back: (required)
+        :type count_back: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._mark_price_candles_serialize(
+            market_id=market_id,
+            resolution=resolution,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            count_back=count_back,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarkPriceCandles",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def mark_price_candles_with_http_info(
+        self,
+        market_id: StrictInt,
+        resolution: StrictStr,
+        start_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
+        end_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
+        count_back: StrictInt,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[MarkPriceCandles]:
+        """markPriceCandles
+
+        Get mark price candles
+
+        :param market_id: (required)
+        :type market_id: int
+        :param resolution: (required)
+        :type resolution: str
+        :param start_timestamp: (required)
+        :type start_timestamp: int
+        :param end_timestamp: (required)
+        :type end_timestamp: int
+        :param count_back: (required)
+        :type count_back: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._mark_price_candles_serialize(
+            market_id=market_id,
+            resolution=resolution,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            count_back=count_back,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarkPriceCandles",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def mark_price_candles_without_preload_content(
+        self,
+        market_id: StrictInt,
+        resolution: StrictStr,
+        start_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
+        end_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
+        count_back: StrictInt,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """markPriceCandles
+
+        Get mark price candles
+
+        :param market_id: (required)
+        :type market_id: int
+        :param resolution: (required)
+        :type resolution: str
+        :param start_timestamp: (required)
+        :type start_timestamp: int
+        :param end_timestamp: (required)
+        :type end_timestamp: int
+        :param count_back: (required)
+        :type count_back: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._mark_price_candles_serialize(
+            market_id=market_id,
+            resolution=resolution,
+            start_timestamp=start_timestamp,
+            end_timestamp=end_timestamp,
+            count_back=count_back,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarkPriceCandles",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _mark_price_candles_serialize(
+        self,
+        market_id,
+        resolution,
+        start_timestamp,
+        end_timestamp,
+        count_back,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if market_id is not None:
+            
+            _query_params.append(('market_id', market_id))
+            
+        if resolution is not None:
+            
+            _query_params.append(('resolution', resolution))
+            
+        if start_timestamp is not None:
+            
+            _query_params.append(('start_timestamp', start_timestamp))
+            
+        if end_timestamp is not None:
+            
+            _query_params.append(('end_timestamp', end_timestamp))
+            
+        if count_back is not None:
+            
+            _query_params.append(('count_back', count_back))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/markPriceCandles',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    async def market_price_charts(
+        self,
+        market_ids: Optional[List[StrictInt]] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> MarketPriceCharts:
+        """marketPriceCharts
+
+        Get last 24h hourly prices for all markets (mark price for perps, index price for spot)
+
+        :param market_ids:
+        :type market_ids: List[int]
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._market_price_charts_serialize(
+            market_ids=market_ids,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarketPriceCharts",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def market_price_charts_with_http_info(
+        self,
+        market_ids: Optional[List[StrictInt]] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[MarketPriceCharts]:
+        """marketPriceCharts
+
+        Get last 24h hourly prices for all markets (mark price for perps, index price for spot)
+
+        :param market_ids:
+        :type market_ids: List[int]
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._market_price_charts_serialize(
+            market_ids=market_ids,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarketPriceCharts",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def market_price_charts_without_preload_content(
+        self,
+        market_ids: Optional[List[StrictInt]] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """marketPriceCharts
+
+        Get last 24h hourly prices for all markets (mark price for perps, index price for spot)
+
+        :param market_ids:
+        :type market_ids: List[int]
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._market_price_charts_serialize(
+            market_ids=market_ids,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarketPriceCharts",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _market_price_charts_serialize(
+        self,
+        market_ids,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+            'market_ids': 'multi',
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if market_ids is not None:
+            
+            _query_params.append(('market_ids', market_ids))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/marketPriceCharts',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

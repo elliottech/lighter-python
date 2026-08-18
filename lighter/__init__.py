@@ -24,6 +24,7 @@ from lighter.api.bridge_api import BridgeApi
 from lighter.api.candlestick_api import CandlestickApi
 from lighter.api.funding_api import FundingApi
 from lighter.api.info_api import InfoApi
+from lighter.api.livepoints_api import LivepointsApi
 from lighter.api.notification_api import NotificationApi
 from lighter.api.order_api import OrderApi
 from lighter.api.referral_api import ReferralApi
@@ -85,17 +86,23 @@ from lighter.models.fundings import Fundings
 from lighter.models.l1_metadata import L1Metadata
 from lighter.models.l1_provider_info import L1ProviderInfo
 from lighter.models.layer1_basic_info import Layer1BasicInfo
+from lighter.models.leaderboard import Leaderboard
+from lighter.models.leaderboard_entry import LeaderboardEntry
 from lighter.models.lease_entry import LeaseEntry
 from lighter.models.lease_option_entry import LeaseOptionEntry
 from lighter.models.liq_trade import LiqTrade
 from lighter.models.liquidation import Liquidation
 from lighter.models.liquidation_info import LiquidationInfo
 from lighter.models.liquidation_infos import LiquidationInfos
+from lighter.models.live_points_total import LivePointsTotal
+from lighter.models.mark_price_candle import MarkPriceCandle
+from lighter.models.mark_price_candles import MarkPriceCandles
 from lighter.models.market_config import MarketConfig
+from lighter.models.market_price_chart import MarketPriceChart
+from lighter.models.market_price_charts import MarketPriceCharts
 from lighter.models.next_nonce import NextNonce
 from lighter.models.order import Order
 from lighter.models.order_book import OrderBook
-from lighter.models.order_book_depth import OrderBookDepth
 from lighter.models.order_book_details import OrderBookDetails
 from lighter.models.order_book_orders import OrderBookOrders
 from lighter.models.order_book_stats import OrderBookStats
@@ -107,7 +114,6 @@ from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
 from lighter.models.pn_l_entry import PnLEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
-from lighter.models.price_level import PriceLevel
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_metadata import PublicPoolMetadata
 from lighter.models.public_pool_share import PublicPoolShare
@@ -118,6 +124,8 @@ from lighter.models.referral import Referral
 from lighter.models.referral_code import ReferralCode
 from lighter.models.referral_point_entry import ReferralPointEntry
 from lighter.models.referral_points import ReferralPoints
+from lighter.models.referral_program_kickback import ReferralProgramKickback
+from lighter.models.referral_totals import ReferralTotals
 from lighter.models.req_set_account_metadata import ReqSetAccountMetadata
 from lighter.models.resp_change_account_tier import RespChangeAccountTier
 from lighter.models.resp_create_rfq import RespCreateRFQ
@@ -152,6 +160,7 @@ from lighter.models.slippage_result import SlippageResult
 from lighter.models.spot_order_book_detail import SpotOrderBookDetail
 from lighter.models.status import Status
 from lighter.models.strategy import Strategy
+from lighter.models.sub_account_metadata import SubAccountMetadata
 from lighter.models.sub_accounts import SubAccounts
 from lighter.models.system_config import SystemConfig
 from lighter.models.token import Token

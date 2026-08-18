@@ -12,6 +12,7 @@ Method | HTTP request | Description
 [**change_account_tier**](AccountApi.md#change_account_tier) | **POST** /api/v1/changeAccountTier | changeAccountTier
 [**get_maker_only_api_keys**](AccountApi.md#get_maker_only_api_keys) | **GET** /api/v1/getMakerOnlyApiKeys | getMakerOnlyApiKeys
 [**l1_metadata**](AccountApi.md#l1_metadata) | **GET** /api/v1/l1Metadata | l1Metadata
+[**leaderboard**](AccountApi.md#leaderboard) | **GET** /api/v1/leaderboard | leaderboard
 [**lease_options**](AccountApi.md#lease_options) | **GET** /api/v1/leaseOptions | leaseOptions
 [**leases**](AccountApi.md#leases) | **GET** /api/v1/leases | leases
 [**liquidations**](AccountApi.md#liquidations) | **GET** /api/v1/liquidations | liquidations
@@ -396,7 +397,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **change_account_tier**
-> RespChangeAccountTier change_account_tier(account_index, new_tier, authorization=authorization, auth=auth)
+> RespChangeAccountTier change_account_tier(account_index, new_tier, authorization=authorization)
 
 changeAccountTier
 
@@ -424,12 +425,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
     new_tier = 'new_tier_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # changeAccountTier
-        api_response = await api_instance.change_account_tier(account_index, new_tier, authorization=authorization, auth=auth)
+        api_response = await api_instance.change_account_tier(account_index, new_tier, authorization=authorization)
         print("The response of AccountApi->change_account_tier:\n")
         pprint(api_response)
     except Exception as e:
@@ -445,8 +445,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
  **new_tier** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 
@@ -612,6 +611,81 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **leaderboard**
+> Leaderboard leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id)
+
+leaderboard
+
+Get points leaderboard. Type should be all.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.leaderboard import Leaderboard
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    type = 'type_example' # str | 
+    authorization = 'authorization_example' # str |  (optional)
+    l1_address = 'l1_address_example' # str |  (optional)
+    competition_id = 'competition_id_example' # str |  (optional)
+
+    try:
+        # leaderboard
+        api_response = await api_instance.leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id)
+        print("The response of AccountApi->leaderboard:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->leaderboard: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **type** | **str**|  | 
+ **authorization** | **str**|  | [optional] 
+ **l1_address** | **str**|  | [optional] 
+ **competition_id** | **str**|  | [optional] 
+
+### Return type
+
+[**Leaderboard**](Leaderboard.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **lease_options**
 > RespGetLeaseOptions lease_options()
 
@@ -678,7 +752,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **leases**
-> RespGetLeases leases(account_index, authorization=authorization, cursor=cursor, limit=limit, auth=auth)
+> RespGetLeases leases(account_index, authorization=authorization, cursor=cursor, limit=limit)
 
 leases
 
@@ -708,11 +782,10 @@ async with lighter.ApiClient(configuration) as api_client:
     authorization = 'authorization_example' # str | API token authorization (optional)
     cursor = 'cursor_example' # str | Pagination cursor from a previous response (optional)
     limit = 20 # int | Number of results to return (1–100, default 20) (optional) (default to 20)
-    auth = 'auth_example' # str | Read-only auth (alternative to header authorization) (optional)
 
     try:
         # leases
-        api_response = await api_instance.leases(account_index, authorization=authorization, cursor=cursor, limit=limit, auth=auth)
+        api_response = await api_instance.leases(account_index, authorization=authorization, cursor=cursor, limit=limit)
         print("The response of AccountApi->leases:\n")
         pprint(api_response)
     except Exception as e:
@@ -730,7 +803,6 @@ Name | Type | Description  | Notes
  **authorization** | **str**| API token authorization | [optional] 
  **cursor** | **str**| Pagination cursor from a previous response | [optional] 
  **limit** | **int**| Number of results to return (1–100, default 20) | [optional] [default to 20]
- **auth** | **str**| Read-only auth (alternative to header authorization) | [optional] 
 
 ### Return type
 
@@ -907,7 +979,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **partner_stats**
-> PartnerStats partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+> PartnerStats partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp, period=period)
 
 partnerStats
 
@@ -936,10 +1008,11 @@ async with lighter.ApiClient(configuration) as api_client:
     account_index = 56 # int | 
     start_timestamp = 56 # int |  (optional)
     end_timestamp = 56 # int |  (optional)
+    period = 'period_example' # str |  (optional)
 
     try:
         # partnerStats
-        api_response = await api_instance.partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+        api_response = await api_instance.partner_stats(account_index, start_timestamp=start_timestamp, end_timestamp=end_timestamp, period=period)
         print("The response of AccountApi->partner_stats:\n")
         pprint(api_response)
     except Exception as e:
@@ -956,6 +1029,7 @@ Name | Type | Description  | Notes
  **account_index** | **int**|  | 
  **start_timestamp** | **int**|  | [optional] 
  **end_timestamp** | **int**|  | [optional] 
+ **period** | **str**|  | [optional] 
 
 ### Return type
 
@@ -1063,7 +1137,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **position_funding**
-> PositionFundings position_funding(account_index, limit, authorization=authorization, market_id=market_id, cursor=cursor, side=side, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+> PositionFundings position_funding(account_index, limit, authorization=authorization, cursor=cursor, side=side, start_timestamp=start_timestamp, end_timestamp=end_timestamp, market_ids=market_ids)
 
 positionFunding
 
@@ -1092,15 +1166,15 @@ async with lighter.ApiClient(configuration) as api_client:
     account_index = 56 # int | 
     limit = 56 # int | 
     authorization = 'authorization_example' # str |  (optional)
-    market_id = 56 # int |  (optional)
     cursor = 'cursor_example' # str |  (optional)
     side = all # str |  (optional) (default to all)
     start_timestamp = 56 # int |  (optional)
     end_timestamp = 56 # int |  (optional)
+    market_ids = [56] # List[int] | comma-separated int64s, e.g. \"1,2\" (optional)
 
     try:
         # positionFunding
-        api_response = await api_instance.position_funding(account_index, limit, authorization=authorization, market_id=market_id, cursor=cursor, side=side, start_timestamp=start_timestamp, end_timestamp=end_timestamp)
+        api_response = await api_instance.position_funding(account_index, limit, authorization=authorization, cursor=cursor, side=side, start_timestamp=start_timestamp, end_timestamp=end_timestamp, market_ids=market_ids)
         print("The response of AccountApi->position_funding:\n")
         pprint(api_response)
     except Exception as e:
@@ -1117,11 +1191,11 @@ Name | Type | Description  | Notes
  **account_index** | **int**|  | 
  **limit** | **int**|  | 
  **authorization** | **str**|  | [optional] 
- **market_id** | **int**|  | [optional] 
  **cursor** | **str**|  | [optional] 
  **side** | **str**|  | [optional] [default to all]
  **start_timestamp** | **int**|  | [optional] 
  **end_timestamp** | **int**|  | [optional] 
+ **market_ids** | [**List[int]**](int.md)| comma-separated int64s, e.g. \&quot;1,2\&quot; | [optional] 
 
 ### Return type
 
@@ -1223,7 +1297,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **referral_user_referrals**
-> UserReferrals referral_user_referrals(l1_address, authorization=authorization, cursor=cursor, auth=auth, stats_start_timestamp=stats_start_timestamp, stats_end_timestamp=stats_end_timestamp, limit=limit)
+> UserReferrals referral_user_referrals(l1_address, authorization=authorization, cursor=cursor, stats_start_timestamp=stats_start_timestamp, stats_end_timestamp=stats_end_timestamp, limit=limit, is_eligible=is_eligible)
 
 userReferrals
 
@@ -1252,14 +1326,14 @@ async with lighter.ApiClient(configuration) as api_client:
     l1_address = 'l1_address_example' # str | 
     authorization = 'authorization_example' # str |  (optional)
     cursor = 'cursor_example' # str |  (optional)
-    auth = 'auth_example' # str |  (optional)
     stats_start_timestamp = 56 # int |  (optional)
     stats_end_timestamp = 56 # int |  (optional)
     limit = 56 # int |  (optional)
+    is_eligible = False # bool |  (optional) (default to False)
 
     try:
         # userReferrals
-        api_response = await api_instance.referral_user_referrals(l1_address, authorization=authorization, cursor=cursor, auth=auth, stats_start_timestamp=stats_start_timestamp, stats_end_timestamp=stats_end_timestamp, limit=limit)
+        api_response = await api_instance.referral_user_referrals(l1_address, authorization=authorization, cursor=cursor, stats_start_timestamp=stats_start_timestamp, stats_end_timestamp=stats_end_timestamp, limit=limit, is_eligible=is_eligible)
         print("The response of AccountApi->referral_user_referrals:\n")
         pprint(api_response)
     except Exception as e:
@@ -1276,10 +1350,10 @@ Name | Type | Description  | Notes
  **l1_address** | **str**|  | 
  **authorization** | **str**|  | [optional] 
  **cursor** | **str**|  | [optional] 
- **auth** | **str**|  | [optional] 
  **stats_start_timestamp** | **int**|  | [optional] 
  **stats_end_timestamp** | **int**|  | [optional] 
  **limit** | **int**|  | [optional] 
+ **is_eligible** | **bool**|  | [optional] [default to False]
 
 ### Return type
 
@@ -1308,7 +1382,7 @@ No authorization required
 
 rfq_create
 
-Create RFQ
+Create RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
 ### Example
 
@@ -1535,7 +1609,7 @@ No authorization required
 
 rfq_respond
 
-Respond to RFQ
+Respond to RFQ. Makers have up to 1 minute to answer an RFQ, after which the user has up to 2 minutes to execute the trade. Quotes are not locked. Makers place orders directly into the order book and can dynamically adjust pricing.
 
 ### Example
 
@@ -1677,7 +1751,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **set_maker_only_api_keys**
-> RespSetMakerOnlyApiKeys set_maker_only_api_keys(authorization, account_index, api_key_indexes, auth=auth)
+> RespSetMakerOnlyApiKeys set_maker_only_api_keys(authorization, account_index, api_key_indexes)
 
 setMakerOnlyApiKeys
 
@@ -1706,11 +1780,10 @@ async with lighter.ApiClient(configuration) as api_client:
     authorization = 'authorization_example' # str | 
     account_index = 56 # int | 
     api_key_indexes = 'api_key_indexes_example' # str | JSON array string of API key indexes, e.g. \\\"[4,5]\\\". Use [] to clear all maker-only restrictions.
-    auth = 'auth_example' # str |  (optional)
 
     try:
         # setMakerOnlyApiKeys
-        api_response = await api_instance.set_maker_only_api_keys(authorization, account_index, api_key_indexes, auth=auth)
+        api_response = await api_instance.set_maker_only_api_keys(authorization, account_index, api_key_indexes)
         print("The response of AccountApi->set_maker_only_api_keys:\n")
         pprint(api_response)
     except Exception as e:
@@ -1727,7 +1800,6 @@ Name | Type | Description  | Notes
  **authorization** | **str**|  | 
  **account_index** | **int**|  | 
  **api_key_indexes** | **str**| JSON array string of API key indexes, e.g. \\\&quot;[4,5]\\\&quot;. Use [] to clear all maker-only restrictions. | 
- **auth** | **str**|  | [optional] 
 
 ### Return type
 
@@ -1779,7 +1851,7 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # tokens
@@ -1798,7 +1870,7 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 

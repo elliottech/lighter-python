@@ -287,7 +287,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **fastwithdraw**
-> ResultCode fastwithdraw(tx_info, to_address, authorization=authorization, auth=auth)
+> ResultCode fastwithdraw(tx_info, to_address, authorization=authorization)
 
 fastwithdraw
 
@@ -315,12 +315,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.BridgeApi(api_client)
     tx_info = 'tx_info_example' # str | 
     to_address = 'to_address_example' # str | 
-    authorization = 'authorization_example' # str |  make required after integ is done (optional)
-    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+    authorization = 'authorization_example' # str |  (optional)
 
     try:
         # fastwithdraw
-        api_response = await api_instance.fastwithdraw(tx_info, to_address, authorization=authorization, auth=auth)
+        api_response = await api_instance.fastwithdraw(tx_info, to_address, authorization=authorization)
         print("The response of BridgeApi->fastwithdraw:\n")
         pprint(api_response)
     except Exception as e:
@@ -336,8 +335,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **tx_info** | **str**|  | 
  **to_address** | **str**|  | 
- **authorization** | **str**|  make required after integ is done | [optional] 
- **auth** | **str**|  made optional to support header auth clients | [optional] 
+ **authorization** | **str**|  | [optional] 
 
 ### Return type
 

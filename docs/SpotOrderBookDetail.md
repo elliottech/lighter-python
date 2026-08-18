@@ -32,6 +32,8 @@ Name | Type | Description | Notes
 **daily_chart** | **Dict[str, float]** |  | 
 **is_maker_fee_enabled** | **bool** |  | 
 **is_taker_fee_enabled** | **bool** |  | 
+**created_at** | **str** |  | 
+**multiplier** | **str** |  | 
 
 ## Example
 
