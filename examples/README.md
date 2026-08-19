@@ -152,23 +152,6 @@ Spot assets (like ETH) need to have both the from and to route set to `spot`.
 You can get all `asset_id`s by following the example below: 
 - `spot_get_order_books.py`
 
-## Paper Trading (simulated, no API keys required)
-Paper trading lets you simulate trades against real order book data without submitting transactions.
-
-- `paper_trading_snapshot.py`
-  - fetches a one-time order book snapshot and simulates buy/sell trades
-  - prints fills, collateral, and trade history
-
-- `paper_trading_live.py`
-  - subscribes to real-time order book updates via WebSocket
-  - simulates trades against continuously updated book state
-  - the paper client uses its own internal WebSocket listener (not `lighter.WsClient`)
-
-- `paper_trading_health.py`
-  - opens positions across multiple markets
-  - compares conservative vs aggressive leverage on the same two-market portfolio
-  - inspects account health, margin usage, leverage, and liquidation prices
-
 ## Setup steps for mainnet
 - deposit money on Lighter to create an account first
 - change the URL to `mainnet.zklighter.elliot.ai`
