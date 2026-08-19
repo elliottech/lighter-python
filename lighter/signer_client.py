@@ -135,7 +135,7 @@ def __populate_shared_library_functions(signer):
     signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelAllOrders.restype = SignedTxResponse
 
-    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
     signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -312,6 +312,8 @@ class SignerClient:
     SELF_TRADE_EQUALITY_MASTER_ACCOUNT_INDEX = 1
 
     NIL_MARKET_INDEX = 255
+
+    NIL_ORDER_VERSION = 0
 
     ROUTE_PERP = 0
     ROUTE_SPOT = 1
@@ -564,11 +566,12 @@ class SignerClient:
             integrator_maker_fee: int = 0,
             self_trade_behavior_mode: int = 0,
             self_trade_equality_mode: int = 0,
+            order_version: int = NIL_ORDER_VERSION,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, self_trade_behavior_mode, self_trade_equality_mode, skip_nonce, nonce, api_key_index, self.account_index))
+        return self.__decode_tx_info(self.signer.SignModifyOrder(market_index, order_index, base_amount, price, trigger_price, integrator_account_index, integrator_taker_fee, integrator_maker_fee, self_trade_behavior_mode, self_trade_equality_mode, order_version, skip_nonce, nonce, api_key_index, self.account_index))
 
     def sign_approve_integrator(
             self,
@@ -1176,6 +1179,7 @@ class SignerClient:
             integrator_maker_fee: int = 0,
             self_trade_behavior_mode: int = 0,
             self_trade_equality_mode: int = 0,
+            order_version: int = NIL_ORDER_VERSION,
             skip_nonce: int = SKIP_NONCE_OFF,
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
@@ -1191,6 +1195,7 @@ class SignerClient:
             integrator_maker_fee=integrator_maker_fee,
             self_trade_behavior_mode=self_trade_behavior_mode,
             self_trade_equality_mode=self_trade_equality_mode,
+            order_version=order_version,
             skip_nonce=skip_nonce,
             nonce=nonce,
             api_key_index=api_key_index
