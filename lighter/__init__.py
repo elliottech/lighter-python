@@ -184,20 +184,3 @@ from lighter.endpoint_profiles import  (EndpointProfile, MAINNET, ROBINHOOD, TES
 # manual additions
 from lighter.ws_client import WsClient
 from lighter.signer_client import SignerClient, create_api_key
-from lighter.paper_client import (
-    AccountTier,
-    InMemoryOrderBook,
-    MarketConfig,
-    OrderBookLevel,
-    PaperAccount,
-    PaperAccountHealth,
-    PaperClient,
-    PaperFill,
-    PaperHealthStatus,
-    PaperOrderRequest,
-    PaperOrderResult,
-    PaperOrderSide,
-    PaperOrderType,
-    PaperPosition,
-    PaperTrade,
-)
