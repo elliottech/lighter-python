@@ -1,17 +1,18 @@
 import asyncio
 
 import lighter
-from examples.utils import get_api_key_config, trim_exception
+from examples.utils import DEFAULT_API_KEY_CONFIG, get_api_key_config, trim_exception
 
 
-async def create_signer_for_user(config_file="./api_key_config.json"):
+async def create_signer_for_user(config_file=DEFAULT_API_KEY_CONFIG):
     # Constructing the SignerClient performs no network I/O (nonces are
     # fetched lazily on first use), so it is safe inside a coroutine.
-    base_url, account_index, private_keys = get_api_key_config(config_file)
+    profile, account_index, private_keys = get_api_key_config(config_file)
     client = lighter.SignerClient(
-        url=base_url,
+        url=profile.api_url,
         account_index=account_index,
         api_private_keys=private_keys,
+        chain_id=profile.chain_id,
     )
 
     err = client.check_client()
@@ -22,7 +23,7 @@ async def create_signer_for_user(config_file="./api_key_config.json"):
     return client
 
 
-async def place_market_order_for_user(config_file="./api_key_config.json"):
+async def place_market_order_for_user(config_file=DEFAULT_API_KEY_CONFIG):
     client = await create_signer_for_user(config_file)
 
     try:
@@ -32,7 +33,7 @@ async def place_market_order_for_user(config_file="./api_key_config.json"):
         tx, tx_hash, err = await client.create_market_order(
             market_index=market_index,
             client_order_index=0,
-            base_amount=100,  # 0.1 ETH
+            base_amount=10,  # 0.1 ETH
             avg_execution_price=4000_00,  # $4000 -- worst acceptable price for the order
             is_ask=False,
         )

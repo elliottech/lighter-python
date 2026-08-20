@@ -1,15 +1,19 @@
 from typing import Tuple, Optional
 import logging
 import json
+from pathlib import Path
 import websockets
 import lighter
+
+
+DEFAULT_API_KEY_CONFIG = Path(__file__).resolve().with_name("api_key_config.json")
 
 
 def trim_exception(e: Exception) -> str:
     return str(e).strip().split("\n")[-1]
 
 
-def save_api_key_config(endpoint_profile, account_index, private_keys, config_file="./api_key_config.json"):
+def save_api_key_config(endpoint_profile, account_index, private_keys, config_file=DEFAULT_API_KEY_CONFIG):
     with open(config_file, "w", encoding="utf-8") as f:
         json.dump({
             "endpointProfile": endpoint_profile.name,
@@ -18,7 +22,7 @@ def save_api_key_config(endpoint_profile, account_index, private_keys, config_fi
         }, f, ensure_ascii=False, indent=2)
 
 
-def get_api_key_config(config_file="./api_key_config.json"):
+def get_api_key_config(config_file=DEFAULT_API_KEY_CONFIG):
     with open(config_file) as f:
         cfg = json.load(f)
 
@@ -43,7 +47,7 @@ def get_api_key_config(config_file="./api_key_config.json"):
     return profile, cfg["accountIndex"], private_key
 
 
-def default_example_setup(config_file="./api_key_config.json",nonce_management_type=lighter.nonce_manager.NonceManagerType.OPTIMISTIC,endpoint_profile=None,) -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
+def default_example_setup(config_file=DEFAULT_API_KEY_CONFIG,nonce_management_type=lighter.nonce_manager.NonceManagerType.OPTIMISTIC,endpoint_profile=None,) -> Optional[Tuple[lighter.SignerClient, lighter.ApiClient, websockets.connect]]:
     logging.basicConfig(level=logging.DEBUG)
 
     config_endpoint, account_index, private_keys = get_api_key_config(config_file)

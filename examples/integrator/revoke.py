@@ -2,11 +2,8 @@ import asyncio
 from examples.utils import default_example_setup
 
 
-CONFIG_FILE = "../api_key_config.json"
-
-
 async def main():
-    client, api_client, _ = default_example_setup(CONFIG_FILE)
+    client, api_client, _ = default_example_setup()
 
     err = client.check_client()
     if err is not None:
