@@ -2,11 +2,8 @@ import asyncio
 from examples.utils import default_example_setup
 
 
-CONFIG_FILE = "../api_key_config.json"
-
-
 async def main():
-    client, api_client, _ = default_example_setup(CONFIG_FILE)
+    client, api_client, _ = default_example_setup()
     client.check_client()
 
     # Note: change this to 2048 to trade spot ETH. Make sure you have at least 0.1 ETH to trade spot.

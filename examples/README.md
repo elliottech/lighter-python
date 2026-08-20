@@ -6,7 +6,7 @@
   - the eth private key will only be used in the Py SDK to sign a message
   - the eth private key is not required in order to trade on the platform
   - the eth private key is not passed to the binary 
-  - the API key config is saved in a local file `./api_key_config.json`
+  - the API key config is saved as `examples/api_key_config.json`; examples resolve this path from their source location, so they can be run from any working directory
 
 ## Start trading on testnet
 - `create_modify_cancel_order_http.py`
