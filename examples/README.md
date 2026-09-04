@@ -24,6 +24,18 @@
 - `create_market_order_eth_sell.py`
   - creates a market sell order for 0.1 ETH @ market price
 
+- `create_stop_loss_market_order.py`
+  - creates a reduce-only market order that is triggered when ETH falls to the stop price
+  - configures the lowest acceptable execution price to limit slippage
+
+- `create_take_profit_market_order.py`
+  - creates a reduce-only market order that is triggered when ETH rises to the take-profit price
+  - configures the lowest acceptable execution price to limit slippage
+
+- `create_twap_market_order.py`
+  - creates a TWAP buy order that splits 0.21 ETH across market orders over 10 minutes
+  - configures the highest acceptable execution price for each market order
+
 - `create_grouped_ioc_with_attached_sl_tp.py`
   - creates an ask (sell) IoC order for 0.1 ETH
   - along w/ the order, it sets up a Stop Loss (SL) and a Take Profit (TP) order for the whole size of the order
