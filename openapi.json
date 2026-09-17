@@ -5548,7 +5548,30 @@
           "l1_decimals": {
             "type": "integer",
             "format": "uint8",
-            "example": 18
+            "example": 18,
+            "description": "L1 token decimals when supplied by registration. Omitted for Core-native and EVM-native assets."
+          },
+          "evm_decimals": {
+            "type": "integer",
+            "format": "uint8",
+            "example": 18,
+            "description": "Canonical EVM token decimals for EVM-native assets. Zero is a valid precision; omission means unavailable."
+          },
+          "canonical_domain": {
+            "type": "integer",
+            "format": "uint8",
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "description": "Asset origin: 0 legacy, 1 L1, 2 Core, 3 EVM. Omitted by older API versions."
+          },
+          "evm_token": {
+            "type": "string",
+            "example": "0x0000000000000000000000000000000000000000",
+            "description": "Linked EVM token or wrapper address. The zero address means unlinked; older API versions omit this field."
           },
           "decimals": {
             "type": "integer",
@@ -5621,7 +5644,6 @@
         "required": [
           "asset_id",
           "symbol",
-          "l1_decimals",
           "decimals",
           "min_transfer_amount",
           "min_withdrawal_amount",
