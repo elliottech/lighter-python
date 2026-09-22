@@ -42,6 +42,9 @@ class WsClient:
         if isinstance(message, str):
             message = json.loads(message)
 
+        if not isinstance(message, dict):
+            return
+
         message_type = message.get("type")
 
         if message_type == "connected":
@@ -61,7 +64,10 @@ class WsClient:
             self.handle_unhandled_message(message)
 
     async def on_message_async(self, ws, message):
-        message = json.loads(message)
+        if isinstance(message, str):
+            message = json.loads(message)
+        if not isinstance(message, dict):
+            return
         message_type = message.get("type")
 
         if message_type == "connected":
