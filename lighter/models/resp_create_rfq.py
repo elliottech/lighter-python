@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.rfq_metadata import RFQMetadata
 from lighter.models.rfq_response_entry import RFQResponseEntry
@@ -33,7 +33,7 @@ class RespCreateRFQ(BaseModel):
     id: StrictInt
     account_index: StrictInt
     market_index: StrictInt
-    direction: StrictInt
+    direction: StrictInt = Field(description="See RespCreateRFQDirectionEnum")
     base_amount: StrictStr
     quote_amount: StrictStr
     status: StrictStr
@@ -43,6 +43,13 @@ class RespCreateRFQ(BaseModel):
     updated_at: StrictInt
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "id", "account_index", "market_index", "direction", "base_amount", "quote_amount", "status", "metadata", "responses", "created_at", "updated_at"]
+
+    @field_validator('direction')
+    def direction_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([-1, 0, 1]):
+            raise ValueError("must be one of enum values (-1, 0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,

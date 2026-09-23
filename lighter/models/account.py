@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -28,8 +28,8 @@ class Account(BaseModel):
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    account_type: StrictInt
-    account_trading_mode: StrictInt = Field(description="Classic=0 and Unified=1")
+    account_type: StrictInt = Field(description="See AccountAccountTypeEnum")
+    account_trading_mode: StrictInt = Field(description="See AccountAccountTradingModeEnum")
     index: StrictInt
     l1_address: StrictStr
     cancel_all_time: StrictInt
@@ -42,6 +42,20 @@ class Account(BaseModel):
     transaction_time: StrictInt
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "transaction_time"]
+
+    @field_validator('account_type')
+    def account_type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1, 2, 3, 4, 5]):
+            raise ValueError("must be one of enum values (0, 1, 2, 3, 4, 5)")
+        return value
+
+    @field_validator('account_trading_mode')
+    def account_trading_mode_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,

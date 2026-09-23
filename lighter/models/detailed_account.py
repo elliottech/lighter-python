@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from lighter.models.account_asset import AccountAsset
 from lighter.models.account_position import AccountPosition
@@ -35,8 +35,8 @@ class DetailedAccount(BaseModel):
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    account_type: StrictInt
-    account_trading_mode: Optional[StrictInt] = Field(default=None, description="Classic=0 and Unified=1")
+    account_type: StrictInt = Field(description="See DetailedAccountAccountTypeEnum")
+    account_trading_mode: Optional[StrictInt] = Field(default=None, description="See DetailedAccountAccountTradingModeEnum")
     index: StrictInt
     l1_address: StrictStr
     cancel_all_time: StrictInt
@@ -68,6 +68,23 @@ class DetailedAccount(BaseModel):
     metadata: SubAccountMetadata
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids", "metadata"]
+
+    @field_validator('account_type')
+    def account_type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1, 2, 3, 4, 5]):
+            raise ValueError("must be one of enum values (0, 1, 2, 3, 4, 5)")
+        return value
+
+    @field_validator('account_trading_mode')
+    def account_trading_mode_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,

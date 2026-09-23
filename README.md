@@ -142,6 +142,8 @@ Class | Method | HTTP request | Description
 
 <!-- AUTOGEN:MODELS -->
  - [Account](docs/Account.md)
+ - [AccountAccountTradingModeEnum](docs/AccountAccountTradingModeEnum.md)
+ - [AccountAccountTypeEnum](docs/AccountAccountTypeEnum.md)
  - [AccountApiKeys](docs/AccountApiKeys.md)
  - [AccountAsset](docs/AccountAsset.md)
  - [AccountLimits](docs/AccountLimits.md)
@@ -149,6 +151,7 @@ Class | Method | HTTP request | Description
  - [AccountMetadatas](docs/AccountMetadatas.md)
  - [AccountPnL](docs/AccountPnL.md)
  - [AccountPosition](docs/AccountPosition.md)
+ - [AccountPositionMarginModeEnum](docs/AccountPositionMarginModeEnum.md)
  - [Announcement](docs/Announcement.md)
  - [Announcements](docs/Announcements.md)
  - [ApiKey](docs/ApiKey.md)
@@ -170,6 +173,8 @@ Class | Method | HTTP request | Description
  - [DepositHistory](docs/DepositHistory.md)
  - [DepositHistoryItem](docs/DepositHistoryItem.md)
  - [DetailedAccount](docs/DetailedAccount.md)
+ - [DetailedAccountAccountTradingModeEnum](docs/DetailedAccountAccountTradingModeEnum.md)
+ - [DetailedAccountAccountTypeEnum](docs/DetailedAccountAccountTypeEnum.md)
  - [DetailedAccounts](docs/DetailedAccounts.md)
  - [EnrichedTx](docs/EnrichedTx.md)
  - [ExchangeMetric](docs/ExchangeMetric.md)
@@ -195,6 +200,7 @@ Class | Method | HTTP request | Description
  - [MarkPriceCandle](docs/MarkPriceCandle.md)
  - [MarkPriceCandles](docs/MarkPriceCandles.md)
  - [MarketConfig](docs/MarketConfig.md)
+ - [MarketConfigMarketMarginModeEnum](docs/MarketConfigMarketMarginModeEnum.md)
  - [MarketPriceChart](docs/MarketPriceChart.md)
  - [MarketPriceCharts](docs/MarketPriceCharts.md)
  - [NextNonce](docs/NextNonce.md)
@@ -212,9 +218,13 @@ Class | Method | HTTP request | Description
  - [PositionFunding](docs/PositionFunding.md)
  - [PositionFundings](docs/PositionFundings.md)
  - [PublicPoolInfo](docs/PublicPoolInfo.md)
+ - [PublicPoolInfoStatusEnum](docs/PublicPoolInfoStatusEnum.md)
  - [PublicPoolMetadata](docs/PublicPoolMetadata.md)
+ - [PublicPoolMetadataAccountTypeEnum](docs/PublicPoolMetadataAccountTypeEnum.md)
+ - [PublicPoolMetadataStatusEnum](docs/PublicPoolMetadataStatusEnum.md)
  - [PublicPoolShare](docs/PublicPoolShare.md)
  - [RFQEntry](docs/RFQEntry.md)
+ - [RFQEntryDirectionEnum](docs/RFQEntryDirectionEnum.md)
  - [RFQMetadata](docs/RFQMetadata.md)
  - [RFQResponseEntry](docs/RFQResponseEntry.md)
  - [Referral](docs/Referral.md)
@@ -226,6 +236,7 @@ Class | Method | HTTP request | Description
  - [ReqSetAccountMetadata](docs/ReqSetAccountMetadata.md)
  - [RespChangeAccountTier](docs/RespChangeAccountTier.md)
  - [RespCreateRFQ](docs/RespCreateRFQ.md)
+ - [RespCreateRFQDirectionEnum](docs/RespCreateRFQDirectionEnum.md)
  - [RespGetApiTokens](docs/RespGetApiTokens.md)
  - [RespGetExchangeMetrics](docs/RespGetExchangeMetrics.md)
  - [RespGetExecuteStats](docs/RespGetExecuteStats.md)
@@ -235,10 +246,12 @@ Class | Method | HTTP request | Description
  - [RespGetLeases](docs/RespGetLeases.md)
  - [RespGetMakerOnlyApiKeys](docs/RespGetMakerOnlyApiKeys.md)
  - [RespGetRFQ](docs/RespGetRFQ.md)
+ - [RespGetRFQDirectionEnum](docs/RespGetRFQDirectionEnum.md)
  - [RespListRFQs](docs/RespListRFQs.md)
  - [RespPostApiToken](docs/RespPostApiToken.md)
  - [RespPublicPoolsMetadata](docs/RespPublicPoolsMetadata.md)
  - [RespRespondToRFQ](docs/RespRespondToRFQ.md)
+ - [RespRespondToRFQDirectionEnum](docs/RespRespondToRFQDirectionEnum.md)
  - [RespRevokeApiToken](docs/RespRevokeApiToken.md)
  - [RespSendTx](docs/RespSendTx.md)
  - [RespSendTxBatch](docs/RespSendTxBatch.md)
@@ -246,6 +259,7 @@ Class | Method | HTTP request | Description
  - [RespSyntheticSpotInfo](docs/RespSyntheticSpotInfo.md)
  - [RespUpdateKickback](docs/RespUpdateKickback.md)
  - [RespUpdateRFQ](docs/RespUpdateRFQ.md)
+ - [RespUpdateRFQDirectionEnum](docs/RespUpdateRFQDirectionEnum.md)
  - [RespUpdateReferralCode](docs/RespUpdateReferralCode.md)
  - [RespWithdrawalDelay](docs/RespWithdrawalDelay.md)
  - [ResultCode](docs/ResultCode.md)
@@ -280,3 +294,22 @@ Class | Method | HTTP request | Description
 
 <a id="documentation-for-authorization"></a>
 <!-- /AUTOGEN:MODELS -->
+
+## Regenerating from openapi.json
+
+`openapi.json` comes from the backend `server.api` (goctl-swagger). Before running
+openapi-generator (7.7.0, `-g python -c config.yaml`), normalize it with:
+
+```sh
+python3 scripts/openapi_postprocess.py openapi.json
+```
+
+goctl-swagger emits integer `options=` as strings (`["Cross:0", "Isolated:1"]`);
+the script converts them to integer enums and, for named ones, adds a
+`<Model><Field>Enum` `IntEnum` schema (e.g. `AccountPositionMarginModeEnum`) whose
+members can be compared against the plain `int` field:
+
+```python
+if position.margin_mode == lighter.AccountPositionMarginModeEnum.Isolated:
+    ...
+```

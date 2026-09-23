@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -40,12 +40,19 @@ class AccountPosition(BaseModel):
     realized_pnl: StrictStr
     liquidation_price: StrictStr
     total_funding_paid_out: Optional[StrictStr] = None
-    margin_mode: StrictInt
+    margin_mode: StrictInt = Field(description="See AccountPositionMarginModeEnum")
     allocated_margin: StrictStr
     total_discount: StrictStr
     margin_set_flag: StrictInt
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["market_id", "symbol", "initial_margin_fraction", "open_order_count", "pending_order_count", "position_tied_order_count", "sign", "position", "avg_entry_price", "position_value", "unrealized_pnl", "realized_pnl", "liquidation_price", "total_funding_paid_out", "margin_mode", "allocated_margin", "total_discount", "margin_set_flag"]
+
+    @field_validator('margin_mode')
+    def margin_mode_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
