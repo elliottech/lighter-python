@@ -3862,7 +3862,7 @@
               "minimum": 1,
               "maximum": 100
             },
-            "description": "Number of results to return (1\u2013100, default 20)"
+            "description": "Number of results to return (1–100, default 20)"
           }
         ],
         "responses": {
@@ -3896,7 +3896,7 @@
         "tags": [
           "account"
         ],
-        "description": "Submit a LIT lease transfer. The server calculates the required fee based on lease_amount and duration_days, then executes the transfer. Fee formula (integer arithmetic): fee = lease_amount \u00d7 (annual_rate \u00d7 100) \u00d7 duration_days / (360 \u00d7 10000).",
+        "description": "Submit a LIT lease transfer. The server calculates the required fee based on lease_amount and duration_days, then executes the transfer. Fee formula (integer arithmetic): fee = lease_amount × (annual_rate × 100) × duration_days / (360 × 10000).",
         "parameters": [
           {
             "name": "authorization",

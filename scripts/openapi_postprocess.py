@@ -93,13 +93,13 @@ def normalize_integer_enums(spec):
 
 
 def main():
-    with open(FILE, "r") as f:
+    with open(FILE, "r", encoding="utf-8") as f:
         spec = json.load(f)
 
     normalize_integer_enums(spec)
 
-    with open(FILE, "w") as f:
-        json.dump(spec, f, indent=2)
+    with open(FILE, "w", encoding="utf-8") as f:
+        json.dump(spec, f, indent=2, ensure_ascii=False)
 
 
 if __name__ == "__main__":
