@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**status** | **int** |  | 
+**status** | **int** | See PublicPoolInfoStatusEnum | 
 **operator_fee** | **str** |  | 
 **min_operator_share_rate** | **str** |  | 
 **total_shares** | **int** |  | 

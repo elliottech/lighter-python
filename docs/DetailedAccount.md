@@ -7,8 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
-**account_type** | **int** |  | 
-**account_trading_mode** | **int** | Classic&#x3D;0 and Unified&#x3D;1 | [optional] 
+**account_type** | **int** | See DetailedAccountAccountTypeEnum | 
+**account_trading_mode** | **int** | Classic&#x3D;0 and Unified&#x3D;1. See DetailedAccountAccountTradingModeEnum | [optional] 
 **index** | **int** |  | 
 **l1_address** | **str** |  | 
 **cancel_all_time** | **int** |  | 

@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from lighter.models.account_asset import AccountAsset
 from lighter.models.public_pool_share import PublicPoolShare
@@ -31,11 +31,11 @@ class PublicPoolMetadata(BaseModel):
     code: StrictInt
     message: Optional[StrictStr] = None
     account_index: StrictInt
-    account_type: StrictInt
+    account_type: StrictInt = Field(description="See PublicPoolMetadataAccountTypeEnum")
     name: StrictStr
     l1_address: StrictStr
     annual_percentage_yield: Union[StrictFloat, StrictInt]
-    status: StrictInt
+    status: StrictInt = Field(description="See PublicPoolMetadataStatusEnum")
     operator_fee: StrictStr
     total_asset_value: StrictStr
     total_shares: StrictInt
@@ -48,6 +48,20 @@ class PublicPoolMetadata(BaseModel):
     total_spot_value: StrictStr
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["code", "message", "account_index", "account_type", "name", "l1_address", "annual_percentage_yield", "status", "operator_fee", "total_asset_value", "total_shares", "account_share", "assets", "created_at", "master_account_index", "sharpe_ratio", "total_perps_value", "total_spot_value"]
+
+    @field_validator('account_type')
+    def account_type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1, 2, 3, 4, 5]):
+            raise ValueError("must be one of enum values (0, 1, 2, 3, 4, 5)")
+        return value
+
+    @field_validator('status')
+    def status_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,

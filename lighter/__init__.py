@@ -45,6 +45,8 @@ from lighter.exceptions import ApiException
 
 # import models into sdk package
 from lighter.models.account import Account
+from lighter.models.account_account_trading_mode_enum import AccountAccountTradingModeEnum
+from lighter.models.account_account_type_enum import AccountAccountTypeEnum
 from lighter.models.account_api_keys import AccountApiKeys
 from lighter.models.account_asset import AccountAsset
 from lighter.models.account_limits import AccountLimits
@@ -52,6 +54,7 @@ from lighter.models.account_metadata import AccountMetadata
 from lighter.models.account_metadatas import AccountMetadatas
 from lighter.models.account_pn_l import AccountPnL
 from lighter.models.account_position import AccountPosition
+from lighter.models.account_position_margin_mode_enum import AccountPositionMarginModeEnum
 from lighter.models.announcement import Announcement
 from lighter.models.announcements import Announcements
 from lighter.models.api_key import ApiKey
@@ -73,6 +76,8 @@ from lighter.models.deposit import Deposit
 from lighter.models.deposit_history import DepositHistory
 from lighter.models.deposit_history_item import DepositHistoryItem
 from lighter.models.detailed_account import DetailedAccount
+from lighter.models.detailed_account_account_trading_mode_enum import DetailedAccountAccountTradingModeEnum
+from lighter.models.detailed_account_account_type_enum import DetailedAccountAccountTypeEnum
 from lighter.models.detailed_accounts import DetailedAccounts
 from lighter.models.enriched_tx import EnrichedTx
 from lighter.models.exchange_metric import ExchangeMetric
@@ -98,6 +103,7 @@ from lighter.models.live_points_total import LivePointsTotal
 from lighter.models.mark_price_candle import MarkPriceCandle
 from lighter.models.mark_price_candles import MarkPriceCandles
 from lighter.models.market_config import MarketConfig
+from lighter.models.market_config_market_margin_mode_enum import MarketConfigMarketMarginModeEnum
 from lighter.models.market_price_chart import MarketPriceChart
 from lighter.models.market_price_charts import MarketPriceCharts
 from lighter.models.next_nonce import NextNonce
@@ -115,9 +121,13 @@ from lighter.models.pn_l_entry import PnLEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
 from lighter.models.public_pool_info import PublicPoolInfo
+from lighter.models.public_pool_info_status_enum import PublicPoolInfoStatusEnum
 from lighter.models.public_pool_metadata import PublicPoolMetadata
+from lighter.models.public_pool_metadata_account_type_enum import PublicPoolMetadataAccountTypeEnum
+from lighter.models.public_pool_metadata_status_enum import PublicPoolMetadataStatusEnum
 from lighter.models.public_pool_share import PublicPoolShare
 from lighter.models.rfq_entry import RFQEntry
+from lighter.models.rfq_entry_direction_enum import RFQEntryDirectionEnum
 from lighter.models.rfq_metadata import RFQMetadata
 from lighter.models.rfq_response_entry import RFQResponseEntry
 from lighter.models.referral import Referral
@@ -129,6 +139,7 @@ from lighter.models.referral_totals import ReferralTotals
 from lighter.models.req_set_account_metadata import ReqSetAccountMetadata
 from lighter.models.resp_change_account_tier import RespChangeAccountTier
 from lighter.models.resp_create_rfq import RespCreateRFQ
+from lighter.models.resp_create_rfq_direction_enum import RespCreateRFQDirectionEnum
 from lighter.models.resp_get_api_tokens import RespGetApiTokens
 from lighter.models.resp_get_exchange_metrics import RespGetExchangeMetrics
 from lighter.models.resp_get_execute_stats import RespGetExecuteStats
@@ -138,10 +149,12 @@ from lighter.models.resp_get_lease_options import RespGetLeaseOptions
 from lighter.models.resp_get_leases import RespGetLeases
 from lighter.models.resp_get_maker_only_api_keys import RespGetMakerOnlyApiKeys
 from lighter.models.resp_get_rfq import RespGetRFQ
+from lighter.models.resp_get_rfq_direction_enum import RespGetRFQDirectionEnum
 from lighter.models.resp_list_rfqs import RespListRFQs
 from lighter.models.resp_post_api_token import RespPostApiToken
 from lighter.models.resp_public_pools_metadata import RespPublicPoolsMetadata
 from lighter.models.resp_respond_to_rfq import RespRespondToRFQ
+from lighter.models.resp_respond_to_rfq_direction_enum import RespRespondToRFQDirectionEnum
 from lighter.models.resp_revoke_api_token import RespRevokeApiToken
 from lighter.models.resp_send_tx import RespSendTx
 from lighter.models.resp_send_tx_batch import RespSendTxBatch
@@ -149,6 +162,7 @@ from lighter.models.resp_set_maker_only_api_keys import RespSetMakerOnlyApiKeys
 from lighter.models.resp_synthetic_spot_info import RespSyntheticSpotInfo
 from lighter.models.resp_update_kickback import RespUpdateKickback
 from lighter.models.resp_update_rfq import RespUpdateRFQ
+from lighter.models.resp_update_rfq_direction_enum import RespUpdateRFQDirectionEnum
 from lighter.models.resp_update_referral_code import RespUpdateReferralCode
 from lighter.models.resp_withdrawal_delay import RespWithdrawalDelay
 from lighter.models.result_code import ResultCode
