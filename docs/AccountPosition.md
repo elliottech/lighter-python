@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 **realized_pnl** | **str** |  | 
 **liquidation_price** | **str** |  | 
 **total_funding_paid_out** | **str** |  | [optional] 
-**margin_mode** | **int** |  | 
+**margin_mode** | **int** | See AccountPositionMarginModeEnum | 
 **allocated_margin** | **str** |  | 
 **total_discount** | **str** |  | 
 **margin_set_flag** | **int** |  | 

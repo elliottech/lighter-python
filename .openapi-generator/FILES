@@ -1,5 +1,7 @@
 README.md
 docs/Account.md
+docs/AccountAccountTradingModeEnum.md
+docs/AccountAccountTypeEnum.md
 docs/AccountApi.md
 docs/AccountApiKeys.md
 docs/AccountAsset.md
@@ -8,6 +10,7 @@ docs/AccountMetadata.md
 docs/AccountMetadatas.md
 docs/AccountPnL.md
 docs/AccountPosition.md
+docs/AccountPositionMarginModeEnum.md
 docs/Announcement.md
 docs/AnnouncementApi.md
 docs/Announcements.md
@@ -33,6 +36,8 @@ docs/Deposit.md
 docs/DepositHistory.md
 docs/DepositHistoryItem.md
 docs/DetailedAccount.md
+docs/DetailedAccountAccountTradingModeEnum.md
+docs/DetailedAccountAccountTypeEnum.md
 docs/DetailedAccounts.md
 docs/EnrichedTx.md
 docs/ExchangeMetric.md
@@ -61,6 +66,7 @@ docs/LivepointsApi.md
 docs/MarkPriceCandle.md
 docs/MarkPriceCandles.md
 docs/MarketConfig.md
+docs/MarketConfigMarketMarginModeEnum.md
 docs/MarketPriceChart.md
 docs/MarketPriceCharts.md
 docs/NextNonce.md
@@ -80,9 +86,13 @@ docs/PnLEntry.md
 docs/PositionFunding.md
 docs/PositionFundings.md
 docs/PublicPoolInfo.md
+docs/PublicPoolInfoStatusEnum.md
 docs/PublicPoolMetadata.md
+docs/PublicPoolMetadataAccountTypeEnum.md
+docs/PublicPoolMetadataStatusEnum.md
 docs/PublicPoolShare.md
 docs/RFQEntry.md
+docs/RFQEntryDirectionEnum.md
 docs/RFQMetadata.md
 docs/RFQResponseEntry.md
 docs/Referral.md
@@ -95,6 +105,7 @@ docs/ReferralTotals.md
 docs/ReqSetAccountMetadata.md
 docs/RespChangeAccountTier.md
 docs/RespCreateRFQ.md
+docs/RespCreateRFQDirectionEnum.md
 docs/RespGetApiTokens.md
 docs/RespGetExchangeMetrics.md
 docs/RespGetExecuteStats.md
@@ -104,10 +115,12 @@ docs/RespGetLeaseOptions.md
 docs/RespGetLeases.md
 docs/RespGetMakerOnlyApiKeys.md
 docs/RespGetRFQ.md
+docs/RespGetRFQDirectionEnum.md
 docs/RespListRFQs.md
 docs/RespPostApiToken.md
 docs/RespPublicPoolsMetadata.md
 docs/RespRespondToRFQ.md
+docs/RespRespondToRFQDirectionEnum.md
 docs/RespRevokeApiToken.md
 docs/RespSendTx.md
 docs/RespSendTxBatch.md
@@ -115,6 +128,7 @@ docs/RespSetMakerOnlyApiKeys.md
 docs/RespSyntheticSpotInfo.md
 docs/RespUpdateKickback.md
 docs/RespUpdateRFQ.md
+docs/RespUpdateRFQDirectionEnum.md
 docs/RespUpdateReferralCode.md
 docs/RespWithdrawalDelay.md
 docs/ResultCode.md
@@ -170,6 +184,8 @@ lighter/configuration.py
 lighter/exceptions.py
 lighter/models/__init__.py
 lighter/models/account.py
+lighter/models/account_account_trading_mode_enum.py
+lighter/models/account_account_type_enum.py
 lighter/models/account_api_keys.py
 lighter/models/account_asset.py
 lighter/models/account_limits.py
@@ -177,6 +193,7 @@ lighter/models/account_metadata.py
 lighter/models/account_metadatas.py
 lighter/models/account_pn_l.py
 lighter/models/account_position.py
+lighter/models/account_position_margin_mode_enum.py
 lighter/models/announcement.py
 lighter/models/announcements.py
 lighter/models/api_key.py
@@ -198,6 +215,8 @@ lighter/models/deposit.py
 lighter/models/deposit_history.py
 lighter/models/deposit_history_item.py
 lighter/models/detailed_account.py
+lighter/models/detailed_account_account_trading_mode_enum.py
+lighter/models/detailed_account_account_type_enum.py
 lighter/models/detailed_accounts.py
 lighter/models/enriched_tx.py
 lighter/models/exchange_metric.py
@@ -223,6 +242,7 @@ lighter/models/live_points_total.py
 lighter/models/mark_price_candle.py
 lighter/models/mark_price_candles.py
 lighter/models/market_config.py
+lighter/models/market_config_market_margin_mode_enum.py
 lighter/models/market_price_chart.py
 lighter/models/market_price_charts.py
 lighter/models/next_nonce.py
@@ -240,7 +260,10 @@ lighter/models/pn_l_entry.py
 lighter/models/position_funding.py
 lighter/models/position_fundings.py
 lighter/models/public_pool_info.py
+lighter/models/public_pool_info_status_enum.py
 lighter/models/public_pool_metadata.py
+lighter/models/public_pool_metadata_account_type_enum.py
+lighter/models/public_pool_metadata_status_enum.py
 lighter/models/public_pool_share.py
 lighter/models/referral.py
 lighter/models/referral_code.py
@@ -251,6 +274,7 @@ lighter/models/referral_totals.py
 lighter/models/req_set_account_metadata.py
 lighter/models/resp_change_account_tier.py
 lighter/models/resp_create_rfq.py
+lighter/models/resp_create_rfq_direction_enum.py
 lighter/models/resp_get_api_tokens.py
 lighter/models/resp_get_exchange_metrics.py
 lighter/models/resp_get_execute_stats.py
@@ -260,10 +284,12 @@ lighter/models/resp_get_lease_options.py
 lighter/models/resp_get_leases.py
 lighter/models/resp_get_maker_only_api_keys.py
 lighter/models/resp_get_rfq.py
+lighter/models/resp_get_rfq_direction_enum.py
 lighter/models/resp_list_rfqs.py
 lighter/models/resp_post_api_token.py
 lighter/models/resp_public_pools_metadata.py
 lighter/models/resp_respond_to_rfq.py
+lighter/models/resp_respond_to_rfq_direction_enum.py
 lighter/models/resp_revoke_api_token.py
 lighter/models/resp_send_tx.py
 lighter/models/resp_send_tx_batch.py
@@ -272,9 +298,11 @@ lighter/models/resp_synthetic_spot_info.py
 lighter/models/resp_update_kickback.py
 lighter/models/resp_update_referral_code.py
 lighter/models/resp_update_rfq.py
+lighter/models/resp_update_rfq_direction_enum.py
 lighter/models/resp_withdrawal_delay.py
 lighter/models/result_code.py
 lighter/models/rfq_entry.py
+lighter/models/rfq_entry_direction_enum.py
 lighter/models/rfq_metadata.py
 lighter/models/rfq_response_entry.py
 lighter/models/risk_info.py

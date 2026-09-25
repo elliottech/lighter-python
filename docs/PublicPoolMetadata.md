@@ -8,11 +8,11 @@ Name | Type | Description | Notes
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
 **account_index** | **int** |  | 
-**account_type** | **int** |  | 
+**account_type** | **int** | See PublicPoolMetadataAccountTypeEnum | 
 **name** | **str** |  | 
 **l1_address** | **str** |  | 
 **annual_percentage_yield** | **float** |  | 
-**status** | **int** |  | 
+**status** | **int** | See PublicPoolMetadataStatusEnum | 
 **operator_fee** | **str** |  | 
 **total_asset_value** | **str** |  | 
 **total_shares** | **int** |  | 

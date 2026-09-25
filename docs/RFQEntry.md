@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **id** | **int** |  | 
 **account_index** | **int** |  | 
 **market_index** | **int** |  | 
-**direction** | **int** |  | 
+**direction** | **int** | See RFQEntryDirectionEnum | 
 **base_amount** | **str** |  | 
 **quote_amount** | **str** |  | 
 **status** | **str** |  | 

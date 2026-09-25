@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**market_margin_mode** | **int** |  | 
+**market_margin_mode** | **int** | See MarketConfigMarketMarginModeEnum | 
 **insurance_fund_account_index** | **int** |  | 
 **liquidation_mode** | **int** |  | 
 **force_reduce_only** | **bool** |  | 
