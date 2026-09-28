@@ -18,23 +18,22 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List
-from lighter.models.trade_stats import TradeStats
+from typing import Any, ClassVar, Dict, List, Optional
+from lighter.models.pnl_leaderboard_entry import PnlLeaderboardEntry
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Referral(BaseModel):
+class PnlLeaderboard(BaseModel):
     """
-    Referral
+    PnlLeaderboard
     """ # noqa: E501
-    l1_address: StrictStr
-    referral_code: StrictStr
-    used_at: StrictInt
-    trade_stats: TradeStats
-    tier: StrictStr
-    source: StrictStr
+    code: StrictInt
+    message: Optional[StrictStr] = None
+    entries: List[PnlLeaderboardEntry]
+    total: StrictInt
+    updated_at: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "referral_code", "used_at", "trade_stats", "tier", "source"]
+    __properties: ClassVar[List[str]] = ["code", "message", "entries", "total", "updated_at"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -54,7 +53,7 @@ class Referral(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Referral from a JSON string"""
+        """Create an instance of PnlLeaderboard from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -77,9 +76,13 @@ class Referral(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of trade_stats
-        if self.trade_stats:
-            _dict['trade_stats'] = self.trade_stats.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in entries (list)
+        _items = []
+        if self.entries:
+            for _item in self.entries:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['entries'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -89,7 +92,7 @@ class Referral(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Referral from a dict"""
+        """Create an instance of PnlLeaderboard from a dict"""
         if obj is None:
             return None
 
@@ -97,12 +100,11 @@ class Referral(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_construct(**{
-            "l1_address": obj.get("l1_address"),
-            "referral_code": obj.get("referral_code"),
-            "used_at": obj.get("used_at"),
-            "trade_stats": TradeStats.from_dict(obj["trade_stats"]) if obj.get("trade_stats") is not None else None,
-            "tier": obj.get("tier"),
-            "source": obj.get("source")
+            "code": obj.get("code"),
+            "message": obj.get("message"),
+            "entries": [PnlLeaderboardEntry.from_dict(_item) for _item in obj["entries"]] if obj.get("entries") is not None else None,
+            "total": obj.get("total"),
+            "updated_at": obj.get("updated_at")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

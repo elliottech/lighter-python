@@ -17,6 +17,8 @@ Name | Type | Description | Notes
 **categories** | **List[str]** |  | 
 **is_allowed_mainnet** | **bool** |  | 
 **is_asset_allowed_mainnet** | **bool** |  | 
+**default_order_book_group_by** | **int** |  | 
+**backend_symbol** | **str** |  | 
 
 ## Example
 

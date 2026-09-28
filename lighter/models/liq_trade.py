@@ -31,8 +31,10 @@ class LiqTrade(BaseModel):
     taker_fee: StrictStr
     maker_fee: StrictStr
     transaction_time: StrictInt
+    bid_account_id: StrictInt
+    ask_account_id: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["price", "size", "taker_fee", "maker_fee", "transaction_time"]
+    __properties: ClassVar[List[str]] = ["price", "size", "taker_fee", "maker_fee", "transaction_time", "bid_account_id", "ask_account_id"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -96,7 +98,9 @@ class LiqTrade(BaseModel):
             "size": obj.get("size"),
             "taker_fee": obj.get("taker_fee"),
             "maker_fee": obj.get("maker_fee"),
-            "transaction_time": obj.get("transaction_time")
+            "transaction_time": obj.get("transaction_time"),
+            "bid_account_id": obj.get("bid_account_id"),
+            "ask_account_id": obj.get("ask_account_id")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

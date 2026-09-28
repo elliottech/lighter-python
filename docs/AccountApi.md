@@ -19,6 +19,7 @@ Method | HTTP request | Description
 [**lit_lease**](AccountApi.md#lit_lease) | **POST** /api/v1/litLease | litLease
 [**partner_stats**](AccountApi.md#partner_stats) | **GET** /api/v1/partnerStats | partnerStats
 [**pnl**](AccountApi.md#pnl) | **GET** /api/v1/pnl | pnl
+[**pnl_leaderboard**](AccountApi.md#pnl_leaderboard) | **GET** /api/v1/pnlLeaderboard | pnlLeaderboard
 [**position_funding**](AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 [**public_pools_metadata**](AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
 [**referral_user_referrals**](AccountApi.md#referral_user_referrals) | **GET** /api/v1/referral/userReferrals | userReferrals
@@ -401,7 +402,7 @@ No authorization required
 
 changeAccountTier
 
-Change account tier. You can only perform this action once every 24 hours, and with no orders or positions open.
+Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
 
 ### Example
 
@@ -612,11 +613,11 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **leaderboard**
-> Leaderboard leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id)
+> Leaderboard leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id, auth=auth)
 
 leaderboard
 
-Get points leaderboard. Type should be all.
+Get points leaderboard
 
 ### Example
 
@@ -642,10 +643,11 @@ async with lighter.ApiClient(configuration) as api_client:
     authorization = 'authorization_example' # str |  (optional)
     l1_address = 'l1_address_example' # str |  (optional)
     competition_id = 'competition_id_example' # str |  (optional)
+    auth = 'auth_example' # str |  (optional)
 
     try:
         # leaderboard
-        api_response = await api_instance.leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id)
+        api_response = await api_instance.leaderboard(type, authorization=authorization, l1_address=l1_address, competition_id=competition_id, auth=auth)
         print("The response of AccountApi->leaderboard:\n")
         pprint(api_response)
     except Exception as e:
@@ -663,6 +665,7 @@ Name | Type | Description  | Notes
  **authorization** | **str**|  | [optional] 
  **l1_address** | **str**|  | [optional] 
  **competition_id** | **str**|  | [optional] 
+ **auth** | **str**|  | [optional] 
 
 ### Return type
 
@@ -1117,6 +1120,85 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**AccountPnL**](AccountPnL.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **pnl_leaderboard**
+> PnlLeaderboard pnl_leaderboard(time_window, sort_by, sort_dir, limit, offset, search=search)
+
+pnlLeaderboard
+
+Get pnl leaderboard
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.pnl_leaderboard import PnlLeaderboard
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    time_window = all # str |  (default to all)
+    sort_by = pnl # str |  (default to pnl)
+    sort_dir = desc # str |  (default to desc)
+    limit = 56 # int | 
+    offset = 56 # int | 
+    search = 'search_example' # str |  (optional)
+
+    try:
+        # pnlLeaderboard
+        api_response = await api_instance.pnl_leaderboard(time_window, sort_by, sort_dir, limit, offset, search=search)
+        print("The response of AccountApi->pnl_leaderboard:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->pnl_leaderboard: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **time_window** | **str**|  | [default to all]
+ **sort_by** | **str**|  | [default to pnl]
+ **sort_dir** | **str**|  | [default to desc]
+ **limit** | **int**|  | 
+ **offset** | **int**|  | 
+ **search** | **str**|  | [optional] 
+
+### Return type
+
+[**PnlLeaderboard**](PnlLeaderboard.md)
 
 ### Authorization
 

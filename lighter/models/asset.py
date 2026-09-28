@@ -50,8 +50,8 @@ class Asset(BaseModel):
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['enabled', 'disabled']):
-            raise ValueError("must be one of enum values ('enabled', 'disabled')")
+        if value not in set(['enabled', 'disabled', 'priced_only']):
+            raise ValueError("must be one of enum values ('enabled', 'disabled', 'priced_only')")
         return value
 
     model_config = ConfigDict(

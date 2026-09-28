@@ -57,7 +57,7 @@ class LivepointsApi:
     ) -> LivePointsTotal:
         """livePoints_total
 
-        Get live points total for an account
+        Get RH live points total for an account
 
         :param account_index: (required)
         :type account_index: int
@@ -128,7 +128,7 @@ class LivepointsApi:
     ) -> ApiResponse[LivePointsTotal]:
         """livePoints_total
 
-        Get live points total for an account
+        Get RH live points total for an account
 
         :param account_index: (required)
         :type account_index: int
@@ -199,7 +199,7 @@ class LivepointsApi:
     ) -> RESTResponseType:
         """livePoints_total
 
-        Get live points total for an account
+        Get RH live points total for an account
 
         :param account_index: (required)
         :type account_index: int

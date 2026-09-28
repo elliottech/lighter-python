@@ -10,6 +10,8 @@ Name | Type | Description | Notes
 **taker_fee** | **str** |  | 
 **maker_fee** | **str** |  | 
 **transaction_time** | **int** |  | 
+**bid_account_id** | **int** |  | 
+**ask_account_id** | **int** |  | 
 
 ## Example
 

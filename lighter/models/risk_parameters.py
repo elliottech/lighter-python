@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -35,7 +35,7 @@ class RiskParameters(BaseModel):
     total_account_liquidation_threshold: StrictStr
     usdc_collateral_with_funding: StrictStr
     usdc_portfolio_value: StrictStr
-    total_portfolio_value: Optional[StrictStr] = None
+    total_portfolio_value: StrictStr
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["market_id", "collateral", "total_account_value", "initial_margin_req", "maintenance_margin_req", "close_out_margin_req", "total_account_liquidation_threshold", "usdc_collateral_with_funding", "usdc_portfolio_value", "total_portfolio_value"]
 

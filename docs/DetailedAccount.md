@@ -38,6 +38,7 @@ Name | Type | Description | Notes
 **cross_maintenance_margin_requirement** | **str** |  | 
 **can_rfq_market_ids** | **List[str]** |  | 
 **metadata** | [**SubAccountMetadata**](SubAccountMetadata.md) |  | 
+**agent_enabled** | **bool** |  | 
 
 ## Example
 

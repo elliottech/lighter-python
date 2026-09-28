@@ -53,7 +53,7 @@ class FundingApi:
     ) -> FundingRates:
         """funding-rates
 
-        Get funding rates
+        Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -116,7 +116,7 @@ class FundingApi:
     ) -> ApiResponse[FundingRates]:
         """funding-rates
 
-        Get funding rates
+        Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -179,7 +179,7 @@ class FundingApi:
     ) -> RESTResponseType:
         """funding-rates
 
-        Get funding rates
+        Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 funding-rates
 
-Get funding rates
+Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.
 
 ### Example
 

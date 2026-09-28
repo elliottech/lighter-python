@@ -16,7 +16,8 @@ Name | Type | Description | Notes
 **max_integrator_perps_taker_fee** | **int** |  | 
 **max_integrator_spot_maker_fee** | **int** |  | 
 **max_integrator_spot_taker_fee** | **int** |  | 
-**market_maker_incentive_account_index** | **int** |  | 
+**market_maker_incentive_account_index** | **int** |  | [optional] 
+**fee_collector_account_index** | **int** |  | 
 
 ## Example
 

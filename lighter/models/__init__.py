@@ -53,6 +53,7 @@ from lighter.models.funding import Funding
 from lighter.models.funding_rate import FundingRate
 from lighter.models.funding_rates import FundingRates
 from lighter.models.fundings import Fundings
+from lighter.models.historical_trades_export_data import HistoricalTradesExportData
 from lighter.models.l1_metadata import L1Metadata
 from lighter.models.l1_provider_info import L1ProviderInfo
 from lighter.models.layer1_basic_info import Layer1BasicInfo
@@ -82,6 +83,8 @@ from lighter.models.partner_stats import PartnerStats
 from lighter.models.pending_unlock import PendingUnlock
 from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
 from lighter.models.pn_l_entry import PnLEntry
+from lighter.models.pnl_leaderboard import PnlLeaderboard
+from lighter.models.pnl_leaderboard_entry import PnlLeaderboardEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
 from lighter.models.public_pool_info import PublicPoolInfo
@@ -95,6 +98,8 @@ from lighter.models.referral_code import ReferralCode
 from lighter.models.referral_point_entry import ReferralPointEntry
 from lighter.models.referral_points import ReferralPoints
 from lighter.models.referral_program_kickback import ReferralProgramKickback
+from lighter.models.referral_stat import ReferralStat
+from lighter.models.referral_stats import ReferralStats
 from lighter.models.referral_totals import ReferralTotals
 from lighter.models.req_set_account_metadata import ReqSetAccountMetadata
 from lighter.models.resp_change_account_tier import RespChangeAccountTier

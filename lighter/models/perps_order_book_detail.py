@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictBool, StrictFloat, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional, Union
+from typing import Any, ClassVar, Dict, List, Union
 from lighter.models.market_config import MarketConfig
 from typing import Optional, Set
 from typing_extensions import Self
@@ -66,11 +66,11 @@ class PerpsOrderBookDetail(BaseModel):
     funding_clamp_big: StrictStr
     base_interest_rate: StrictStr
     created_at: StrictStr
-    mark_price: Optional[StrictStr] = None
-    index_price: Optional[StrictStr] = None
-    multiplier: Optional[StrictStr] = None
-    market_flags: Optional[StrictInt] = None
-    funding_premium_multiplier: Optional[StrictInt] = None
+    mark_price: StrictStr
+    index_price: StrictStr
+    multiplier: StrictStr
+    market_flags: StrictInt
+    funding_premium_multiplier: StrictInt
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "size_decimals", "price_decimals", "quote_multiplier", "default_initial_margin_fraction", "min_initial_margin_fraction", "maintenance_margin_fraction", "closeout_margin_fraction", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "open_interest", "daily_chart", "market_config", "strategy_index", "is_maker_fee_enabled", "is_taker_fee_enabled", "funding_clamp_small", "funding_clamp_big", "base_interest_rate", "created_at", "mark_price", "index_price", "multiplier", "market_flags", "funding_premium_multiplier"]
 
