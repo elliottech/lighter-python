@@ -15,9 +15,9 @@ class WsClient:
         account_ids=[],
         on_order_book_update=print,
         on_account_update=print,
+        ws_url=None,
         on_shutdown=None,
         on_unhandled_message=None,
-        ws_url=None,
     ):
         if ws_url is not None:
             self.base_url = ws_url.rstrip("/")
