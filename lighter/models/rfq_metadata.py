@@ -31,8 +31,9 @@ class RFQMetadata(BaseModel):
     requested_slippage: StrictStr
     worst_price: StrictStr
     mark_price: StrictStr
+    requested_est_fill_fraction: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["requested_est_price", "requested_max_slippage", "requested_slippage", "worst_price", "mark_price"]
+    __properties: ClassVar[List[str]] = ["requested_est_price", "requested_max_slippage", "requested_slippage", "worst_price", "mark_price", "requested_est_fill_fraction"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -96,7 +97,8 @@ class RFQMetadata(BaseModel):
             "requested_max_slippage": obj.get("requested_max_slippage"),
             "requested_slippage": obj.get("requested_slippage"),
             "worst_price": obj.get("worst_price"),
-            "mark_price": obj.get("mark_price")
+            "mark_price": obj.get("mark_price"),
+            "requested_est_fill_fraction": obj.get("requested_est_fill_fraction")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

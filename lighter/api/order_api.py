@@ -22,6 +22,7 @@ from typing_extensions import Annotated
 from lighter.models.asset_details import AssetDetails
 from lighter.models.exchange_stats import ExchangeStats
 from lighter.models.export_data import ExportData
+from lighter.models.historical_trades_export_data import HistoricalTradesExportData
 from lighter.models.order_book_details import OrderBookDetails
 from lighter.models.order_book_orders import OrderBookOrders
 from lighter.models.order_books import OrderBooks
@@ -2496,6 +2497,317 @@ class OrderApi:
         return self.api_client.param_serialize(
             method='GET',
             resource_path='/api/v1/export',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    async def export_historical_trades(
+        self,
+        l1_address: StrictStr,
+        var_date: Annotated[StrictStr, Field(description=" UTC day, YYYY-MM-DD")],
+        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> HistoricalTradesExportData:
+        """export_historicalTrades
+
+        Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param var_date:  UTC day, YYYY-MM-DD (required)
+        :type var_date: str
+        :param authorization:  make required after integ is done
+        :type authorization: str
+        :param auth:  made optional to support header auth clients
+        :type auth: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._export_historical_trades_serialize(
+            l1_address=l1_address,
+            var_date=var_date,
+            authorization=authorization,
+            auth=auth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "HistoricalTradesExportData",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def export_historical_trades_with_http_info(
+        self,
+        l1_address: StrictStr,
+        var_date: Annotated[StrictStr, Field(description=" UTC day, YYYY-MM-DD")],
+        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[HistoricalTradesExportData]:
+        """export_historicalTrades
+
+        Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param var_date:  UTC day, YYYY-MM-DD (required)
+        :type var_date: str
+        :param authorization:  make required after integ is done
+        :type authorization: str
+        :param auth:  made optional to support header auth clients
+        :type auth: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._export_historical_trades_serialize(
+            l1_address=l1_address,
+            var_date=var_date,
+            authorization=authorization,
+            auth=auth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "HistoricalTradesExportData",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def export_historical_trades_without_preload_content(
+        self,
+        l1_address: StrictStr,
+        var_date: Annotated[StrictStr, Field(description=" UTC day, YYYY-MM-DD")],
+        authorization: Annotated[Optional[StrictStr], Field(description=" make required after integ is done")] = None,
+        auth: Annotated[Optional[StrictStr], Field(description=" made optional to support header auth clients")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """export_historicalTrades
+
+        Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+        :param l1_address: (required)
+        :type l1_address: str
+        :param var_date:  UTC day, YYYY-MM-DD (required)
+        :type var_date: str
+        :param authorization:  make required after integ is done
+        :type authorization: str
+        :param auth:  made optional to support header auth clients
+        :type auth: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._export_historical_trades_serialize(
+            l1_address=l1_address,
+            var_date=var_date,
+            authorization=authorization,
+            auth=auth,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "HistoricalTradesExportData",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _export_historical_trades_serialize(
+        self,
+        l1_address,
+        var_date,
+        authorization,
+        auth,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if authorization is not None:
+            
+            _query_params.append(('authorization', authorization))
+            
+        if auth is not None:
+            
+            _query_params.append(('auth', auth))
+            
+        if l1_address is not None:
+            
+            _query_params.append(('l1_address', l1_address))
+            
+        if var_date is not None:
+            
+            _query_params.append(('date', var_date))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/export/historicalTrades',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

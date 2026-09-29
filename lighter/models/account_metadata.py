@@ -36,8 +36,9 @@ class AccountMetadata(BaseModel):
     can_rfq: StrictBool
     can_rfq_market_ids: List[StrictStr]
     metadata: SubAccountMetadata
+    agent_enabled: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "can_rfq", "can_rfq_market_ids", "metadata"]
+    __properties: ClassVar[List[str]] = ["account_index", "name", "description", "can_invite", "referral_points_percentage", "created_at", "can_rfq", "can_rfq_market_ids", "metadata", "agent_enabled"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -108,7 +109,8 @@ class AccountMetadata(BaseModel):
             "created_at": obj.get("created_at"),
             "can_rfq": obj.get("can_rfq"),
             "can_rfq_market_ids": obj.get("can_rfq_market_ids"),
-            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None
+            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None,
+            "agent_enabled": obj.get("agent_enabled")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

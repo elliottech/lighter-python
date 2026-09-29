@@ -82,6 +82,7 @@ from lighter.models.export_data import ExportData
 from lighter.models.funding import Funding
 from lighter.models.funding_rate import FundingRate
 from lighter.models.funding_rates import FundingRates
+from lighter.models.historical_trades_export_data import HistoricalTradesExportData
 from lighter.models.fundings import Fundings
 from lighter.models.l1_metadata import L1Metadata
 from lighter.models.l1_provider_info import L1ProviderInfo
@@ -111,6 +112,8 @@ from lighter.models.orders import Orders
 from lighter.models.partner_stats import PartnerStats
 from lighter.models.pending_unlock import PendingUnlock
 from lighter.models.perps_order_book_detail import PerpsOrderBookDetail
+from lighter.models.pnl_leaderboard import PnlLeaderboard
+from lighter.models.pnl_leaderboard_entry import PnlLeaderboardEntry
 from lighter.models.pn_l_entry import PnLEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
@@ -121,6 +124,8 @@ from lighter.models.rfq_entry import RFQEntry
 from lighter.models.rfq_metadata import RFQMetadata
 from lighter.models.rfq_response_entry import RFQResponseEntry
 from lighter.models.referral import Referral
+from lighter.models.referral_stat import ReferralStat
+from lighter.models.referral_stats import ReferralStats
 from lighter.models.referral_code import ReferralCode
 from lighter.models.referral_point_entry import ReferralPointEntry
 from lighter.models.referral_points import ReferralPoints

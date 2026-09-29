@@ -70,6 +70,7 @@ Class | Method | HTTP request | Description
 *AccountApi* | [**lit_lease**](docs/AccountApi.md#lit_lease) | **POST** /api/v1/litLease | litLease
 *AccountApi* | [**partner_stats**](docs/AccountApi.md#partner_stats) | **GET** /api/v1/partnerStats | partnerStats
 *AccountApi* | [**pnl**](docs/AccountApi.md#pnl) | **GET** /api/v1/pnl | pnl
+*AccountApi* | [**pnl_leaderboard**](docs/AccountApi.md#pnl_leaderboard) | **GET** /api/v1/pnlLeaderboard | pnlLeaderboard
 *AccountApi* | [**position_funding**](docs/AccountApi.md#position_funding) | **GET** /api/v1/positionFunding | positionFunding
 *AccountApi* | [**public_pools_metadata**](docs/AccountApi.md#public_pools_metadata) | **GET** /api/v1/publicPoolsMetadata | publicPoolsMetadata
 *AccountApi* | [**referral_user_referrals**](docs/AccountApi.md#referral_user_referrals) | **GET** /api/v1/referral/userReferrals | userReferrals
@@ -110,6 +111,7 @@ Class | Method | HTTP request | Description
 *OrderApi* | [**asset_details**](docs/OrderApi.md#asset_details) | **GET** /api/v1/assetDetails | assetDetails
 *OrderApi* | [**exchange_metrics**](docs/OrderApi.md#exchange_metrics) | **GET** /api/v1/exchangeMetrics | exchangeMetrics
 *OrderApi* | [**exchange_stats**](docs/OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
+*OrderApi* | [**export_historical_trades**](docs/OrderApi.md#export_historical_trades) | **GET** /api/v1/export/historicalTrades | export_historicalTrades
 *OrderApi* | [**execute_stats**](docs/OrderApi.md#execute_stats) | **GET** /api/v1/executeStats | executeStats
 *OrderApi* | [**export**](docs/OrderApi.md#export) | **GET** /api/v1/export | export
 *OrderApi* | [**order_book_details**](docs/OrderApi.md#order_book_details) | **GET** /api/v1/orderBookDetails | orderBookDetails
@@ -121,6 +123,7 @@ Class | Method | HTTP request | Description
 *ReferralApi* | [**referral_get**](docs/ReferralApi.md#referral_get) | **GET** /api/v1/referral/get | referral_get
 *ReferralApi* | [**referral_kickback_update**](docs/ReferralApi.md#referral_kickback_update) | **POST** /api/v1/referral/kickback/update | referral_kickback_update
 *ReferralApi* | [**referral_points**](docs/ReferralApi.md#referral_points) | **GET** /api/v1/referral/points | referral_points
+*ReferralApi* | [**referral_stats**](docs/ReferralApi.md#referral_stats) | **GET** /api/v1/referral/stats | referral_stats
 *ReferralApi* | [**referral_update**](docs/ReferralApi.md#referral_update) | **POST** /api/v1/referral/update | referral_update
 *ReferralApi* | [**referral_use**](docs/ReferralApi.md#referral_use) | **POST** /api/v1/referral/use | referral_use
 *RootApi* | [**info**](docs/RootApi.md#info) | **GET** /info | info
@@ -179,6 +182,7 @@ Class | Method | HTTP request | Description
  - [Funding](docs/Funding.md)
  - [FundingRate](docs/FundingRate.md)
  - [FundingRates](docs/FundingRates.md)
+ - [HistoricalTradesExportData](docs/HistoricalTradesExportData.md)
  - [Fundings](docs/Fundings.md)
  - [L1Metadata](docs/L1Metadata.md)
  - [L1ProviderInfo](docs/L1ProviderInfo.md)
@@ -208,6 +212,8 @@ Class | Method | HTTP request | Description
  - [PartnerStats](docs/PartnerStats.md)
  - [PendingUnlock](docs/PendingUnlock.md)
  - [PerpsOrderBookDetail](docs/PerpsOrderBookDetail.md)
+ - [PnlLeaderboard](docs/PnlLeaderboard.md)
+ - [PnlLeaderboardEntry](docs/PnlLeaderboardEntry.md)
  - [PnLEntry](docs/PnLEntry.md)
  - [PositionFunding](docs/PositionFunding.md)
  - [PositionFundings](docs/PositionFundings.md)
@@ -218,6 +224,8 @@ Class | Method | HTTP request | Description
  - [RFQMetadata](docs/RFQMetadata.md)
  - [RFQResponseEntry](docs/RFQResponseEntry.md)
  - [Referral](docs/Referral.md)
+ - [ReferralStat](docs/ReferralStat.md)
+ - [ReferralStats](docs/ReferralStats.md)
  - [ReferralCode](docs/ReferralCode.md)
  - [ReferralPointEntry](docs/ReferralPointEntry.md)
  - [ReferralPoints](docs/ReferralPoints.md)

@@ -12,6 +12,7 @@ Method | HTTP request | Description
 [**exchange_stats**](OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
 [**execute_stats**](OrderApi.md#execute_stats) | **GET** /api/v1/executeStats | executeStats
 [**export**](OrderApi.md#export) | **GET** /api/v1/export | export
+[**export_historical_trades**](OrderApi.md#export_historical_trades) | **GET** /api/v1/export/historicalTrades | export_historicalTrades
 [**order_book_details**](OrderApi.md#order_book_details) | **GET** /api/v1/orderBookDetails | orderBookDetails
 [**order_book_orders**](OrderApi.md#order_book_orders) | **GET** /api/v1/orderBookOrders | orderBookOrders
 [**order_books**](OrderApi.md#order_books) | **GET** /api/v1/orderBooks | orderBooks
@@ -596,6 +597,81 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ExportData**](ExportData.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **export_historical_trades**
+> HistoricalTradesExportData export_historical_trades(l1_address, var_date, authorization=authorization, auth=auth)
+
+export_historicalTrades
+
+Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.historical_trades_export_data import HistoricalTradesExportData
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.OrderApi(api_client)
+    l1_address = 'l1_address_example' # str | 
+    var_date = 'var_date_example' # str |  UTC day, YYYY-MM-DD
+    authorization = 'authorization_example' # str |  make required after integ is done (optional)
+    auth = 'auth_example' # str |  made optional to support header auth clients (optional)
+
+    try:
+        # export_historicalTrades
+        api_response = await api_instance.export_historical_trades(l1_address, var_date, authorization=authorization, auth=auth)
+        print("The response of OrderApi->export_historical_trades:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling OrderApi->export_historical_trades: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **l1_address** | **str**|  | 
+ **var_date** | **str**|  UTC day, YYYY-MM-DD | 
+ **authorization** | **str**|  make required after integ is done | [optional] 
+ **auth** | **str**|  made optional to support header auth clients | [optional] 
+
+### Return type
+
+[**HistoricalTradesExportData**](HistoricalTradesExportData.md)
 
 ### Authorization
 

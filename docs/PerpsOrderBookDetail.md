@@ -44,11 +44,11 @@ Name | Type | Description | Notes
 **funding_clamp_big** | **str** |  | 
 **base_interest_rate** | **str** |  | 
 **created_at** | **str** |  | 
-**mark_price** | **str** |  | [optional] 
-**index_price** | **str** |  | [optional] 
-**multiplier** | **str** |  | [optional] 
-**market_flags** | **int** |  | [optional] 
-**funding_premium_multiplier** | **int** |  | [optional] 
+**mark_price** | **str** |  | 
+**index_price** | **str** |  | 
+**multiplier** | **str** |  | 
+**market_flags** | **int** |  | 
+**funding_premium_multiplier** | **int** |  | 
 
 ## Example
 

@@ -44,6 +44,7 @@ docs/FundingApi.md
 docs/FundingRate.md
 docs/FundingRates.md
 docs/Fundings.md
+docs/HistoricalTradesExportData.md
 docs/InfoApi.md
 docs/L1Metadata.md
 docs/L1ProviderInfo.md
@@ -77,6 +78,8 @@ docs/PartnerStats.md
 docs/PendingUnlock.md
 docs/PerpsOrderBookDetail.md
 docs/PnLEntry.md
+docs/PnlLeaderboard.md
+docs/PnlLeaderboardEntry.md
 docs/PositionFunding.md
 docs/PositionFundings.md
 docs/PublicPoolInfo.md
@@ -91,6 +94,8 @@ docs/ReferralCode.md
 docs/ReferralPointEntry.md
 docs/ReferralPoints.md
 docs/ReferralProgramKickback.md
+docs/ReferralStat.md
+docs/ReferralStats.md
 docs/ReferralTotals.md
 docs/ReqSetAccountMetadata.md
 docs/RespChangeAccountTier.md
@@ -208,6 +213,7 @@ lighter/models/funding.py
 lighter/models/funding_rate.py
 lighter/models/funding_rates.py
 lighter/models/fundings.py
+lighter/models/historical_trades_export_data.py
 lighter/models/l1_metadata.py
 lighter/models/l1_provider_info.py
 lighter/models/layer1_basic_info.py
@@ -237,6 +243,8 @@ lighter/models/partner_stats.py
 lighter/models/pending_unlock.py
 lighter/models/perps_order_book_detail.py
 lighter/models/pn_l_entry.py
+lighter/models/pnl_leaderboard.py
+lighter/models/pnl_leaderboard_entry.py
 lighter/models/position_funding.py
 lighter/models/position_fundings.py
 lighter/models/public_pool_info.py
@@ -247,6 +255,8 @@ lighter/models/referral_code.py
 lighter/models/referral_point_entry.py
 lighter/models/referral_points.py
 lighter/models/referral_program_kickback.py
+lighter/models/referral_stat.py
+lighter/models/referral_stats.py
 lighter/models/referral_totals.py
 lighter/models/req_set_account_metadata.py
 lighter/models/resp_change_account_tier.py

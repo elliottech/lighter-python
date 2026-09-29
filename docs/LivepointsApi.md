@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 livePoints_total
 
-Get live points total for an account
+Get RH live points total for an account
 
 ### Example
 

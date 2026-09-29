@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **requested_slippage** | **str** |  | 
 **worst_price** | **str** |  | 
 **mark_price** | **str** |  | 
+**requested_est_fill_fraction** | **str** |  | 
 
 ## Example
 

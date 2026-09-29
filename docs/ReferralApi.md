@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**referral_get**](ReferralApi.md#referral_get) | **GET** /api/v1/referral/get | referral_get
 [**referral_kickback_update**](ReferralApi.md#referral_kickback_update) | **POST** /api/v1/referral/kickback/update | referral_kickback_update
 [**referral_points**](ReferralApi.md#referral_points) | **GET** /api/v1/referral/points | referral_points
+[**referral_stats**](ReferralApi.md#referral_stats) | **GET** /api/v1/referral/stats | referral_stats
 [**referral_update**](ReferralApi.md#referral_update) | **POST** /api/v1/referral/update | referral_update
 [**referral_use**](ReferralApi.md#referral_use) | **POST** /api/v1/referral/use | referral_use
 
@@ -298,6 +299,81 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **referral_stats**
+> ReferralStats referral_stats(l1_address, authorization=authorization, auth=auth, is_eligible=is_eligible)
+
+referral_stats
+
+Get trade stats summed across a referrer's referred users
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.referral_stats import ReferralStats
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.ReferralApi(api_client)
+    l1_address = 'l1_address_example' # str | 
+    authorization = 'authorization_example' # str |  (optional)
+    auth = 'auth_example' # str |  (optional)
+    is_eligible = False # bool |  (optional) (default to False)
+
+    try:
+        # referral_stats
+        api_response = await api_instance.referral_stats(l1_address, authorization=authorization, auth=auth, is_eligible=is_eligible)
+        print("The response of ReferralApi->referral_stats:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReferralApi->referral_stats: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **l1_address** | **str**|  | 
+ **authorization** | **str**|  | [optional] 
+ **auth** | **str**|  | [optional] 
+ **is_eligible** | **bool**|  | [optional] [default to False]
+
+### Return type
+
+[**ReferralStats**](ReferralStats.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **referral_update**
 > RespUpdateReferralCode referral_update(account_index, new_referral_code, authorization=authorization)
 
@@ -372,7 +448,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **referral_use**
-> ResultCode referral_use(l1_address, referral_code, authorization=authorization, discord=discord, telegram=telegram, x=x, signature=signature)
+> ResultCode referral_use(l1_address, referral_code, authorization=authorization, discord=discord, telegram=telegram, x=x, signature=signature, source=source)
 
 referral_use
 
@@ -405,10 +481,11 @@ async with lighter.ApiClient(configuration) as api_client:
     telegram = 'telegram_example' # str |  (optional)
     x = 'x_example' # str |  (optional)
     signature = 'signature_example' # str |  (optional)
+    source = 'source_example' # str |  (optional)
 
     try:
         # referral_use
-        api_response = await api_instance.referral_use(l1_address, referral_code, authorization=authorization, discord=discord, telegram=telegram, x=x, signature=signature)
+        api_response = await api_instance.referral_use(l1_address, referral_code, authorization=authorization, discord=discord, telegram=telegram, x=x, signature=signature, source=source)
         print("The response of ReferralApi->referral_use:\n")
         pprint(api_response)
     except Exception as e:
@@ -429,6 +506,7 @@ Name | Type | Description  | Notes
  **telegram** | **str**|  | [optional] 
  **x** | **str**|  | [optional] 
  **signature** | **str**|  | [optional] 
+ **source** | **str**|  | [optional] 
 
 ### Return type
 

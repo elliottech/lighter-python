@@ -973,7 +973,7 @@
         "tags": [
           "account"
         ],
-        "description": "Change account tier. You can only perform this action once every 24 hours, and with no orders or positions open.",
+        "description": "Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.",
         "parameters": [
           {
             "name": "authorization",
@@ -1351,7 +1351,7 @@
         "tags": [
           "funding"
         ],
-        "description": "Get funding rates",
+        "description": "Get funding rates across venues. For real-time funding rates, use the market_stats WebSocket channel.",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -4912,7 +4912,7 @@
         "tags": [
           "livepoints"
         ],
-        "description": "Get live points total for an account",
+        "description": "Get RH live points total for an account",
         "parameters": [
           {
             "name": "authorization",
@@ -4963,7 +4963,7 @@
         "tags": [
           "account"
         ],
-        "description": "Get points leaderboard. Type should be all.",
+        "description": "Get points leaderboard",
         "parameters": [
           {
             "name": "authorization",
@@ -5001,6 +5001,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "auth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -5026,11 +5034,257 @@
           }
         }
       }
+    },
+    "/api/v1/referral/stats": {
+      "get": {
+        "summary": "referral_stats",
+        "operationId": "referral_stats",
+        "tags": [
+          "referral"
+        ],
+        "description": "Get trade stats summed across a referrer's referred users",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "auth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "l1_address",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_eligible",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "format": "boolean",
+              "default": "false"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralStats"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/export/historicalTrades": {
+      "get": {
+        "summary": "export_historicalTrades",
+        "operationId": "export_historicalTrades",
+        "tags": [
+          "order"
+        ],
+        "description": "Export global historical trades, updated daily at 8 PM UTC. Requires a one-time 100 LIT L2Transfer to 0x4FD058F25bE85E459ec552cA8e4C696FD1D34125. Returns a presigned S3 URL valid for 1 hour.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "query",
+            "description": " make required after integ is done",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "auth",
+            "in": "query",
+            "description": " made optional to support header auth clients",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "l1_address",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": " UTC day, YYYY-MM-DD",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalTradesExportData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pnlLeaderboard": {
+      "get": {
+        "summary": "pnlLeaderboard",
+        "operationId": "pnlLeaderboard",
+        "tags": [
+          "account"
+        ],
+        "description": "Get pnl leaderboard",
+        "parameters": [
+          {
+            "name": "time_window",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "24h",
+                "7d",
+                "30d",
+                "all"
+              ],
+              "default": "all"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pnl",
+                "roi",
+                "volume",
+                "account_value"
+              ],
+              "default": "pnl"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "uint8",
+              "default": "10",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": "0",
+              "minimum": 0,
+              "maximum": 100000
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PnlLeaderboard"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
     {
-      "url": "https://mainnet.zklighter.elliot.ai"
+      "url": "https://mainnet.zklighter.elliot.ai/"
     }
   ],
   "components": {
@@ -5309,6 +5563,10 @@
           },
           "metadata": {
             "$ref": "#/components/schemas/SubAccountMetadata"
+          },
+          "agent_enabled": {
+            "type": "boolean",
+            "format": "boolean"
           }
         },
         "title": "AccountMetadata",
@@ -5320,6 +5578,7 @@
           "referral_points_percentage",
           "can_rfq",
           "can_rfq_market_ids",
+          "agent_enabled",
           "created_at",
           "metadata"
         ]
@@ -5568,7 +5827,8 @@
             "example": "enabled",
             "enum": [
               "enabled",
-              "disabled"
+              "disabled",
+              "priced_only"
             ]
           },
           "index_price": {
@@ -6223,6 +6483,10 @@
           },
           "metadata": {
             "$ref": "#/components/schemas/SubAccountMetadata"
+          },
+          "agent_enabled": {
+            "type": "boolean",
+            "format": "boolean"
           }
         },
         "title": "DetailedAccount",
@@ -6246,6 +6510,7 @@
           "referral_points_percentage",
           "can_rfq",
           "can_rfq_market_ids",
+          "agent_enabled",
           "created_at",
           "metadata",
           "positions",
@@ -6675,6 +6940,16 @@
           "transaction_time": {
             "type": "integer",
             "format": "int64"
+          },
+          "bid_account_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": "3"
+          },
+          "ask_account_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
           }
         },
         "title": "LiqTrade",
@@ -6683,7 +6958,9 @@
           "size",
           "taker_fee",
           "maker_fee",
-          "transaction_time"
+          "transaction_time",
+          "ask_account_id",
+          "bid_account_id"
         ]
       },
       "Liquidation": {
@@ -7083,6 +7360,11 @@
             "type": "integer",
             "format": "int64",
             "example": "1"
+          },
+          "order_version": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
           }
         },
         "title": "Order",
@@ -7124,7 +7406,8 @@
           "timestamp",
           "created_at",
           "updated_at",
-          "transaction_time"
+          "transaction_time",
+          "order_version"
         ]
       },
       "OrderBook": {
@@ -7477,6 +7760,7 @@
           "supported_price_decimals",
           "supported_quote_decimals",
           "created_at",
+          "multiplier",
           "size_decimals",
           "price_decimals",
           "quote_multiplier",
@@ -7484,6 +7768,8 @@
           "min_initial_margin_fraction",
           "maintenance_margin_fraction",
           "closeout_margin_fraction",
+          "mark_price",
+          "index_price",
           "last_trade_price",
           "daily_trades_count",
           "daily_base_token_volume",
@@ -7495,6 +7781,8 @@
           "daily_chart",
           "market_config",
           "strategy_index",
+          "market_flags",
+          "funding_premium_multiplier",
           "funding_clamp_small",
           "funding_clamp_big",
           "base_interest_rate"
@@ -8679,7 +8967,8 @@
           "total_account_liquidation_threshold",
           "collateral",
           "usdc_collateral_with_funding",
-          "usdc_portfolio_value"
+          "usdc_portfolio_value",
+          "total_portfolio_value"
         ]
       },
       "SharePrice": {
@@ -9853,6 +10142,9 @@
           },
           "signature": {
             "type": "string"
+          },
+          "source": {
+            "type": "string"
           }
         },
         "title": "ReqUseReferralCode",
@@ -10428,14 +10720,18 @@
           },
           "tier": {
             "type": "string"
+          },
+          "source": {
+            "type": "string"
           }
         },
         "required": [
-          "trade_stats",
           "l1_address",
           "referral_code",
+          "used_at",
           "tier",
-          "used_at"
+          "source",
+          "trade_stats"
         ]
       },
       "UserReferrals": {
@@ -10548,20 +10844,25 @@
             "type": "integer",
             "format": "int64",
             "example": "3"
+          },
+          "fee_collector_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": "4"
           }
         },
         "required": [
-          "max_integrator_perps_maker_fee",
-          "max_integrator_perps_taker_fee",
-          "max_integrator_spot_maker_fee",
-          "max_integrator_spot_taker_fee",
           "code",
-          "funding_fee_rebate_account_index",
-          "liquidity_pool_cooldown_period",
           "liquidity_pool_index",
           "staking_pool_index",
+          "funding_fee_rebate_account_index",
+          "fee_collector_account_index",
+          "liquidity_pool_cooldown_period",
           "staking_pool_lockup_period",
-          "market_maker_incentive_account_index"
+          "max_integrator_spot_taker_fee",
+          "max_integrator_spot_maker_fee",
+          "max_integrator_perps_taker_fee",
+          "max_integrator_perps_maker_fee"
         ]
       },
       "PendingUnlock": {
@@ -10719,6 +11020,7 @@
         "title": "Token",
         "required": [
           "symbol",
+          "backend_symbol",
           "name",
           "logo",
           "logo_extension",
@@ -10729,7 +11031,8 @@
           "asset_type",
           "categories",
           "is_allowed_mainnet",
-          "is_asset_allowed_mainnet"
+          "is_asset_allowed_mainnet",
+          "default_order_book_group_by"
         ],
         "properties": {
           "symbol": {
@@ -10791,6 +11094,15 @@
           "is_asset_allowed_mainnet": {
             "type": "boolean",
             "format": "boolean"
+          },
+          "default_order_book_group_by": {
+            "type": "integer",
+            "format": "int64",
+            "example": "10"
+          },
+          "backend_symbol": {
+            "type": "string",
+            "example": "ETH"
           }
         }
       },
@@ -11028,6 +11340,9 @@
           },
           "mark_price": {
             "type": "string"
+          },
+          "requested_est_fill_fraction": {
+            "type": "string"
           }
         },
         "title": "RFQMetadata",
@@ -11035,6 +11350,7 @@
           "requested_est_price",
           "requested_max_slippage",
           "requested_slippage",
+          "requested_est_fill_fraction",
           "mark_price",
           "worst_price"
         ]
@@ -11244,11 +11560,7 @@
           },
           "direction": {
             "type": "integer",
-            "format": "int16",
-            "enum": [
-              "0",
-              "1"
-            ]
+            "format": "int16"
           },
           "metadata": {
             "type": "string"
@@ -11690,6 +12002,157 @@
           "entry",
           "entryId",
           "metadata"
+        ]
+      },
+      "ReferralStats": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReferralStat"
+            }
+          }
+        },
+        "title": "ReferralStats",
+        "required": [
+          "code",
+          "stats"
+        ]
+      },
+      "ReferralStat": {
+        "type": "object",
+        "properties": {
+          "start_timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "trade_stats": {
+            "$ref": "#/components/schemas/TradeStats"
+          }
+        },
+        "title": "ReferralStat",
+        "required": [
+          "start_timestamp",
+          "end_timestamp",
+          "trade_stats"
+        ]
+      },
+      "HistoricalTradesExportData": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data_url": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "example": "2025-01-02T00:00:00Z"
+          }
+        },
+        "title": "HistoricalTradesExportData",
+        "required": [
+          "code",
+          "data_url",
+          "expires_at"
+        ]
+      },
+      "PnlLeaderboard": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PnlLeaderboardEntry"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int64",
+            "example": "41543"
+          },
+          "updated_at": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1754992800"
+          }
+        },
+        "title": "PnlLeaderboard",
+        "required": [
+          "code",
+          "entries",
+          "total",
+          "updated_at"
+        ]
+      },
+      "PnlLeaderboardEntry": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "l1_address": {
+            "type": "string",
+            "example": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
+          },
+          "account_value": {
+            "type": "number",
+            "format": "double",
+            "example": "225006123.46"
+          },
+          "pnl": {
+            "type": "number",
+            "format": "double",
+            "example": "445047878.27"
+          },
+          "roi": {
+            "type": "number",
+            "format": "double",
+            "example": "26412.5721"
+          },
+          "volume": {
+            "type": "number",
+            "format": "double",
+            "example": "15999.34"
+          }
+        },
+        "title": "PnlLeaderboardEntry",
+        "required": [
+          "rank",
+          "l1_address",
+          "account_value",
+          "pnl",
+          "roi",
+          "volume"
         ]
       }
     }

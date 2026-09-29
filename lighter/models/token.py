@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
@@ -38,8 +38,10 @@ class Token(BaseModel):
     categories: List[StrictStr]
     is_allowed_mainnet: StrictBool
     is_asset_allowed_mainnet: StrictBool
+    default_order_book_group_by: StrictInt
+    backend_symbol: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "name", "logo", "logo_extension", "description_key", "gecko_id", "paprika_id", "market", "asset_type", "categories", "is_allowed_mainnet", "is_asset_allowed_mainnet"]
+    __properties: ClassVar[List[str]] = ["symbol", "name", "logo", "logo_extension", "description_key", "gecko_id", "paprika_id", "market", "asset_type", "categories", "is_allowed_mainnet", "is_asset_allowed_mainnet", "default_order_book_group_by", "backend_symbol"]
 
     @field_validator('logo_extension')
     def logo_extension_validate_enum(cls, value):
@@ -131,7 +133,9 @@ class Token(BaseModel):
             "asset_type": obj.get("asset_type"),
             "categories": obj.get("categories"),
             "is_allowed_mainnet": obj.get("is_allowed_mainnet"),
-            "is_asset_allowed_mainnet": obj.get("is_asset_allowed_mainnet")
+            "is_asset_allowed_mainnet": obj.get("is_asset_allowed_mainnet"),
+            "default_order_book_group_by": obj.get("default_order_book_group_by"),
+            "backend_symbol": obj.get("backend_symbol")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

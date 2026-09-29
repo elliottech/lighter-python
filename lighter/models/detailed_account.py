@@ -66,8 +66,9 @@ class DetailedAccount(BaseModel):
     cross_maintenance_margin_requirement: StrictStr
     can_rfq_market_ids: List[StrictStr]
     metadata: SubAccountMetadata
+    agent_enabled: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids", "metadata"]
+    __properties: ClassVar[List[str]] = ["code", "message", "account_type", "account_trading_mode", "index", "l1_address", "cancel_all_time", "total_order_count", "total_isolated_order_count", "pending_order_count", "available_balance", "status", "collateral", "account_index", "name", "description", "can_invite", "referral_points_percentage", "positions", "assets", "total_asset_value", "cross_asset_value", "pool_info", "shares", "created_at", "transaction_time", "pending_unlocks", "approved_integrators", "can_rfq", "cross_initial_margin_requirement", "cross_maintenance_margin_requirement", "can_rfq_market_ids", "metadata", "agent_enabled"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -200,7 +201,8 @@ class DetailedAccount(BaseModel):
             "cross_initial_margin_requirement": obj.get("cross_initial_margin_requirement"),
             "cross_maintenance_margin_requirement": obj.get("cross_maintenance_margin_requirement"),
             "can_rfq_market_ids": obj.get("can_rfq_market_ids"),
-            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None
+            "metadata": SubAccountMetadata.from_dict(obj["metadata"]) if obj.get("metadata") is not None else None,
+            "agent_enabled": obj.get("agent_enabled")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

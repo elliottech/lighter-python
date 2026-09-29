@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **can_rfq** | **bool** |  | 
 **can_rfq_market_ids** | **List[str]** |  | 
 **metadata** | [**SubAccountMetadata**](SubAccountMetadata.md) |  | 
+**agent_enabled** | **bool** |  | 
 
 ## Example
 

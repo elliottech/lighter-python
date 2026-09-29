@@ -28,6 +28,7 @@ from lighter.models.l1_metadata import L1Metadata
 from lighter.models.leaderboard import Leaderboard
 from lighter.models.liquidation_infos import LiquidationInfos
 from lighter.models.partner_stats import PartnerStats
+from lighter.models.pnl_leaderboard import PnlLeaderboard
 from lighter.models.position_fundings import PositionFundings
 from lighter.models.resp_change_account_tier import RespChangeAccountTier
 from lighter.models.resp_create_rfq import RespCreateRFQ
@@ -1534,7 +1535,7 @@ class AccountApi:
     ) -> RespChangeAccountTier:
         """changeAccountTier
 
-        Change account tier. You can only perform this action once every 24 hours, and with no orders or positions open.
+        Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
 
         :param account_index: (required)
         :type account_index: int
@@ -1609,7 +1610,7 @@ class AccountApi:
     ) -> ApiResponse[RespChangeAccountTier]:
         """changeAccountTier
 
-        Change account tier. You can only perform this action once every 24 hours, and with no orders or positions open.
+        Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
 
         :param account_index: (required)
         :type account_index: int
@@ -1684,7 +1685,7 @@ class AccountApi:
     ) -> RESTResponseType:
         """changeAccountTier
 
-        Change account tier. You can only perform this action once every 24 hours, and with no orders or positions open.
+        Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
 
         :param account_index: (required)
         :type account_index: int
@@ -2371,6 +2372,7 @@ class AccountApi:
         authorization: Optional[StrictStr] = None,
         l1_address: Optional[StrictStr] = None,
         competition_id: Optional[StrictStr] = None,
+        auth: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2386,7 +2388,7 @@ class AccountApi:
     ) -> Leaderboard:
         """leaderboard
 
-        Get points leaderboard. Type should be all.
+        Get points leaderboard
 
         :param type: (required)
         :type type: str
@@ -2396,6 +2398,8 @@ class AccountApi:
         :type l1_address: str
         :param competition_id:
         :type competition_id: str
+        :param auth:
+        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2423,6 +2427,7 @@ class AccountApi:
             authorization=authorization,
             l1_address=l1_address,
             competition_id=competition_id,
+            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2450,6 +2455,7 @@ class AccountApi:
         authorization: Optional[StrictStr] = None,
         l1_address: Optional[StrictStr] = None,
         competition_id: Optional[StrictStr] = None,
+        auth: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2465,7 +2471,7 @@ class AccountApi:
     ) -> ApiResponse[Leaderboard]:
         """leaderboard
 
-        Get points leaderboard. Type should be all.
+        Get points leaderboard
 
         :param type: (required)
         :type type: str
@@ -2475,6 +2481,8 @@ class AccountApi:
         :type l1_address: str
         :param competition_id:
         :type competition_id: str
+        :param auth:
+        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2502,6 +2510,7 @@ class AccountApi:
             authorization=authorization,
             l1_address=l1_address,
             competition_id=competition_id,
+            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2529,6 +2538,7 @@ class AccountApi:
         authorization: Optional[StrictStr] = None,
         l1_address: Optional[StrictStr] = None,
         competition_id: Optional[StrictStr] = None,
+        auth: Optional[StrictStr] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2544,7 +2554,7 @@ class AccountApi:
     ) -> RESTResponseType:
         """leaderboard
 
-        Get points leaderboard. Type should be all.
+        Get points leaderboard
 
         :param type: (required)
         :type type: str
@@ -2554,6 +2564,8 @@ class AccountApi:
         :type l1_address: str
         :param competition_id:
         :type competition_id: str
+        :param auth:
+        :type auth: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2581,6 +2593,7 @@ class AccountApi:
             authorization=authorization,
             l1_address=l1_address,
             competition_id=competition_id,
+            auth=auth,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2604,6 +2617,7 @@ class AccountApi:
         authorization,
         l1_address,
         competition_id,
+        auth,
         _request_auth,
         _content_type,
         _headers,
@@ -2635,6 +2649,10 @@ class AccountApi:
         if competition_id is not None:
             
             _query_params.append(('competition_id', competition_id))
+            
+        if auth is not None:
+            
+            _query_params.append(('auth', auth))
             
         # process the header parameters
         if authorization is not None:
@@ -4541,6 +4559,351 @@ class AccountApi:
         return self.api_client.param_serialize(
             method='GET',
             resource_path='/api/v1/pnl',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    async def pnl_leaderboard(
+        self,
+        time_window: StrictStr,
+        sort_by: StrictStr,
+        sort_dir: StrictStr,
+        limit: Annotated[int, Field(le=100, strict=True, ge=1)],
+        offset: Annotated[int, Field(le=100000, strict=True, ge=0)],
+        search: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> PnlLeaderboard:
+        """pnlLeaderboard
+
+        Get pnl leaderboard
+
+        :param time_window: (required)
+        :type time_window: str
+        :param sort_by: (required)
+        :type sort_by: str
+        :param sort_dir: (required)
+        :type sort_dir: str
+        :param limit: (required)
+        :type limit: int
+        :param offset: (required)
+        :type offset: int
+        :param search:
+        :type search: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._pnl_leaderboard_serialize(
+            time_window=time_window,
+            sort_by=sort_by,
+            sort_dir=sort_dir,
+            limit=limit,
+            offset=offset,
+            search=search,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "PnlLeaderboard",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def pnl_leaderboard_with_http_info(
+        self,
+        time_window: StrictStr,
+        sort_by: StrictStr,
+        sort_dir: StrictStr,
+        limit: Annotated[int, Field(le=100, strict=True, ge=1)],
+        offset: Annotated[int, Field(le=100000, strict=True, ge=0)],
+        search: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[PnlLeaderboard]:
+        """pnlLeaderboard
+
+        Get pnl leaderboard
+
+        :param time_window: (required)
+        :type time_window: str
+        :param sort_by: (required)
+        :type sort_by: str
+        :param sort_dir: (required)
+        :type sort_dir: str
+        :param limit: (required)
+        :type limit: int
+        :param offset: (required)
+        :type offset: int
+        :param search:
+        :type search: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._pnl_leaderboard_serialize(
+            time_window=time_window,
+            sort_by=sort_by,
+            sort_dir=sort_dir,
+            limit=limit,
+            offset=offset,
+            search=search,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "PnlLeaderboard",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def pnl_leaderboard_without_preload_content(
+        self,
+        time_window: StrictStr,
+        sort_by: StrictStr,
+        sort_dir: StrictStr,
+        limit: Annotated[int, Field(le=100, strict=True, ge=1)],
+        offset: Annotated[int, Field(le=100000, strict=True, ge=0)],
+        search: Optional[StrictStr] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """pnlLeaderboard
+
+        Get pnl leaderboard
+
+        :param time_window: (required)
+        :type time_window: str
+        :param sort_by: (required)
+        :type sort_by: str
+        :param sort_dir: (required)
+        :type sort_dir: str
+        :param limit: (required)
+        :type limit: int
+        :param offset: (required)
+        :type offset: int
+        :param search:
+        :type search: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._pnl_leaderboard_serialize(
+            time_window=time_window,
+            sort_by=sort_by,
+            sort_dir=sort_dir,
+            limit=limit,
+            offset=offset,
+            search=search,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "PnlLeaderboard",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _pnl_leaderboard_serialize(
+        self,
+        time_window,
+        sort_by,
+        sort_dir,
+        limit,
+        offset,
+        search,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if time_window is not None:
+            
+            _query_params.append(('time_window', time_window))
+            
+        if sort_by is not None:
+            
+            _query_params.append(('sort_by', sort_by))
+            
+        if sort_dir is not None:
+            
+            _query_params.append(('sort_dir', sort_dir))
+            
+        if limit is not None:
+            
+            _query_params.append(('limit', limit))
+            
+        if offset is not None:
+            
+            _query_params.append(('offset', offset))
+            
+        if search is not None:
+            
+            _query_params.append(('search', search))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/api/v1/pnlLeaderboard',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
