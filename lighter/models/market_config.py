@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -26,7 +26,7 @@ class MarketConfig(BaseModel):
     """
     MarketConfig
     """ # noqa: E501
-    market_margin_mode: StrictInt
+    market_margin_mode: StrictInt = Field(description="See MarketConfigMarketMarginModeEnum")
     insurance_fund_account_index: StrictInt
     liquidation_mode: StrictInt
     force_reduce_only: StrictBool
@@ -36,6 +36,13 @@ class MarketConfig(BaseModel):
     rfq_enabled: StrictBool
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["market_margin_mode", "insurance_fund_account_index", "liquidation_mode", "force_reduce_only", "funding_fee_discounts_enabled", "trading_hours", "hidden", "rfq_enabled"]
+
+    @field_validator('market_margin_mode')
+    def market_margin_mode_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,

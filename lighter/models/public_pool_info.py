@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Union
 from lighter.models.daily_return import DailyReturn
 from lighter.models.share_price import SharePrice
@@ -29,7 +29,7 @@ class PublicPoolInfo(BaseModel):
     """
     PublicPoolInfo
     """ # noqa: E501
-    status: StrictInt
+    status: StrictInt = Field(description="See PublicPoolInfoStatusEnum")
     operator_fee: StrictStr
     min_operator_share_rate: StrictStr
     total_shares: StrictInt
@@ -41,6 +41,13 @@ class PublicPoolInfo(BaseModel):
     strategies: List[Strategy]
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "daily_returns", "share_prices", "sharpe_ratio", "strategies"]
+
+    @field_validator('status')
+    def status_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
