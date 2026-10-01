@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,7 +28,10 @@ class Asset(BaseModel):
     """ # noqa: E501
     asset_id: StrictInt
     symbol: StrictStr
-    l1_decimals: StrictInt
+    l1_decimals: Optional[StrictInt] = Field(default=None, description="L1 token decimals when supplied by registration. Omitted for Core-native and EVM-native assets.")
+    evm_decimals: Optional[StrictInt] = Field(default=None, description="Canonical EVM token decimals for EVM-native assets. Zero is a valid precision; omission means unavailable.")
+    canonical_domain: Optional[StrictInt] = Field(default=None, description="Asset origin: 0 legacy, 1 L1, 2 Core, 3 EVM. Omitted by older API versions.")
+    evm_token: Optional[StrictStr] = Field(default=None, description="Linked EVM token or wrapper address. The zero address means unlinked; older API versions omit this field.")
     decimals: StrictInt
     min_transfer_amount: StrictStr
     min_withdrawal_amount: StrictStr
@@ -45,7 +48,17 @@ class Asset(BaseModel):
     liquidation_factor: StrictStr
     multiplier: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap", "liquidation_factor", "multiplier"]
+    __properties: ClassVar[List[str]] = ["asset_id", "symbol", "l1_decimals", "evm_decimals", "canonical_domain", "evm_token", "decimals", "min_transfer_amount", "min_withdrawal_amount", "margin_mode", "index_price", "l1_address", "global_supply_cap", "liquidation_fee", "liquidation_threshold", "loan_to_value", "price_decimals", "total_supplied", "user_supply_cap", "liquidation_factor", "multiplier"]
+
+    @field_validator('canonical_domain')
+    def canonical_domain_validate_enum(cls, value):
+        """Validates the enum"""
+        if value is None:
+            return value
+
+        if value not in set([0, 1, 2, 3]):
+            raise ValueError("must be one of enum values (0, 1, 2, 3)")
+        return value
 
     @field_validator('margin_mode')
     def margin_mode_validate_enum(cls, value):
@@ -115,6 +128,9 @@ class Asset(BaseModel):
             "asset_id": obj.get("asset_id"),
             "symbol": obj.get("symbol"),
             "l1_decimals": obj.get("l1_decimals"),
+            "evm_decimals": obj.get("evm_decimals"),
+            "canonical_domain": obj.get("canonical_domain"),
+            "evm_token": obj.get("evm_token"),
             "decimals": obj.get("decimals"),
             "min_transfer_amount": obj.get("min_transfer_amount"),
             "min_withdrawal_amount": obj.get("min_withdrawal_amount"),
