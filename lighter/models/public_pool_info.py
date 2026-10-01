@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from lighter.models.daily_return import DailyReturn
 from lighter.models.share_price import SharePrice
 from lighter.models.strategy import Strategy
@@ -34,11 +34,11 @@ class PublicPoolInfo(BaseModel):
     min_operator_share_rate: StrictStr
     total_shares: StrictInt
     operator_shares: StrictInt
-    annual_percentage_yield: Union[StrictFloat, StrictInt]
-    daily_returns: List[DailyReturn]
-    share_prices: List[SharePrice]
-    sharpe_ratio: Union[StrictFloat, StrictInt]
-    strategies: List[Strategy]
+    annual_percentage_yield: Optional[Union[StrictFloat, StrictInt]] = None
+    daily_returns: Optional[List[DailyReturn]] = None
+    share_prices: Optional[List[SharePrice]] = None
+    sharpe_ratio: Optional[Union[StrictFloat, StrictInt]] = None
+    strategies: Optional[List[Strategy]] = None
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["status", "operator_fee", "min_operator_share_rate", "total_shares", "operator_shares", "annual_percentage_yield", "daily_returns", "share_prices", "sharpe_ratio", "strategies"]
 
