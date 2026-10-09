@@ -30,7 +30,7 @@ class ApiKeyResponse(ctypes.Structure):
 
 class CreateOrderTxReq(ctypes.Structure):
     _fields_ = [
-        ("MarketIndex", ctypes.c_int),
+        ("MarketIndex", ctypes.c_longlong),
         ("ClientOrderIndex", ctypes.c_longlong),
         ("BaseAmount", ctypes.c_longlong),
         ("Price", ctypes.c_uint32),
@@ -116,14 +116,14 @@ def __populate_shared_library_functions(signer):
     signer.SignChangePubKey.argtypes = [ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignChangePubKey.restype = SignedTxResponse
 
-    signer.SignCreateOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
+    signer.SignCreateOrder.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
                                             ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateOrder.restype = SignedTxResponse
 
     signer.SignCreateGroupedOrders.argtypes = [ctypes.c_uint8, ctypes.POINTER(CreateOrderTxReq), ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateGroupedOrders.restype = SignedTxResponse
 
-    signer.SignCancelOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCancelOrder.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelOrder.restype = SignedTxResponse
 
     signer.SignWithdraw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -132,10 +132,10 @@ def __populate_shared_library_functions(signer):
     signer.SignCreateSubAccount.argtypes = [ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCreateSubAccount.restype = SignedTxResponse
 
-    signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignCancelAllOrders.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignCancelAllOrders.restype = SignedTxResponse
 
-    signer.SignModifyOrder.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignModifyOrder.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignModifyOrder.restype = SignedTxResponse
 
     signer.SignTransfer.argtypes = [ctypes.c_longlong, ctypes.c_int16, ctypes.c_int8, ctypes.c_int8, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -159,7 +159,7 @@ def __populate_shared_library_functions(signer):
     signer.SignUnstakeAssets.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUnstakeAssets.restype = SignedTxResponse
 
-    signer.SignUpdateLeverage.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdateLeverage.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateLeverage.restype = SignedTxResponse
 
     signer.CreateAuthToken.argtypes = [ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
@@ -168,7 +168,7 @@ def __populate_shared_library_functions(signer):
     # Note: SwitchAPIKey is no longer exported in the new binary
     # All functions now take api_key_index directly, so switching is handled via parameters
 
-    signer.SignUpdateMargin.argtypes = [ctypes.c_int, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignUpdateMargin.argtypes = [ctypes.c_longlong, ctypes.c_longlong, ctypes.c_int, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateMargin.restype = SignedTxResponse
 
     signer.SignApproveIntegrator.argtypes = [ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
