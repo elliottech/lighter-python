@@ -3949,6 +3949,8 @@ class OrderApi:
         aggregate: Optional[StrictBool] = None,
         skip_ask_order_id: Optional[StrictStr] = None,
         skip_bid_order_id: Optional[StrictStr] = None,
+        integrator_account_index: Optional[StrictInt] = None,
+        order_index_str: Annotated[Optional[StrictStr], Field(description=" takes precedence over order_index; for clients that cannot represent uint64 exactly")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3998,6 +4000,10 @@ class OrderApi:
         :type skip_ask_order_id: str
         :param skip_bid_order_id:
         :type skip_bid_order_id: str
+        :param integrator_account_index:
+        :type integrator_account_index: int
+        :param order_index_str:  takes precedence over order_index; for clients that cannot represent uint64 exactly
+        :type order_index_str: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -4037,6 +4043,8 @@ class OrderApi:
             aggregate=aggregate,
             skip_ask_order_id=skip_ask_order_id,
             skip_bid_order_id=skip_bid_order_id,
+            integrator_account_index=integrator_account_index,
+            order_index_str=order_index_str,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -4076,6 +4084,8 @@ class OrderApi:
         aggregate: Optional[StrictBool] = None,
         skip_ask_order_id: Optional[StrictStr] = None,
         skip_bid_order_id: Optional[StrictStr] = None,
+        integrator_account_index: Optional[StrictInt] = None,
+        order_index_str: Annotated[Optional[StrictStr], Field(description=" takes precedence over order_index; for clients that cannot represent uint64 exactly")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -4125,6 +4135,10 @@ class OrderApi:
         :type skip_ask_order_id: str
         :param skip_bid_order_id:
         :type skip_bid_order_id: str
+        :param integrator_account_index:
+        :type integrator_account_index: int
+        :param order_index_str:  takes precedence over order_index; for clients that cannot represent uint64 exactly
+        :type order_index_str: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -4164,6 +4178,8 @@ class OrderApi:
             aggregate=aggregate,
             skip_ask_order_id=skip_ask_order_id,
             skip_bid_order_id=skip_bid_order_id,
+            integrator_account_index=integrator_account_index,
+            order_index_str=order_index_str,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -4203,6 +4219,8 @@ class OrderApi:
         aggregate: Optional[StrictBool] = None,
         skip_ask_order_id: Optional[StrictStr] = None,
         skip_bid_order_id: Optional[StrictStr] = None,
+        integrator_account_index: Optional[StrictInt] = None,
+        order_index_str: Annotated[Optional[StrictStr], Field(description=" takes precedence over order_index; for clients that cannot represent uint64 exactly")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -4252,6 +4270,10 @@ class OrderApi:
         :type skip_ask_order_id: str
         :param skip_bid_order_id:
         :type skip_bid_order_id: str
+        :param integrator_account_index:
+        :type integrator_account_index: int
+        :param order_index_str:  takes precedence over order_index; for clients that cannot represent uint64 exactly
+        :type order_index_str: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -4291,6 +4313,8 @@ class OrderApi:
             aggregate=aggregate,
             skip_ask_order_id=skip_ask_order_id,
             skip_bid_order_id=skip_bid_order_id,
+            integrator_account_index=integrator_account_index,
+            order_index_str=order_index_str,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -4326,6 +4350,8 @@ class OrderApi:
         aggregate,
         skip_ask_order_id,
         skip_bid_order_id,
+        integrator_account_index,
+        order_index_str,
         _request_auth,
         _content_type,
         _headers,
@@ -4405,6 +4431,14 @@ class OrderApi:
         if skip_bid_order_id is not None:
             
             _query_params.append(('skip_bid_order_id', skip_bid_order_id))
+            
+        if integrator_account_index is not None:
+            
+            _query_params.append(('integrator_account_index', integrator_account_index))
+            
+        if order_index_str is not None:
+            
+            _query_params.append(('order_index_str', order_index_str))
             
         # process the header parameters
         if authorization is not None:

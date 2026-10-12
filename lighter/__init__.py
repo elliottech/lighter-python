@@ -22,15 +22,18 @@ from lighter.api.announcement_api import AnnouncementApi
 from lighter.api.block_api import BlockApi
 from lighter.api.bridge_api import BridgeApi
 from lighter.api.candlestick_api import CandlestickApi
+from lighter.api.event_api import EventApi
 from lighter.api.funding_api import FundingApi
 from lighter.api.info_api import InfoApi
 from lighter.api.livepoints_api import LivepointsApi
 from lighter.api.notification_api import NotificationApi
 from lighter.api.order_api import OrderApi
+from lighter.api.portfolio_api import PortfolioApi
 from lighter.api.referral_api import ReferralApi
 from lighter.api.root_api import RootApi
 from lighter.api.tokenlist_api import TokenlistApi
 from lighter.api.transaction_api import TransactionApi
+from lighter.api.updown_api import UpdownApi
 
 # import ApiClient
 from lighter.api_response import ApiResponse
@@ -59,8 +62,11 @@ from lighter.models.api_token import ApiToken
 from lighter.models.approved_integrator import ApprovedIntegrator
 from lighter.models.asset import Asset
 from lighter.models.asset_details import AssetDetails
+from lighter.models.binary_option_market_stats import BinaryOptionMarketStats
 from lighter.models.block import Block
 from lighter.models.blocks import Blocks
+from lighter.models.bo_event_pn_l import BoEventPnL
+from lighter.models.bo_outcome_pn_l import BoOutcomePnL
 from lighter.models.bridge_supported_network import BridgeSupportedNetwork
 from lighter.models.bridge_supported_networks import BridgeSupportedNetworks
 from lighter.models.candle import Candle
@@ -75,6 +81,8 @@ from lighter.models.deposit_history_item import DepositHistoryItem
 from lighter.models.detailed_account import DetailedAccount
 from lighter.models.detailed_accounts import DetailedAccounts
 from lighter.models.enriched_tx import EnrichedTx
+from lighter.models.event_detail import EventDetail
+from lighter.models.event_order_book_entry import EventOrderBookEntry
 from lighter.models.exchange_metric import ExchangeMetric
 from lighter.models.exchange_stats import ExchangeStats
 from lighter.models.execute_stat import ExecuteStat
@@ -117,9 +125,15 @@ from lighter.models.pnl_leaderboard_entry import PnlLeaderboardEntry
 from lighter.models.pn_l_entry import PnLEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
+from lighter.models.price_oracle_market import PriceOracleMarket
+from lighter.models.price_oracle_price import PriceOraclePrice
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_metadata import PublicPoolMetadata
 from lighter.models.public_pool_share import PublicPoolShare
+from lighter.models.resp_get_bo_pn_l import RespGetBoPnL
+from lighter.models.resp_get_events import RespGetEvents
+from lighter.models.resp_get_up_down_candles import RespGetUpDownCandles
+from lighter.models.resp_price_oracle_info import RespPriceOracleInfo
 from lighter.models.rfq_entry import RFQEntry
 from lighter.models.rfq_metadata import RFQMetadata
 from lighter.models.rfq_response_entry import RFQResponseEntry
@@ -179,6 +193,7 @@ from lighter.models.transfer_history_item import TransferHistoryItem
 from lighter.models.tx import Tx
 from lighter.models.tx_hash import TxHash
 from lighter.models.txs import Txs
+from lighter.models.up_down_candle import UpDownCandle
 from lighter.models.user_referrals import UserReferrals
 from lighter.models.validator_info import ValidatorInfo
 from lighter.models.withdraw_history import WithdrawHistory

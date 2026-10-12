@@ -29,8 +29,11 @@ from lighter.models.api_token import ApiToken
 from lighter.models.approved_integrator import ApprovedIntegrator
 from lighter.models.asset import Asset
 from lighter.models.asset_details import AssetDetails
+from lighter.models.binary_option_market_stats import BinaryOptionMarketStats
 from lighter.models.block import Block
 from lighter.models.blocks import Blocks
+from lighter.models.bo_event_pn_l import BoEventPnL
+from lighter.models.bo_outcome_pn_l import BoOutcomePnL
 from lighter.models.bridge_supported_network import BridgeSupportedNetwork
 from lighter.models.bridge_supported_networks import BridgeSupportedNetworks
 from lighter.models.candle import Candle
@@ -45,6 +48,8 @@ from lighter.models.deposit_history_item import DepositHistoryItem
 from lighter.models.detailed_account import DetailedAccount
 from lighter.models.detailed_accounts import DetailedAccounts
 from lighter.models.enriched_tx import EnrichedTx
+from lighter.models.event_detail import EventDetail
+from lighter.models.event_order_book_entry import EventOrderBookEntry
 from lighter.models.exchange_metric import ExchangeMetric
 from lighter.models.exchange_stats import ExchangeStats
 from lighter.models.execute_stat import ExecuteStat
@@ -87,6 +92,8 @@ from lighter.models.pnl_leaderboard import PnlLeaderboard
 from lighter.models.pnl_leaderboard_entry import PnlLeaderboardEntry
 from lighter.models.position_funding import PositionFunding
 from lighter.models.position_fundings import PositionFundings
+from lighter.models.price_oracle_market import PriceOracleMarket
+from lighter.models.price_oracle_price import PriceOraclePrice
 from lighter.models.public_pool_info import PublicPoolInfo
 from lighter.models.public_pool_metadata import PublicPoolMetadata
 from lighter.models.public_pool_share import PublicPoolShare
@@ -105,6 +112,8 @@ from lighter.models.req_set_account_metadata import ReqSetAccountMetadata
 from lighter.models.resp_change_account_tier import RespChangeAccountTier
 from lighter.models.resp_create_rfq import RespCreateRFQ
 from lighter.models.resp_get_api_tokens import RespGetApiTokens
+from lighter.models.resp_get_bo_pn_l import RespGetBoPnL
+from lighter.models.resp_get_events import RespGetEvents
 from lighter.models.resp_get_exchange_metrics import RespGetExchangeMetrics
 from lighter.models.resp_get_execute_stats import RespGetExecuteStats
 from lighter.models.resp_get_fast_bridge_info import RespGetFastBridgeInfo
@@ -113,8 +122,10 @@ from lighter.models.resp_get_lease_options import RespGetLeaseOptions
 from lighter.models.resp_get_leases import RespGetLeases
 from lighter.models.resp_get_maker_only_api_keys import RespGetMakerOnlyApiKeys
 from lighter.models.resp_get_rfq import RespGetRFQ
+from lighter.models.resp_get_up_down_candles import RespGetUpDownCandles
 from lighter.models.resp_list_rfqs import RespListRFQs
 from lighter.models.resp_post_api_token import RespPostApiToken
+from lighter.models.resp_price_oracle_info import RespPriceOracleInfo
 from lighter.models.resp_public_pools_metadata import RespPublicPoolsMetadata
 from lighter.models.resp_respond_to_rfq import RespRespondToRFQ
 from lighter.models.resp_revoke_api_token import RespRevokeApiToken
@@ -149,6 +160,7 @@ from lighter.models.transfer_history_item import TransferHistoryItem
 from lighter.models.tx import Tx
 from lighter.models.tx_hash import TxHash
 from lighter.models.txs import Txs
+from lighter.models.up_down_candle import UpDownCandle
 from lighter.models.user_referrals import UserReferrals
 from lighter.models.validator_info import ValidatorInfo
 from lighter.models.withdraw_history import WithdrawHistory

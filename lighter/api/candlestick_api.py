@@ -50,6 +50,7 @@ class CandlestickApi:
         end_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
         count_back: StrictInt,
         set_timestamp_to_end: Optional[StrictBool] = None,
+        merge_mark_price: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -79,6 +80,8 @@ class CandlestickApi:
         :type count_back: int
         :param set_timestamp_to_end:
         :type set_timestamp_to_end: bool
+        :param merge_mark_price:
+        :type merge_mark_price: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -108,6 +111,7 @@ class CandlestickApi:
             end_timestamp=end_timestamp,
             count_back=count_back,
             set_timestamp_to_end=set_timestamp_to_end,
+            merge_mark_price=merge_mark_price,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -137,6 +141,7 @@ class CandlestickApi:
         end_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
         count_back: StrictInt,
         set_timestamp_to_end: Optional[StrictBool] = None,
+        merge_mark_price: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -166,6 +171,8 @@ class CandlestickApi:
         :type count_back: int
         :param set_timestamp_to_end:
         :type set_timestamp_to_end: bool
+        :param merge_mark_price:
+        :type merge_mark_price: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -195,6 +202,7 @@ class CandlestickApi:
             end_timestamp=end_timestamp,
             count_back=count_back,
             set_timestamp_to_end=set_timestamp_to_end,
+            merge_mark_price=merge_mark_price,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -224,6 +232,7 @@ class CandlestickApi:
         end_timestamp: Annotated[int, Field(le=5000000000000, strict=True, ge=0)],
         count_back: StrictInt,
         set_timestamp_to_end: Optional[StrictBool] = None,
+        merge_mark_price: Optional[StrictBool] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -253,6 +262,8 @@ class CandlestickApi:
         :type count_back: int
         :param set_timestamp_to_end:
         :type set_timestamp_to_end: bool
+        :param merge_mark_price:
+        :type merge_mark_price: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -282,6 +293,7 @@ class CandlestickApi:
             end_timestamp=end_timestamp,
             count_back=count_back,
             set_timestamp_to_end=set_timestamp_to_end,
+            merge_mark_price=merge_mark_price,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -307,6 +319,7 @@ class CandlestickApi:
         end_timestamp,
         count_back,
         set_timestamp_to_end,
+        merge_mark_price,
         _request_auth,
         _content_type,
         _headers,
@@ -350,6 +363,10 @@ class CandlestickApi:
         if set_timestamp_to_end is not None:
             
             _query_params.append(('set_timestamp_to_end', set_timestamp_to_end))
+            
+        if merge_mark_price is not None:
+            
+            _query_params.append(('merge_mark_price', merge_mark_price))
             
         # process the header parameters
         # process the form parameters

@@ -940,6 +940,16 @@
               "format": "boolean",
               "default": "false"
             }
+          },
+          {
+            "name": "merge_mark_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "format": "boolean",
+              "default": "false"
+            }
           }
         ],
         "responses": {
@@ -973,7 +983,7 @@
         "tags": [
           "account"
         ],
-        "description": "Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.",
+        "description": "Change account tier. You can only perform this action once every 24 hours.",
         "parameters": [
           {
             "name": "authorization",
@@ -2413,7 +2423,8 @@
               "enum": [
                 "all",
                 "spot",
-                "perp"
+                "perp",
+                "bo"
               ],
               "default": "all"
             }
@@ -2552,6 +2563,25 @@
           {
             "name": "skip_bid_order_id",
             "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "integrator_account_index",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": "-1"
+            }
+          },
+          {
+            "name": "order_index_str",
+            "in": "query",
+            "description": " takes precedence over order_index; for clients that cannot represent uint64 exactly",
             "required": false,
             "schema": {
               "type": "string"
@@ -5264,6 +5294,399 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PnlLeaderboard"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/priceOracleInfo": {
+      "get": {
+        "summary": "priceOracleInfo",
+        "operationId": "priceOracleInfo",
+        "tags": [
+          "info"
+        ],
+        "description": "Get price oracle info (source in use, median exchanges, price cap) for all markets or a single symbol",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespPriceOracleInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/upDownCandles": {
+      "get": {
+        "summary": "upDownCandles",
+        "operationId": "upDownCandles",
+        "tags": [
+          "updown"
+        ],
+        "description": "Get the OHLC candles (1s = the exact price observations, or 30s) of an up/down market series (symbol + duration, e.g. btc/5m) in a bounded time range (at most 24h), oldest first. Pass next_cursor as start_timestamp to page forward; live candles are on the up_down_candle/<symbol>/<duration>/<resolution> websocket channel.",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": " market series: underlying (case-insensitive) ...",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "description": " ... and market duration, e.g. 30s or 5m",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "description": " 1s candles are the observations themselves",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1s",
+                "30s"
+              ],
+              "default": "1s"
+            }
+          },
+          {
+            "name": "start_timestamp",
+            "in": "query",
+            "description": " inclusive bucket start, seconds",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0,
+              "maximum": 5000000000
+            }
+          },
+          {
+            "name": "end_timestamp",
+            "in": "query",
+            "description": " inclusive, seconds; at most 24h after start_timestamp",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0,
+              "maximum": 5000000000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": "1000",
+              "minimum": 1,
+              "maximum": 3600
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespGetUpDownCandles"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events": {
+      "get": {
+        "summary": "events",
+        "operationId": "events",
+        "tags": [
+          "event"
+        ],
+        "description": "Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. Occurrence sorting uses (occurrence_start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.",
+        "parameters": [
+          {
+            "name": "event_ids",
+            "in": "query",
+            "description": " comma-separated positive IDs, max 50",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "market_ids",
+            "in": "query",
+            "description": " comma-separated positive IDs, max 50",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "creator_account_index",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "description": " true: at least one outcome still tradeable; false: none",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "format": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "description": " series tag; creator filter is optional",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "event_kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "one_off",
+                "recurrent"
+              ]
+            }
+          },
+          {
+            "name": "start_from",
+            "in": "query",
+            "description": " inclusive occurrence start, Unix milliseconds",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "start_before",
+            "in": "query",
+            "description": " exclusive occurrence start, Unix milliseconds",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "occurrence_start_at"
+              ],
+              "default": "id"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespGetEvents"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/boPnl": {
+      "get": {
+        "summary": "portfolio_boPnl",
+        "operationId": "portfolio_boPnl",
+        "tags": [
+          "portfolio"
+        ],
+        "description": "Get binary-options realized PnL for an authenticated account, grouped by event and ordered newest event first. cursor is an exclusive event id; event_id returns a single event. Every outcome the account has traded is reported, including markets still open or unsettled, so an entry never disappears as the account trades. Per outcome, total_pnl is all realized PnL so far including settlement, and settlement_pnl is null until the market settles with a position to settle, then the string 0.000000 for an actual zero-PnL settlement. An event's total_pnl is the sum of its listed outcomes. Missing display metadata uses zero/empty values.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "query",
+            "description": " make required after integ is done",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "auth",
+            "in": "query",
+            "description": " made optional to support header auth clients",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "account_index",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "event_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": "100",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespGetBoPnL"
                 }
               }
             }
@@ -12153,6 +12576,740 @@
           "pnl",
           "roi",
           "volume"
+        ]
+      },
+      "RespPriceOracleInfo": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "computed_at_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceOracleMarket"
+            }
+          }
+        },
+        "title": "RespPriceOracleInfo",
+        "required": [
+          "code",
+          "computed_at_ms",
+          "markets"
+        ]
+      },
+      "PriceOracleMarket": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "index": {
+            "$ref": "#/components/schemas/PriceOraclePrice"
+          },
+          "mark": {
+            "$ref": "#/components/schemas/PriceOraclePrice"
+          }
+        },
+        "title": "PriceOracleMarket",
+        "required": [
+          "symbol",
+          "index",
+          "mark"
+        ]
+      },
+      "PriceOraclePrice": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "using_median": {
+            "type": "boolean",
+            "format": "boolean"
+          },
+          "using_internal_price": {
+            "type": "boolean",
+            "format": "boolean"
+          },
+          "median_sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "price_cap_bps": {
+            "type": "number",
+            "format": "double"
+          },
+          "price_cap_reference_price": {
+            "type": "number",
+            "format": "double",
+            "description": " cap bounds: ref * (1 -/+ bps / 10000)"
+          }
+        },
+        "title": "PriceOraclePrice",
+        "required": [
+          "source",
+          "using_median",
+          "using_internal_price",
+          "median_sources",
+          "price_cap_bps",
+          "price_cap_reference_price"
+        ]
+      },
+      "RespGetUpDownCandles": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "candles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpDownCandle"
+            },
+            "description": " ascending by timestamp"
+          },
+          "next_cursor": {
+            "type": "integer",
+            "format": "int64",
+            "example": "0",
+            "description": " start_timestamp of the next page; 0 when the range is exhausted"
+          }
+        },
+        "title": "RespGetUpDownCandles",
+        "required": [
+          "code",
+          "candles"
+        ]
+      },
+      "UpDownCandle": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "example": "btc"
+          },
+          "duration": {
+            "type": "string",
+            "example": "5m"
+          },
+          "resolution": {
+            "type": "string",
+            "example": "30s"
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1789551600",
+            "description": " bucket start, unix seconds"
+          },
+          "open": {
+            "type": "string",
+            "example": "115342.123456789012345678",
+            "description": " exact provider prices, decimal strings"
+          },
+          "high": {
+            "type": "string",
+            "example": "115350.5"
+          },
+          "low": {
+            "type": "string",
+            "example": "115300.25"
+          },
+          "close": {
+            "type": "string",
+            "example": "115340.123456789012345678"
+          },
+          "sampleCount": {
+            "type": "integer",
+            "format": "int64",
+            "description": " observations in the candle: orders live updates of the same bucket, not served"
+          },
+          "provider": {
+            "type": "string",
+            "example": "chainlink",
+            "description": " provider feed of the last observation of the candle"
+          },
+          "feed_id": {
+            "type": "string",
+            "example": "0x0002ee6757e8822c00d273bc340fc24c9cafe123a4ff2ea1dbdb31944bc7d95f"
+          }
+        },
+        "title": "UpDownCandle",
+        "required": [
+          "symbol",
+          "duration",
+          "resolution",
+          "timestamp",
+          "open",
+          "high",
+          "low",
+          "close",
+          "sampleCount",
+          "provider",
+          "feed_id"
+        ]
+      },
+      "RespGetEvents": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "next_cursor": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventDetail"
+            }
+          }
+        },
+        "title": "RespGetEvents",
+        "required": [
+          "code",
+          "events"
+        ]
+      },
+      "EventDetail": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "creator_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1640995200000"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "event_kind": {
+            "type": "string",
+            "enum": [
+              "one_off",
+              "recurrent"
+            ]
+          },
+          "recurrence_period_seconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "occurrence_start_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "occurrence_end_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "order_books": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventOrderBookEntry"
+            }
+          },
+          "lifetime_quote_token_volume": {
+            "type": "number",
+            "format": "double",
+            "example": "8400000.00"
+          }
+        },
+        "title": "EventDetail",
+        "required": [
+          "event_id",
+          "title",
+          "description",
+          "creator_account_index",
+          "created_at",
+          "tag",
+          "event_kind",
+          "recurrence_period_seconds",
+          "occurrence_start_at",
+          "occurrence_end_at",
+          "metadata",
+          "order_books",
+          "lifetime_quote_token_volume"
+        ]
+      },
+      "EventOrderBookEntry": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "example": "ETH"
+          },
+          "market_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "marketSlotId": {
+            "type": "integer",
+            "format": "int16",
+            "description": " internal only: the reusable tree slot backing this market; never serialized, users only know market_id (the public market index)"
+          },
+          "market_type": {
+            "type": "string",
+            "enum": [
+              "perp",
+              "spot",
+              "binary_options"
+            ]
+          },
+          "base_asset_id": {
+            "type": "integer",
+            "format": "int16",
+            "example": "1"
+          },
+          "quote_asset_id": {
+            "type": "integer",
+            "format": "int16",
+            "example": "2"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "inactive",
+              "active"
+            ]
+          },
+          "taker_fee": {
+            "type": "string",
+            "example": "0.0001"
+          },
+          "is_taker_fee_enabled": {
+            "type": "boolean",
+            "format": "boolean",
+            "example": "true"
+          },
+          "maker_fee": {
+            "type": "string",
+            "example": "0.0000"
+          },
+          "is_maker_fee_enabled": {
+            "type": "boolean",
+            "format": "boolean",
+            "example": "true"
+          },
+          "liquidation_fee": {
+            "type": "string",
+            "example": "0.01"
+          },
+          "min_base_amount": {
+            "type": "string",
+            "example": "0.01"
+          },
+          "min_quote_amount": {
+            "type": "string",
+            "example": "0.1"
+          },
+          "order_quote_limit": {
+            "type": "string",
+            "example": "235.25"
+          },
+          "supported_size_decimals": {
+            "type": "integer",
+            "format": "uint8",
+            "example": "4"
+          },
+          "supported_price_decimals": {
+            "type": "integer",
+            "format": "uint8",
+            "example": "4"
+          },
+          "supported_quote_decimals": {
+            "type": "integer",
+            "format": "uint8",
+            "example": "4"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "1640995200000"
+          },
+          "multiplier": {
+            "type": "string",
+            "example": "1.000000000000000000"
+          },
+          "start_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1640995200000"
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1640995200000"
+          },
+          "open_interest": {
+            "type": "string",
+            "example": "93.0"
+          },
+          "outcome": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "x-enum-varnames": [
+              "None",
+              "No",
+              "Yes"
+            ]
+          },
+          "operator_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          },
+          "settlement_cap": {
+            "type": "integer",
+            "format": "int32",
+            "example": "10000"
+          },
+          "settlement_type": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1
+            ],
+            "x-enum-varnames": [
+              "Discrete",
+              "Continuous"
+            ]
+          },
+          "settlement_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": "10000"
+          },
+          "default_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": "5000"
+          },
+          "is_frozen": {
+            "type": "boolean",
+            "format": "boolean",
+            "example": "false"
+          },
+          "size_decimals": {
+            "type": "integer",
+            "format": "uint8",
+            "example": "4"
+          },
+          "price_decimals": {
+            "type": "integer",
+            "format": "uint8",
+            "example": "4"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/BinaryOptionMarketStats"
+          }
+        },
+        "title": "EventOrderBookEntry",
+        "required": [
+          "symbol",
+          "market_id",
+          "marketSlotId",
+          "market_type",
+          "base_asset_id",
+          "quote_asset_id",
+          "status",
+          "taker_fee",
+          "is_taker_fee_enabled",
+          "maker_fee",
+          "is_maker_fee_enabled",
+          "liquidation_fee",
+          "min_base_amount",
+          "min_quote_amount",
+          "order_quote_limit",
+          "supported_size_decimals",
+          "supported_price_decimals",
+          "supported_quote_decimals",
+          "created_at",
+          "multiplier",
+          "start_timestamp",
+          "end_timestamp",
+          "open_interest",
+          "outcome",
+          "operator_account_index",
+          "settlement_cap",
+          "settlement_type",
+          "settlement_price",
+          "default_price",
+          "is_frozen",
+          "size_decimals",
+          "price_decimals",
+          "stats"
+        ]
+      },
+      "BinaryOptionMarketStats": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "example": "BINOPT1000"
+          },
+          "market_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1000"
+          },
+          "mid_price": {
+            "type": "string",
+            "example": "0.52"
+          },
+          "best_ask_price": {
+            "type": "string",
+            "example": "0.53"
+          },
+          "best_bid_price": {
+            "type": "string",
+            "example": "0.51"
+          },
+          "last_trade_price": {
+            "type": "string",
+            "example": "0.52"
+          },
+          "daily_base_token_volume": {
+            "type": "number",
+            "format": "double",
+            "example": "235.25"
+          },
+          "daily_quote_token_volume": {
+            "type": "number",
+            "format": "double",
+            "example": "115.27"
+          },
+          "daily_price_low": {
+            "type": "number",
+            "format": "double",
+            "example": "0.42"
+          },
+          "daily_price_high": {
+            "type": "number",
+            "format": "double",
+            "example": "0.55"
+          },
+          "daily_price_change": {
+            "type": "number",
+            "format": "double",
+            "example": "0.03"
+          },
+          "lifetime_quote_token_volume": {
+            "type": "number",
+            "format": "double",
+            "example": "8400000.00"
+          },
+          "lifetime_base_token_volume": {
+            "type": "number",
+            "format": "double",
+            "example": "16000000.00",
+            "description": " outcome shares traded over the market's life"
+          },
+          "open_interest": {
+            "type": "string",
+            "example": "93.0"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "inactive",
+              "active",
+              "in-settlement"
+            ],
+            "description": " inactive once the trading window closes"
+          },
+          "outcome": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "x-enum-varnames": [
+              "None",
+              "No",
+              "Yes"
+            ]
+          }
+        },
+        "title": "BinaryOptionMarketStats",
+        "required": [
+          "symbol",
+          "market_id",
+          "mid_price",
+          "best_ask_price",
+          "best_bid_price",
+          "last_trade_price",
+          "daily_base_token_volume",
+          "daily_quote_token_volume",
+          "daily_price_low",
+          "daily_price_high",
+          "daily_price_change",
+          "lifetime_quote_token_volume",
+          "lifetime_base_token_volume",
+          "open_interest",
+          "status",
+          "outcome"
+        ]
+      },
+      "RespGetBoPnL": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoEventPnL"
+            }
+          },
+          "next_cursor": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          }
+        },
+        "title": "RespGetBoPnL",
+        "required": [
+          "code",
+          "events"
+        ]
+      },
+      "BoEventPnL": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "event_title": {
+            "type": "string"
+          },
+          "event_description": {
+            "type": "string"
+          },
+          "total_pnl": {
+            "type": "string"
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoOutcomePnL"
+            }
+          }
+        },
+        "title": "BoEventPnL",
+        "required": [
+          "event_id",
+          "event_title",
+          "event_description",
+          "total_pnl",
+          "outcomes"
+        ]
+      },
+      "BoOutcomePnL": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "x-enum-varnames": [
+              "None",
+              "No",
+              "Yes"
+            ]
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "settlement_pnl": {
+            "type": "string"
+          },
+          "last_trade_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "total_pnl": {
+            "type": "string"
+          }
+        },
+        "title": "BoOutcomePnL",
+        "required": [
+          "market_id",
+          "symbol",
+          "outcome",
+          "end_timestamp",
+          "settlement_pnl",
+          "last_trade_id",
+          "total_pnl"
         ]
       }
     }

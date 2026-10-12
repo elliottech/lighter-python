@@ -1535,7 +1535,7 @@ class AccountApi:
     ) -> RespChangeAccountTier:
         """changeAccountTier
 
-        Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
+        Change account tier. You can only perform this action once every 24 hours.
 
         :param account_index: (required)
         :type account_index: int
@@ -1610,7 +1610,7 @@ class AccountApi:
     ) -> ApiResponse[RespChangeAccountTier]:
         """changeAccountTier
 
-        Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
+        Change account tier. You can only perform this action once every 24 hours.
 
         :param account_index: (required)
         :type account_index: int
@@ -1685,7 +1685,7 @@ class AccountApi:
     ) -> RESTResponseType:
         """changeAccountTier
 
-        Change account type (applies to both master, and subaccounts). Downgrades can be performed once every 24 hours.
+        Change account tier. You can only perform this action once every 24 hours.
 
         :param account_index: (required)
         :type account_index: int

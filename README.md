@@ -97,8 +97,10 @@ Class | Method | HTTP request | Description
 *CandlestickApi* | [**fundings**](docs/CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
 *CandlestickApi* | [**mark_price_candles**](docs/CandlestickApi.md#mark_price_candles) | **GET** /api/v1/markPriceCandles | markPriceCandles
 *CandlestickApi* | [**market_price_charts**](docs/CandlestickApi.md#market_price_charts) | **GET** /api/v1/marketPriceCharts | marketPriceCharts
+*EventApi* | [**events**](docs/EventApi.md#events) | **GET** /api/v1/events | events
 *FundingApi* | [**funding_rates**](docs/FundingApi.md#funding_rates) | **GET** /api/v1/funding-rates | funding-rates
 *InfoApi* | [**layer1_basic_info**](docs/InfoApi.md#layer1_basic_info) | **GET** /api/v1/layer1BasicInfo | layer1BasicInfo
+*InfoApi* | [**price_oracle_info**](docs/InfoApi.md#price_oracle_info) | **GET** /api/v1/priceOracleInfo | priceOracleInfo
 *InfoApi* | [**synthetic_spot_info**](docs/InfoApi.md#synthetic_spot_info) | **GET** /api/v1/syntheticSpotInfo | syntheticSpotInfo
 *InfoApi* | [**system_config**](docs/InfoApi.md#system_config) | **GET** /api/v1/systemConfig | systemConfig
 *InfoApi* | [**transfer_fee_info**](docs/InfoApi.md#transfer_fee_info) | **GET** /api/v1/transferFeeInfo | transferFeeInfo
@@ -111,14 +113,15 @@ Class | Method | HTTP request | Description
 *OrderApi* | [**asset_details**](docs/OrderApi.md#asset_details) | **GET** /api/v1/assetDetails | assetDetails
 *OrderApi* | [**exchange_metrics**](docs/OrderApi.md#exchange_metrics) | **GET** /api/v1/exchangeMetrics | exchangeMetrics
 *OrderApi* | [**exchange_stats**](docs/OrderApi.md#exchange_stats) | **GET** /api/v1/exchangeStats | exchangeStats
-*OrderApi* | [**export_historical_trades**](docs/OrderApi.md#export_historical_trades) | **GET** /api/v1/export/historicalTrades | export_historicalTrades
 *OrderApi* | [**execute_stats**](docs/OrderApi.md#execute_stats) | **GET** /api/v1/executeStats | executeStats
 *OrderApi* | [**export**](docs/OrderApi.md#export) | **GET** /api/v1/export | export
+*OrderApi* | [**export_historical_trades**](docs/OrderApi.md#export_historical_trades) | **GET** /api/v1/export/historicalTrades | export_historicalTrades
 *OrderApi* | [**order_book_details**](docs/OrderApi.md#order_book_details) | **GET** /api/v1/orderBookDetails | orderBookDetails
 *OrderApi* | [**order_book_orders**](docs/OrderApi.md#order_book_orders) | **GET** /api/v1/orderBookOrders | orderBookOrders
 *OrderApi* | [**order_books**](docs/OrderApi.md#order_books) | **GET** /api/v1/orderBooks | orderBooks
 *OrderApi* | [**recent_trades**](docs/OrderApi.md#recent_trades) | **GET** /api/v1/recentTrades | recentTrades
 *OrderApi* | [**trades**](docs/OrderApi.md#trades) | **GET** /api/v1/trades | trades
+*PortfolioApi* | [**portfolio_bo_pnl**](docs/PortfolioApi.md#portfolio_bo_pnl) | **GET** /api/v1/portfolio/boPnl | portfolio_boPnl
 *ReferralApi* | [**referral_create**](docs/ReferralApi.md#referral_create) | **POST** /api/v1/referral/create | referral_create
 *ReferralApi* | [**referral_get**](docs/ReferralApi.md#referral_get) | **GET** /api/v1/referral/get | referral_get
 *ReferralApi* | [**referral_kickback_update**](docs/ReferralApi.md#referral_kickback_update) | **POST** /api/v1/referral/kickback/update | referral_kickback_update
@@ -141,6 +144,7 @@ Class | Method | HTTP request | Description
 *TransactionApi* | [**tx_from_l1_tx_hash**](docs/TransactionApi.md#tx_from_l1_tx_hash) | **GET** /api/v1/txFromL1TxHash | txFromL1TxHash
 *TransactionApi* | [**txs**](docs/TransactionApi.md#txs) | **GET** /api/v1/txs | txs
 *TransactionApi* | [**withdraw_history**](docs/TransactionApi.md#withdraw_history) | **GET** /api/v1/withdraw/history | withdraw_history
+*UpdownApi* | [**up_down_candles**](docs/UpdownApi.md#up_down_candles) | **GET** /api/v1/upDownCandles | upDownCandles
 <!-- /AUTOGEN:API_ENDPOINTS -->
 
 <!-- AUTOGEN:MODELS -->
@@ -159,8 +163,11 @@ Class | Method | HTTP request | Description
  - [ApprovedIntegrator](docs/ApprovedIntegrator.md)
  - [Asset](docs/Asset.md)
  - [AssetDetails](docs/AssetDetails.md)
+ - [BinaryOptionMarketStats](docs/BinaryOptionMarketStats.md)
  - [Block](docs/Block.md)
  - [Blocks](docs/Blocks.md)
+ - [BoEventPnL](docs/BoEventPnL.md)
+ - [BoOutcomePnL](docs/BoOutcomePnL.md)
  - [BridgeSupportedNetwork](docs/BridgeSupportedNetwork.md)
  - [BridgeSupportedNetworks](docs/BridgeSupportedNetworks.md)
  - [Candle](docs/Candle.md)
@@ -175,6 +182,8 @@ Class | Method | HTTP request | Description
  - [DetailedAccount](docs/DetailedAccount.md)
  - [DetailedAccounts](docs/DetailedAccounts.md)
  - [EnrichedTx](docs/EnrichedTx.md)
+ - [EventDetail](docs/EventDetail.md)
+ - [EventOrderBookEntry](docs/EventOrderBookEntry.md)
  - [ExchangeMetric](docs/ExchangeMetric.md)
  - [ExchangeStats](docs/ExchangeStats.md)
  - [ExecuteStat](docs/ExecuteStat.md)
@@ -182,8 +191,8 @@ Class | Method | HTTP request | Description
  - [Funding](docs/Funding.md)
  - [FundingRate](docs/FundingRate.md)
  - [FundingRates](docs/FundingRates.md)
- - [HistoricalTradesExportData](docs/HistoricalTradesExportData.md)
  - [Fundings](docs/Fundings.md)
+ - [HistoricalTradesExportData](docs/HistoricalTradesExportData.md)
  - [L1Metadata](docs/L1Metadata.md)
  - [L1ProviderInfo](docs/L1ProviderInfo.md)
  - [Layer1BasicInfo](docs/Layer1BasicInfo.md)
@@ -212,11 +221,13 @@ Class | Method | HTTP request | Description
  - [PartnerStats](docs/PartnerStats.md)
  - [PendingUnlock](docs/PendingUnlock.md)
  - [PerpsOrderBookDetail](docs/PerpsOrderBookDetail.md)
+ - [PnLEntry](docs/PnLEntry.md)
  - [PnlLeaderboard](docs/PnlLeaderboard.md)
  - [PnlLeaderboardEntry](docs/PnlLeaderboardEntry.md)
- - [PnLEntry](docs/PnLEntry.md)
  - [PositionFunding](docs/PositionFunding.md)
  - [PositionFundings](docs/PositionFundings.md)
+ - [PriceOracleMarket](docs/PriceOracleMarket.md)
+ - [PriceOraclePrice](docs/PriceOraclePrice.md)
  - [PublicPoolInfo](docs/PublicPoolInfo.md)
  - [PublicPoolMetadata](docs/PublicPoolMetadata.md)
  - [PublicPoolShare](docs/PublicPoolShare.md)
@@ -224,17 +235,19 @@ Class | Method | HTTP request | Description
  - [RFQMetadata](docs/RFQMetadata.md)
  - [RFQResponseEntry](docs/RFQResponseEntry.md)
  - [Referral](docs/Referral.md)
- - [ReferralStat](docs/ReferralStat.md)
- - [ReferralStats](docs/ReferralStats.md)
  - [ReferralCode](docs/ReferralCode.md)
  - [ReferralPointEntry](docs/ReferralPointEntry.md)
  - [ReferralPoints](docs/ReferralPoints.md)
  - [ReferralProgramKickback](docs/ReferralProgramKickback.md)
+ - [ReferralStat](docs/ReferralStat.md)
+ - [ReferralStats](docs/ReferralStats.md)
  - [ReferralTotals](docs/ReferralTotals.md)
  - [ReqSetAccountMetadata](docs/ReqSetAccountMetadata.md)
  - [RespChangeAccountTier](docs/RespChangeAccountTier.md)
  - [RespCreateRFQ](docs/RespCreateRFQ.md)
  - [RespGetApiTokens](docs/RespGetApiTokens.md)
+ - [RespGetBoPnL](docs/RespGetBoPnL.md)
+ - [RespGetEvents](docs/RespGetEvents.md)
  - [RespGetExchangeMetrics](docs/RespGetExchangeMetrics.md)
  - [RespGetExecuteStats](docs/RespGetExecuteStats.md)
  - [RespGetFastBridgeInfo](docs/RespGetFastBridgeInfo.md)
@@ -243,8 +256,10 @@ Class | Method | HTTP request | Description
  - [RespGetLeases](docs/RespGetLeases.md)
  - [RespGetMakerOnlyApiKeys](docs/RespGetMakerOnlyApiKeys.md)
  - [RespGetRFQ](docs/RespGetRFQ.md)
+ - [RespGetUpDownCandles](docs/RespGetUpDownCandles.md)
  - [RespListRFQs](docs/RespListRFQs.md)
  - [RespPostApiToken](docs/RespPostApiToken.md)
+ - [RespPriceOracleInfo](docs/RespPriceOracleInfo.md)
  - [RespPublicPoolsMetadata](docs/RespPublicPoolsMetadata.md)
  - [RespRespondToRFQ](docs/RespRespondToRFQ.md)
  - [RespRevokeApiToken](docs/RespRevokeApiToken.md)
@@ -279,6 +294,7 @@ Class | Method | HTTP request | Description
  - [Tx](docs/Tx.md)
  - [TxHash](docs/TxHash.md)
  - [Txs](docs/Txs.md)
+ - [UpDownCandle](docs/UpDownCandle.md)
  - [UserReferrals](docs/UserReferrals.md)
  - [ValidatorInfo](docs/ValidatorInfo.md)
  - [WithdrawHistory](docs/WithdrawHistory.md)

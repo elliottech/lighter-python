@@ -11,7 +11,7 @@ Method | HTTP request | Description
 
 
 # **candles**
-> Candles candles(market_id, resolution, start_timestamp, end_timestamp, count_back, set_timestamp_to_end=set_timestamp_to_end)
+> Candles candles(market_id, resolution, start_timestamp, end_timestamp, count_back, set_timestamp_to_end=set_timestamp_to_end, merge_mark_price=merge_mark_price)
 
 candles
 
@@ -43,10 +43,11 @@ async with lighter.ApiClient(configuration) as api_client:
     end_timestamp = 56 # int | 
     count_back = 56 # int | 
     set_timestamp_to_end = False # bool |  (optional) (default to False)
+    merge_mark_price = False # bool |  (optional) (default to False)
 
     try:
         # candles
-        api_response = await api_instance.candles(market_id, resolution, start_timestamp, end_timestamp, count_back, set_timestamp_to_end=set_timestamp_to_end)
+        api_response = await api_instance.candles(market_id, resolution, start_timestamp, end_timestamp, count_back, set_timestamp_to_end=set_timestamp_to_end, merge_mark_price=merge_mark_price)
         print("The response of CandlestickApi->candles:\n")
         pprint(api_response)
     except Exception as e:
@@ -66,6 +67,7 @@ Name | Type | Description  | Notes
  **end_timestamp** | **int**|  | 
  **count_back** | **int**|  | 
  **set_timestamp_to_end** | **bool**|  | [optional] [default to False]
+ **merge_mark_price** | **bool**|  | [optional] [default to False]
 
 ### Return type
 

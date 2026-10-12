@@ -976,7 +976,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **trades**
-> Trades trades(sort_by, limit, authorization=authorization, market_id=market_id, market_type=market_type, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate, skip_ask_order_id=skip_ask_order_id, skip_bid_order_id=skip_bid_order_id)
+> Trades trades(sort_by, limit, authorization=authorization, market_id=market_id, market_type=market_type, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate, skip_ask_order_id=skip_ask_order_id, skip_bid_order_id=skip_bid_order_id, integrator_account_index=integrator_account_index, order_index_str=order_index_str)
 
 trades
 
@@ -1018,10 +1018,12 @@ async with lighter.ApiClient(configuration) as api_client:
     aggregate = False # bool |  (optional) (default to False)
     skip_ask_order_id = 'skip_ask_order_id_example' # str |  (optional)
     skip_bid_order_id = 'skip_bid_order_id_example' # str |  (optional)
+    integrator_account_index = 56 # int |  (optional)
+    order_index_str = 'order_index_str_example' # str |  takes precedence over order_index; for clients that cannot represent uint64 exactly (optional)
 
     try:
         # trades
-        api_response = await api_instance.trades(sort_by, limit, authorization=authorization, market_id=market_id, market_type=market_type, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate, skip_ask_order_id=skip_ask_order_id, skip_bid_order_id=skip_bid_order_id)
+        api_response = await api_instance.trades(sort_by, limit, authorization=authorization, market_id=market_id, market_type=market_type, account_index=account_index, order_index=order_index, sort_dir=sort_dir, cursor=cursor, var_from=var_from, ask_filter=ask_filter, role=role, type=type, aggregate=aggregate, skip_ask_order_id=skip_ask_order_id, skip_bid_order_id=skip_bid_order_id, integrator_account_index=integrator_account_index, order_index_str=order_index_str)
         print("The response of OrderApi->trades:\n")
         pprint(api_response)
     except Exception as e:
@@ -1051,6 +1053,8 @@ Name | Type | Description  | Notes
  **aggregate** | **bool**|  | [optional] [default to False]
  **skip_ask_order_id** | **str**|  | [optional] 
  **skip_bid_order_id** | **str**|  | [optional] 
+ **integrator_account_index** | **int**|  | [optional] 
+ **order_index_str** | **str**|  takes precedence over order_index; for clients that cannot represent uint64 exactly | [optional] 
 
 ### Return type
 
