@@ -8,8 +8,8 @@ async def main():
     client, api_client, _ = default_example_setup()
 
     # Binary options markets are not listed by /orderBooks, discover them through /events.
-    # Pick the active market that resolves soonest (end_timestamp is in ms).
-    events = await lighter.EventApi(api_client).events(active=True, limit=10)
+    # Filter by series tag (e.g. btc-updown-30s, eth-updown-5m) and pick the market that resolves soonest.
+    events = await lighter.EventApi(api_client).events(active=True, tag="eth-updown-30s", limit=10)
     now_ms = int(time.time() * 1000)
     market = min(
         (ob for event in events.events for ob in event.order_books if ob.status == "active" and ob.end_timestamp > now_ms),
