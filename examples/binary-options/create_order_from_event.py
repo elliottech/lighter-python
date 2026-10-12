@@ -1,4 +1,5 @@
 import asyncio
+import time
 import lighter
 from examples.utils import default_example_setup
 
@@ -7,8 +8,13 @@ async def main():
     client, api_client, _ = default_example_setup()
 
     # Binary options markets are not listed by /orderBooks, discover them through /events.
+    # Pick the active market that resolves soonest (end_timestamp is in ms).
     events = await lighter.EventApi(api_client).events(active=True, limit=10)
-    market = next(ob for event in events.events for ob in event.order_books if ob.status == "active")
+    now_ms = int(time.time() * 1000)
+    market = min(
+        (ob for event in events.events for ob in event.order_books if ob.status == "active" and ob.end_timestamp > now_ms),
+        key=lambda ob: ob.end_timestamp,
+    )
     print(
         f"{market.symbol} market_id={market.market_id} settlement_cap={market.settlement_cap} "
         f"best_bid={market.stats.best_bid_price} best_ask={market.stats.best_ask_price}"
