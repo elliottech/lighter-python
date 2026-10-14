@@ -3,27 +3,31 @@ import time
 import lighter
 from examples.utils import default_example_setup
 
+TAG = "eth-updown-15m"
+SHARES = 10
+PRICE_PCT = 60  # buy YES at 60% of settlement_cap == 0.60 implied probability
+
 
 async def main():
     client, api_client, _ = default_example_setup()
 
     # Binary options markets are not listed by /orderBooks, discover them through /events.
     # Filter by series tag (e.g. btc-updown-30s, eth-updown-5m) and pick the market that resolves soonest.
-    events = await lighter.EventApi(api_client).events(active=True, tag="eth-updown-15m", limit=10)
+    events = await lighter.EventApi(api_client).events(active=True, tag=TAG, limit=10)
     now_ms = int(time.time() * 1000)
     market = min(
-        (ob for event in events.events for ob in event.order_books if ob.status == "active" and ob.end_timestamp > now_ms),
+        (ob for event in events.events for ob in event.order_books if ob.end_timestamp > now_ms),
         key=lambda ob: ob.end_timestamp,
     )
     print(
         f"{market.symbol} market_id={market.market_id} settlement_cap={market.settlement_cap} "
-        f"best_bid={market.stats.best_bid_price} best_ask={market.stats.best_ask_price}"
+        f"best_bid={market.stats.best_bid_price or 'none'} best_ask={market.stats.best_ask_price or 'none'}"
     )
 
     # Prices are ticks between 0 and settlement_cap (the payout of a winning share).
-    # Buy = YES, sell = NO. 60% of the cap == 0.60 implied probability.
-    price = market.settlement_cap * 60 // 100
-    base_amount = 10 * 10**market.size_decimals  # 10 shares
+    # Buy = YES, sell = NO.
+    price = market.settlement_cap * PRICE_PCT // 100
+    base_amount = SHARES * 10**market.size_decimals
 
     tx, tx_hash, err = await client.create_order(
         market_index=market.market_id,
