@@ -43,12 +43,12 @@ class Trade(BaseModel):
     taker_fee: Optional[StrictInt] = None
     taker_position_size_before: StrictStr
     taker_entry_quote_before: StrictStr
-    taker_initial_margin_fraction_before: StrictInt
+    taker_initial_margin_fraction_before: Optional[StrictInt] = None
     taker_position_sign_changed: StrictBool
     maker_fee: Optional[StrictInt] = None
     maker_position_size_before: StrictStr
     maker_entry_quote_before: StrictStr
-    maker_initial_margin_fraction_before: StrictInt
+    maker_initial_margin_fraction_before: Optional[StrictInt] = None
     maker_position_sign_changed: StrictBool
     transaction_time: StrictInt
     bid_account_pnl: StrictStr = Field(description="Realized PnL for the queried account index, triggered by reducing a short position")

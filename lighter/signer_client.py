@@ -289,6 +289,7 @@ class SignerClient:
     DEFAULT_IOC_EXPIRY = 0
     DEFAULT_10_MIN_AUTH_EXPIRY = -1
     MINUTE = 60
+    MIN_ORDER_EXPIRY_MS = 4 * MINUTE * 1000
 
     CROSS_MARGIN_MODE = 0
     ISOLATED_MARGIN_MODE = 1
@@ -689,6 +690,14 @@ class SignerClient:
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX
     ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+        # order_expiry is an absolute unix timestamp in milliseconds; the server
+        # rejects GTT orders expiring less than 4 minutes from now with
+        # code=21711 "invalid expiry"
+        if order_expiry > 0 and order_expiry - int(time.time() * 1000) < self.MIN_ORDER_EXPIRY_MS:
+            logging.warning(
+                f"order_expiry={order_expiry} is less than {self.MIN_ORDER_EXPIRY_MS} milliseconds "
+                f"in the future; the server will reject the order with an invalid expiry error"
+            )
         tx_type, tx_info, tx_hash, error = self.sign_create_order(
             market_index,
             client_order_index,
@@ -1127,6 +1136,112 @@ class SignerClient:
             api_key_index=api_key_index,
         )
 
+    # will only place the stop-loss order if it can execute with slippage <= max_slippage
+    async def create_sl_order_if_slippage(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            is_ask,
+            max_slippage,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+        ob_orders = await self.order_api.order_book_orders(market_index, 100)
+        if ideal_price is None:
+            ideal_price = await self.get_best_price(market_index, is_ask, ob_orders)
+        potential_execution_price, matched_size = await self.get_potential_execution_price(
+            market_index,
+            base_amount,
+            is_ask,
+            is_amount_base=True,
+            ob_orders=ob_orders
+        )
+
+        acceptable_execution_price = ideal_price * (1 + max_slippage * (-1 if is_ask else 1))
+        if (is_ask and potential_execution_price < acceptable_execution_price) or (not is_ask and potential_execution_price > acceptable_execution_price):
+            return None, None, "Excessive slippage"
+
+        if matched_size < base_amount:
+            return None, None, "Cannot be sure slippage will be acceptable due to the high size"
+
+        return await self.create_sl_order(
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            round(acceptable_execution_price),
+            is_ask,
+            reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
+            nonce=nonce,
+            api_key_index=api_key_index,
+        )
+
+    # will only place the take-profit order if it can execute with slippage <= max_slippage
+    async def create_tp_order_if_slippage(
+            self,
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            is_ask,
+            max_slippage,
+            reduce_only=False,
+            *,
+            integrator_account_index: int = 0,
+            integrator_taker_fee: int = 0,
+            integrator_maker_fee: int = 0,
+            ideal_price=None,
+            skip_nonce: int = SKIP_NONCE_OFF,
+            nonce: int = DEFAULT_NONCE,
+            api_key_index: int = DEFAULT_API_KEY_INDEX
+        ) -> Union[Tuple[CreateOrder, RespSendTx, None], Tuple[None, None, str]]:
+        ob_orders = await self.order_api.order_book_orders(market_index, 100)
+        if ideal_price is None:
+            ideal_price = await self.get_best_price(market_index, is_ask, ob_orders)
+        potential_execution_price, matched_size = await self.get_potential_execution_price(
+            market_index,
+            base_amount,
+            is_ask,
+            is_amount_base=True,
+            ob_orders=ob_orders
+        )
+
+        acceptable_execution_price = ideal_price * (1 + max_slippage * (-1 if is_ask else 1))
+        if (is_ask and potential_execution_price < acceptable_execution_price) or (not is_ask and potential_execution_price > acceptable_execution_price):
+            return None, None, "Excessive slippage"
+
+        if matched_size < base_amount:
+            return None, None, "Cannot be sure slippage will be acceptable due to the high size"
+
+        return await self.create_tp_order(
+            market_index,
+            client_order_index,
+            base_amount,
+            trigger_price,
+            round(acceptable_execution_price),
+            is_ask,
+            reduce_only,
+            integrator_account_index=integrator_account_index,
+            integrator_taker_fee=integrator_taker_fee,
+            integrator_maker_fee=integrator_maker_fee,
+            skip_nonce=skip_nonce,
+            nonce=nonce,
+            api_key_index=api_key_index,
+        )
+
     @process_api_key_and_nonce
     async def withdraw(self, asset_id: int, route_type: int, amount: float, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
         if asset_id in self.ASSET_TO_TICKER_SCALE:
@@ -1394,6 +1509,36 @@ class SignerClient:
         api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
         return tx_info, api_response, None
 
+
+    # parses a send_tx response: code=200 with an empty message means success.
+    # A code=200 message can hold either informational volume quota status
+    # (the "ratelimit" key, which the server also attaches to accepted orders)
+    # or a rejection reason ("error", "reason", "cancel_reason"). Orders that
+    # are accepted but never fill (e.g. triggered SL/TP failing on margin) are
+    # only visible post-hoc via account_inactive_orders statuses; the send_tx
+    # response itself carries no reason for them.
+    @staticmethod
+    def parse_send_tx_response(api_response: RespSendTx) -> Tuple[bool, Optional[str]]:
+        if api_response is None:
+            return False, "No response from API"
+        if api_response.code != CODE_OK:
+            return False, api_response.message
+        if not api_response.message:
+            return True, None
+
+        try:
+            msg_data = json.loads(api_response.message)
+        except (json.JSONDecodeError, TypeError):
+            return False, api_response.message
+
+        if isinstance(msg_data, dict):
+            for key in ("error", "reason", "cancel_reason"):
+                if msg_data.get(key):
+                    return False, f"{key}: {msg_data[key]}"
+            if "ratelimit" in msg_data:
+                # informational volume quota status; the order itself was accepted
+                return True, f"ratelimit: {msg_data['ratelimit']}"
+        return False, api_response.message
 
     async def send_tx(self, tx_type: StrictInt, tx_info: str) -> RespSendTx:
         if tx_info[0] != "{":
