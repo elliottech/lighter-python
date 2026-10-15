@@ -180,6 +180,16 @@ def __populate_shared_library_functions(signer):
     signer.SignUpdateAccountAssetConfig.argtypes = [ctypes.c_int16, ctypes.c_uint8, ctypes.c_uint8,  ctypes.c_longlong,  ctypes.c_int, ctypes.c_longlong]
     signer.SignUpdateAccountAssetConfig.restype = SignedTxResponse
 
+
+    signer.SignBinaryOptionsOperatorCreateMarket.argtypes = [ctypes.c_int16, ctypes.c_uint8, ctypes.c_int16, ctypes.c_int16, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint8, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignBinaryOptionsOperatorCreateMarket.restype = SignedTxResponse
+
+    signer.SignBinaryOptionsOperatorUpdateMarket.argtypes = [ctypes.c_int16, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_uint32, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_longlong, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignBinaryOptionsOperatorUpdateMarket.restype = SignedTxResponse
+
+    signer.SignBinaryOptionsOperatorSettleMarket.argtypes = [ctypes.c_int16, ctypes.c_longlong, ctypes.c_uint32, ctypes.c_uint8, ctypes.c_uint8, ctypes.c_longlong, ctypes.c_int, ctypes.c_longlong]
+    signer.SignBinaryOptionsOperatorSettleMarket.restype = SignedTxResponse
+
     signer.Free.argtypes = [ctypes.c_void_p]
     signer.Free.restype = None
 
@@ -665,6 +675,15 @@ class SignerClient:
 
     def sign_update_account_asset_config(self, asset_index: int, asset_margin_mode: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         return self.__decode_tx_info(self.signer.SignUpdateAccountAssetConfig(asset_index, asset_margin_mode, skip_nonce, nonce, api_key_index, self.account_index))
+
+    def sign_binary_options_operator_create_market(self, market_slot: int, market_type: int, base_asset_id: int, quote_asset_id: int, start_timestamp: int, end_timestamp: int, size_extension_multiplier: int, quote_extension_multiplier: int, settlement_cap: int, settlement_type: int, default_price: int, taker_fee: int, maker_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, symbol: str, size_decimals: int, price_decimals: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignBinaryOptionsOperatorCreateMarket(market_slot, market_type, base_asset_id, quote_asset_id, start_timestamp, end_timestamp, size_extension_multiplier, quote_extension_multiplier, settlement_cap, settlement_type, default_price, taker_fee, maker_fee, min_base_amount, min_quote_amount, order_quote_limit, open_interest_limit, is_frozen, ctypes.c_char_p(symbol.encode("utf-8")), size_decimals, price_decimals, skip_nonce, nonce, api_key_index, self.account_index))
+
+    def sign_binary_options_operator_update_market(self, market_slot: int, public_market_index: int, start_timestamp: int, end_timestamp: int, taker_fee: int, maker_fee: int, liquidation_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignBinaryOptionsOperatorUpdateMarket(market_slot, public_market_index, start_timestamp, end_timestamp, taker_fee, maker_fee, liquidation_fee, min_base_amount, min_quote_amount, order_quote_limit, open_interest_limit, is_frozen, skip_nonce, nonce, api_key_index, self.account_index))
+
+    def sign_binary_options_operator_settle_market(self, market_slot: int, public_market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+        return self.__decode_tx_info(self.signer.SignBinaryOptionsOperatorSettleMarket(market_slot, public_market_index, settlement_price, is_refund, skip_nonce, nonce, api_key_index, self.account_index))
 
     @process_api_key_and_nonce
     async def create_order(
@@ -1388,6 +1407,36 @@ class SignerClient:
     async def update_account_asset_config(self, asset_index: int, asset_margin_mode: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         tx_type, tx_info, tx_hash, error = self.sign_update_account_asset_config(
             asset_index, asset_margin_mode, skip_nonce, nonce, api_key_index
+        )
+        if error is not None:
+            return None, None, error
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def binary_options_operator_create_market(self, market_slot: int, market_type: int, base_asset_id: int, quote_asset_id: int, start_timestamp: int, end_timestamp: int, size_extension_multiplier: int, quote_extension_multiplier: int, settlement_cap: int, settlement_type: int, default_price: int, taker_fee: int, maker_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, symbol: str, size_decimals: int, price_decimals: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_binary_options_operator_create_market(
+            market_slot, market_type, base_asset_id, quote_asset_id, start_timestamp, end_timestamp, size_extension_multiplier, quote_extension_multiplier, settlement_cap, settlement_type, default_price, taker_fee, maker_fee, min_base_amount, min_quote_amount, order_quote_limit, open_interest_limit, is_frozen, symbol, size_decimals, price_decimals, skip_nonce, nonce, api_key_index
+        )
+        if error is not None:
+            return None, None, error
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def binary_options_operator_update_market(self, market_slot: int, public_market_index: int, start_timestamp: int, end_timestamp: int, taker_fee: int, maker_fee: int, liquidation_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_binary_options_operator_update_market(
+            market_slot, public_market_index, start_timestamp, end_timestamp, taker_fee, maker_fee, liquidation_fee, min_base_amount, min_quote_amount, order_quote_limit, open_interest_limit, is_frozen, skip_nonce, nonce, api_key_index
+        )
+        if error is not None:
+            return None, None, error
+        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
+        return tx_info, api_response, None
+
+    @process_api_key_and_nonce
+    async def binary_options_operator_settle_market(self, market_slot: int, public_market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+        tx_type, tx_info, tx_hash, error = self.sign_binary_options_operator_settle_market(
+            market_slot, public_market_index, settlement_price, is_refund, skip_nonce, nonce, api_key_index
         )
         if error is not None:
             return None, None, error
