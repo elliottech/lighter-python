@@ -45,10 +45,17 @@ async def main():
     if err is not None:
         raise Exception(err)
 
-    # the public market index (used by create_order / update / settle) is in the tx event
-    await asyncio.sleep(2)
-    executed = await lighter.TransactionApi(api_client).tx(by="hash", value=tx_hash)
-    print(f"public market index: {json.loads(executed.event_info)['m']}")
+    # the public market index (used by create_order / update / settle) is in the tx event;
+    # the tx shows up in the indexer a few seconds after it is accepted
+    tx_api = lighter.TransactionApi(api_client)
+    for _ in range(30):
+        await asyncio.sleep(1)
+        try:
+            executed = await tx_api.tx(by="hash", value=tx_hash.tx_hash)
+        except lighter.ApiException:
+            continue
+        print(f"public market index: {json.loads(executed.event_info)['m']}")
+        break
 
     await client.close()
     await api_client.close()
