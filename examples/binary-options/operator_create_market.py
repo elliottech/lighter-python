@@ -9,7 +9,6 @@ from examples.utils import default_example_setup
 MARKET_SLOT = 1900
 SYMBOL = "BTC-UPDOWN-TEST"
 DURATION_MS = 5 * 60 * 1000
-USDC_ASSET_ID = 3
 
 
 async def main():
@@ -17,18 +16,13 @@ async def main():
 
     start_ms = int(time.time() * 1000)
     # size_decimals=4, price_decimals=2: 1 share pays settlement_cap=100 ticks = 1 USDC when it wins,
-    # prices are 0..100 (implied probability in %). settlement_cap must equal size_multiplier / quote_multiplier.
+    # prices are 0..100 (implied probability in %).
     tx, tx_hash, err = await client.binary_options_operator_create_market(
         market_slot=MARKET_SLOT,
-        market_type=2,
-        base_asset_id=USDC_ASSET_ID,
-        quote_asset_id=USDC_ASSET_ID,
-        start_timestamp=start_ms,
-        end_timestamp=start_ms + DURATION_MS,
-        size_extension_multiplier=100_000_000,
-        quote_extension_multiplier=1_000_000,
+        start_timestamp_ms=start_ms,
+        end_timestamp_ms=start_ms + DURATION_MS,
         settlement_cap=100,
-        settlement_type=0,  # 0 discrete (settles at 0 or settlement_cap), 1 continuous (any price in [0, cap])
+        settlement_type=client.BINARY_OPTIONS_SETTLEMENT_TYPE_DISCRETE,  # or BINARY_OPTIONS_SETTLEMENT_TYPE_CONTINUOUS (settles at any price in [0, cap])
         default_price=50,  # price used when the market is refunded
         taker_fee=0,
         maker_fee=0,
