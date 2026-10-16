@@ -55,6 +55,46 @@ typedef struct {
     int64_t OrderExpiry;
 } CreateOrderTxReq;
 
+typedef struct {
+    int16_t MarketSlot;
+    int64_t StartTimestampMs;
+    int64_t EndTimestampMs;
+    uint32_t SettlementCap;
+    uint8_t SettlementType;
+    uint32_t DefaultPrice;
+    uint32_t TakerFee;
+    uint32_t MakerFee;
+    int64_t MinBaseAmount;
+    int64_t MinQuoteAmount;
+    int64_t OrderQuoteLimit;
+    int64_t OpenInterestLimit;
+    uint8_t IsFrozen;
+    char* Symbol;
+    uint8_t SizeDecimals;
+    uint8_t PriceDecimals;
+} BinaryOptionsOperatorCreateMarketTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t PublicMarketIndex;
+    int64_t StartTimestampMs;
+    int64_t EndTimestampMs;
+    uint32_t TakerFee;
+    uint32_t MakerFee;
+    int64_t MinBaseAmount;
+    int64_t MinQuoteAmount;
+    int64_t OrderQuoteLimit;
+    int64_t OpenInterestLimit;
+    uint8_t IsFrozen;
+} BinaryOptionsOperatorUpdateMarketTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t PublicMarketIndex;
+    uint32_t SettlementPrice;
+    uint8_t IsRefund;
+} BinaryOptionsOperatorSettleMarketTxReq;
+
 #line 1 "cgo-generated-wrapper"
 
 
@@ -135,9 +175,9 @@ extern SignedTxResponse SignUnstakeAssets(long long cStakingPoolIndex, long long
 extern SignedTxResponse SignApproveIntegrator(long long cIntegratorIndex, uint32_t cMaxPerpsTakerFee, uint32_t cMaxPerpsMakerFee, uint32_t cMaxSpotTakerFee, uint32_t cMaxSpotMakerFee, long long cApprovalExpiry, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignUpdateAccountConfig(uint8_t cAccountTradingMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignUpdateAccountAssetConfig(int16_t cAssetIndex, uint8_t cAssetMarginMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignBinaryOptionsOperatorCreateMarket(int16_t cMarketIndex, uint8_t cMarketType, int16_t cBaseAssetId, int16_t cQuoteAssetId, long long cStartTimestamp, long long cEndTimestamp, long long cSizeExtensionMultiplier, long long cQuoteExtensionMultiplier, uint32_t cSettlementCap, uint8_t cSettlementType, uint32_t cDefaultPrice, uint32_t cTakerFee, uint32_t cMakerFee, long long cMinBaseAmount, long long cMinQuoteAmount, long long cOrderQuoteLimit, long long cOpenInterestLimit, uint8_t cIsFrozen, char* cSymbol, uint8_t cSizeDecimals, uint8_t cPriceDecimals, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignBinaryOptionsOperatorUpdateMarket(int16_t cMarketIndex, long long cPublicMarketIndex, long long cStartTimestamp, long long cEndTimestamp, uint32_t cTakerFee, uint32_t cMakerFee, uint32_t cLiquidationFee, long long cMinBaseAmount, long long cMinQuoteAmount, long long cOrderQuoteLimit, long long cOpenInterestLimit, uint8_t cIsFrozen, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
-extern SignedTxResponse SignBinaryOptionsOperatorSettleMarket(int16_t cMarketIndex, long long cPublicMarketIndex, uint32_t cSettlementPrice, uint8_t cIsRefund, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorCreateMarket(BinaryOptionsOperatorCreateMarketTxReq* cReq, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorUpdateMarket(BinaryOptionsOperatorUpdateMarketTxReq* cReq, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorSettleMarket(BinaryOptionsOperatorSettleMarketTxReq* cReq, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern void Free(void* ptr);
 
 #ifdef __cplusplus
