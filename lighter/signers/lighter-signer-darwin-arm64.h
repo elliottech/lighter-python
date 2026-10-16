@@ -12,8 +12,6 @@
 
 #ifndef GO_CGO_GOSTRING_TYPEDEF
 typedef struct { const char *p; ptrdiff_t n; } _GoString_;
-extern size_t _GoStringLen(_GoString_ s);
-extern const char *_GoStringPtr(_GoString_ s);
 #endif
 
 #endif
@@ -83,15 +81,9 @@ typedef size_t GoUintptr;
 typedef float GoFloat32;
 typedef double GoFloat64;
 #ifdef _MSC_VER
-#if !defined(__cplusplus) || _MSVC_LANG <= 201402L
 #include <complex.h>
 typedef _Fcomplex GoComplex64;
 typedef _Dcomplex GoComplex128;
-#else
-#include <complex>
-typedef std::complex<float> GoComplex64;
-typedef std::complex<double> GoComplex128;
-#endif
 #else
 typedef float _Complex GoComplex64;
 typedef double _Complex GoComplex128;
@@ -119,7 +111,7 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern ApiKeyResponse GenerateAPIKey(void);
+extern ApiKeyResponse GenerateAPIKey();
 extern char* CreateClient(char* cUrl, char* cPrivateKey, int cChainId, int cApiKeyIndex, long long cAccountIndex);
 extern char* CheckClient(int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignChangePubKey(char* cPubKey, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
@@ -143,6 +135,9 @@ extern SignedTxResponse SignUnstakeAssets(long long cStakingPoolIndex, long long
 extern SignedTxResponse SignApproveIntegrator(long long cIntegratorIndex, uint32_t cMaxPerpsTakerFee, uint32_t cMaxPerpsMakerFee, uint32_t cMaxSpotTakerFee, uint32_t cMaxSpotMakerFee, long long cApprovalExpiry, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignUpdateAccountConfig(uint8_t cAccountTradingMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern SignedTxResponse SignUpdateAccountAssetConfig(int16_t cAssetIndex, uint8_t cAssetMarginMode, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorCreateMarket(int16_t cMarketIndex, uint8_t cMarketType, int16_t cBaseAssetId, int16_t cQuoteAssetId, long long cStartTimestamp, long long cEndTimestamp, long long cSizeExtensionMultiplier, long long cQuoteExtensionMultiplier, uint32_t cSettlementCap, uint8_t cSettlementType, uint32_t cDefaultPrice, uint32_t cTakerFee, uint32_t cMakerFee, long long cMinBaseAmount, long long cMinQuoteAmount, long long cOrderQuoteLimit, long long cOpenInterestLimit, uint8_t cIsFrozen, char* cSymbol, uint8_t cSizeDecimals, uint8_t cPriceDecimals, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorUpdateMarket(int16_t cMarketIndex, long long cPublicMarketIndex, long long cStartTimestamp, long long cEndTimestamp, uint32_t cTakerFee, uint32_t cMakerFee, uint32_t cLiquidationFee, long long cMinBaseAmount, long long cMinQuoteAmount, long long cOrderQuoteLimit, long long cOpenInterestLimit, uint8_t cIsFrozen, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
+extern SignedTxResponse SignBinaryOptionsOperatorSettleMarket(int16_t cMarketIndex, long long cPublicMarketIndex, uint32_t cSettlementPrice, uint8_t cIsRefund, uint8_t cSkipNonce, long long cNonce, int cApiKeyIndex, long long cAccountIndex);
 extern void Free(void* ptr);
 
 #ifdef __cplusplus
