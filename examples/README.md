@@ -137,6 +137,16 @@ If you want to deposit / withdraw from a public pool, check the following exampl
 To get information about pools, check:
 - `public_pool_info.py`
 
+## Binary Options
+Users trade binary options markets with regular orders; markets are discovered through `/events`, see:
+- `create_order_from_event.py`
+
+Market operators (accounts Lighter assigned a binary options slot to) can run markets on their slot:
+- `operator_create_market.py`
+  - opens a market on the slot and prints its public market index
+- `operator_settle_market.py`
+  - settles (or refunds) the market; `binary_options_operator_update_market` can freeze it or change fees/limits/timestamps before that
+
 ## Moving funds around
 - `withdraw_fast.py`
   - send USDC directly from Lighter to Arbitrum

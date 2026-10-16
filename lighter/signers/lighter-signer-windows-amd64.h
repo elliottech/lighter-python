@@ -55,6 +55,46 @@ typedef struct {
     int64_t OrderExpiry;
 } CreateOrderTxReq;
 
+typedef struct {
+    int16_t MarketSlot;
+    int64_t StartTimestampMs;
+    int64_t EndTimestampMs;
+    uint32_t SettlementCap;
+    uint8_t SettlementType;
+    uint32_t DefaultPrice;
+    uint32_t TakerFee;
+    uint32_t MakerFee;
+    int64_t MinBaseAmount;
+    int64_t MinQuoteAmount;
+    int64_t OrderQuoteLimit;
+    int64_t OpenInterestLimit;
+    uint8_t IsFrozen;
+    char* Symbol;
+    uint8_t SizeDecimals;
+    uint8_t PriceDecimals;
+} BinaryOptionsOperatorCreateMarketTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t PublicMarketIndex;
+    int64_t StartTimestampMs;
+    int64_t EndTimestampMs;
+    uint32_t TakerFee;
+    uint32_t MakerFee;
+    int64_t MinBaseAmount;
+    int64_t MinQuoteAmount;
+    int64_t OrderQuoteLimit;
+    int64_t OpenInterestLimit;
+    uint8_t IsFrozen;
+} BinaryOptionsOperatorUpdateMarketTxReq;
+
+typedef struct {
+    int16_t MarketSlot;
+    int64_t PublicMarketIndex;
+    uint32_t SettlementPrice;
+    uint8_t IsRefund;
+} BinaryOptionsOperatorSettleMarketTxReq;
+
 #line 1 "cgo-generated-wrapper"
 
 
@@ -135,6 +175,9 @@ extern __declspec(dllexport) SignedTxResponse SignUnstakeAssets(long long int cS
 extern __declspec(dllexport) SignedTxResponse SignApproveIntegrator(long long int cIntegratorIndex, uint32_t cMaxPerpsTakerFee, uint32_t cMaxPerpsMakerFee, uint32_t cMaxSpotTakerFee, uint32_t cMaxSpotMakerFee, long long int cApprovalExpiry, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) SignedTxResponse SignUpdateAccountConfig(uint8_t cAccountTradingMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) SignedTxResponse SignUpdateAccountAssetConfig(int16_t cAssetIndex, uint8_t cAssetMarginMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern __declspec(dllexport) SignedTxResponse SignBinaryOptionsOperatorCreateMarket(BinaryOptionsOperatorCreateMarketTxReq* cReq, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern __declspec(dllexport) SignedTxResponse SignBinaryOptionsOperatorUpdateMarket(BinaryOptionsOperatorUpdateMarketTxReq* cReq, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern __declspec(dllexport) SignedTxResponse SignBinaryOptionsOperatorSettleMarket(BinaryOptionsOperatorSettleMarketTxReq* cReq, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern __declspec(dllexport) void Free(void* ptr);
 
 #ifdef __cplusplus
