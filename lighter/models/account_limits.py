@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -38,8 +38,10 @@ class AccountLimits(BaseModel):
     leased_lit: StrictStr = Field(description="Total actively leased LIT.")
     user_tier_name: StrictStr
     user_tier_last_update: Optional[StrictInt] = None
+    bo_user_tier_name: StrictStr
+    bo_fee_rate: Union[StrictFloat, StrictInt] = Field(description=" Product of the staking and BO volume multipliers; 0.72 means a 28% discount.")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "max_llp_percentage", "user_tier", "can_create_public_pool", "max_llp_amount", "current_maker_fee_tick", "current_taker_fee_tick", "effective_lit_stakes", "leased_lit", "user_tier_name", "user_tier_last_update"]
+    __properties: ClassVar[List[str]] = ["code", "message", "max_llp_percentage", "user_tier", "can_create_public_pool", "max_llp_amount", "current_maker_fee_tick", "current_taker_fee_tick", "effective_lit_stakes", "leased_lit", "user_tier_name", "user_tier_last_update", "bo_user_tier_name", "bo_fee_rate"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -110,7 +112,9 @@ class AccountLimits(BaseModel):
             "effective_lit_stakes": obj.get("effective_lit_stakes"),
             "leased_lit": obj.get("leased_lit"),
             "user_tier_name": obj.get("user_tier_name"),
-            "user_tier_last_update": obj.get("user_tier_last_update")
+            "user_tier_last_update": obj.get("user_tier_last_update"),
+            "bo_user_tier_name": obj.get("bo_user_tier_name"),
+            "bo_fee_rate": obj.get("bo_fee_rate")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

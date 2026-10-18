@@ -33,7 +33,7 @@ class EventOrderBookEntry(BaseModel):
     market_type: StrictStr
     base_asset_id: StrictInt
     quote_asset_id: StrictInt
-    status: StrictStr
+    status: StrictStr = Field(description=" waiting-for-settlement and settled are binary options only")
     taker_fee: StrictStr
     is_taker_fee_enabled: StrictBool
     maker_fee: StrictStr
@@ -73,8 +73,8 @@ class EventOrderBookEntry(BaseModel):
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['inactive', 'active']):
-            raise ValueError("must be one of enum values ('inactive', 'active')")
+        if value not in set(['inactive', 'active', 'in-settlement', 'waiting-for-settlement', 'settled']):
+            raise ValueError("must be one of enum values ('inactive', 'active', 'in-settlement', 'waiting-for-settlement', 'settled')")
         return value
 
     @field_validator('outcome')

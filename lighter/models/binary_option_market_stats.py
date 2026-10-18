@@ -40,7 +40,7 @@ class BinaryOptionMarketStats(BaseModel):
     lifetime_quote_token_volume: Union[StrictFloat, StrictInt]
     lifetime_base_token_volume: Union[StrictFloat, StrictInt] = Field(description=" outcome shares traded over the market's life")
     open_interest: StrictStr
-    status: StrictStr = Field(description=" inactive once the trading window closes")
+    status: StrictStr = Field(description=" inactive before the trading window opens, waiting-for-settlement once it closes")
     outcome: StrictInt
     additional_properties: Dict[str, Any] = {}
     __properties: ClassVar[List[str]] = ["symbol", "market_id", "mid_price", "best_ask_price", "best_bid_price", "last_trade_price", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "lifetime_quote_token_volume", "lifetime_base_token_volume", "open_interest", "status", "outcome"]
@@ -48,8 +48,8 @@ class BinaryOptionMarketStats(BaseModel):
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['inactive', 'active', 'in-settlement']):
-            raise ValueError("must be one of enum values ('inactive', 'active', 'in-settlement')")
+        if value not in set(['inactive', 'active', 'waiting-for-settlement', 'in-settlement', 'settled']):
+            raise ValueError("must be one of enum values ('inactive', 'active', 'waiting-for-settlement', 'in-settlement', 'settled')")
         return value
 
     @field_validator('outcome')

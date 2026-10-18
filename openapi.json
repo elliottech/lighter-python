@@ -5353,108 +5353,6 @@
         }
       }
     },
-    "/api/v1/upDownCandles": {
-      "get": {
-        "summary": "upDownCandles",
-        "operationId": "upDownCandles",
-        "tags": [
-          "updown"
-        ],
-        "description": "Get the OHLC candles (1s = the exact price observations, or 30s) of an up/down market series (symbol + duration, e.g. btc/5m) in a bounded time range (at most 24h), oldest first. Pass next_cursor as start_timestamp to page forward; live candles are on the up_down_candle/<symbol>/<duration>/<resolution> websocket channel.",
-        "parameters": [
-          {
-            "name": "symbol",
-            "in": "query",
-            "description": " market series: underlying (case-insensitive) ...",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "duration",
-            "in": "query",
-            "description": " ... and market duration, e.g. 30s or 5m",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "resolution",
-            "in": "query",
-            "description": " 1s candles are the observations themselves",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "1s",
-                "30s"
-              ],
-              "default": "1s"
-            }
-          },
-          {
-            "name": "start_timestamp",
-            "in": "query",
-            "description": " inclusive bucket start, seconds",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "minimum": 0,
-              "maximum": 5000000000
-            }
-          },
-          {
-            "name": "end_timestamp",
-            "in": "query",
-            "description": " inclusive, seconds; at most 24h after start_timestamp",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "minimum": 0,
-              "maximum": 5000000000
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "default": "1000",
-              "minimum": 1,
-              "maximum": 3600
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RespGetUpDownCandles"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ResultCode"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/events": {
       "get": {
         "summary": "events",
@@ -5462,7 +5360,7 @@
         "tags": [
           "event"
         ],
-        "description": "Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. Occurrence sorting uses (occurrence_start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.",
+        "description": "Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. start_at sorting uses (start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.",
         "parameters": [
           {
             "name": "event_ids",
@@ -5545,7 +5443,7 @@
           {
             "name": "start_from",
             "in": "query",
-            "description": " inclusive occurrence start, Unix milliseconds",
+            "description": " inclusive start_at, Unix milliseconds",
             "required": false,
             "schema": {
               "type": "integer",
@@ -5555,7 +5453,7 @@
           {
             "name": "start_before",
             "in": "query",
-            "description": " exclusive occurrence start, Unix milliseconds",
+            "description": " exclusive start_at, Unix milliseconds",
             "required": false,
             "schema": {
               "type": "integer",
@@ -5570,7 +5468,7 @@
               "type": "string",
               "enum": [
                 "id",
-                "occurrence_start_at"
+                "start_at"
               ],
               "default": "id"
             }
@@ -5687,6 +5585,157 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RespGetBoPnL"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/upDownCandles": {
+      "get": {
+        "summary": "upDownCandles",
+        "operationId": "upDownCandles",
+        "tags": [
+          "updown"
+        ],
+        "description": "Get the OHLC candles (1s = the exact price observations, or 30s) of an up/down market series (symbol + duration, e.g. btc/5m) in a bounded time range (at most 24h), oldest first. Pass next_cursor as start_timestamp to page forward; live candles are on the up_down_candle/<symbol>/<duration>/<resolution> websocket channel.",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "description": " market series: underlying (case-insensitive) ...",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "description": " ... and market duration, e.g. 30s or 5m",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resolution",
+            "in": "query",
+            "description": " 1s candles are the observations themselves",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1s",
+                "30s"
+              ],
+              "default": "1s"
+            }
+          },
+          {
+            "name": "start_timestamp",
+            "in": "query",
+            "description": " inclusive bucket start, seconds",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0,
+              "maximum": 5000000000
+            }
+          },
+          {
+            "name": "end_timestamp",
+            "in": "query",
+            "description": " inclusive, seconds; at most 24h after start_timestamp",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0,
+              "maximum": 5000000000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": "1000",
+              "minimum": 1,
+              "maximum": 3600
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespGetUpDownCandles"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/feeTiers": {
+      "get": {
+        "summary": "feeTiers",
+        "operationId": "feeTiers",
+        "tags": [
+          "account"
+        ],
+        "description": "Get fee tiers. filter=perps|spot returns the regular user tiers (both market types share them). filter=bo returns BO volume tiers and LIT staking discount tiers; filter=all returns everything. An account's BO multiplier is the BO tier fee_rate times the staking fee_rate, applied to each BO market's maker/taker fee (see /api/v1/events) and then scaled by 1 - trade_price / settlement_cap.",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "bo",
+                "perps",
+                "spot"
+              ],
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeeTiers"
                 }
               }
             }
@@ -5932,20 +5981,32 @@
           "user_tier_last_update": {
             "type": "integer",
             "format": "int64"
+          },
+          "bo_user_tier_name": {
+            "type": "string",
+            "example": "bo_standard"
+          },
+          "bo_fee_rate": {
+            "type": "number",
+            "format": "double",
+            "example": "0.72",
+            "description": " Product of the staking and BO volume multipliers; 0.72 means a 28% discount."
           }
         },
         "title": "AccountLimits",
         "required": [
           "code",
           "max_llp_percentage",
+          "max_llp_amount",
           "user_tier",
           "can_create_public_pool",
-          "max_llp_amount",
+          "user_tier_name",
+          "bo_user_tier_name",
+          "bo_fee_rate",
           "current_maker_fee_tick",
           "current_taker_fee_tick",
-          "effective_lit_stakes",
           "leased_lit",
-          "user_tier_name"
+          "effective_lit_stakes"
         ]
       },
       "AccountMetadata": {
@@ -12667,105 +12728,6 @@
           "price_cap_reference_price"
         ]
       },
-      "RespGetUpDownCandles": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32",
-            "example": "200"
-          },
-          "message": {
-            "type": "string"
-          },
-          "candles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UpDownCandle"
-            },
-            "description": " ascending by timestamp"
-          },
-          "next_cursor": {
-            "type": "integer",
-            "format": "int64",
-            "example": "0",
-            "description": " start_timestamp of the next page; 0 when the range is exhausted"
-          }
-        },
-        "title": "RespGetUpDownCandles",
-        "required": [
-          "code",
-          "candles"
-        ]
-      },
-      "UpDownCandle": {
-        "type": "object",
-        "properties": {
-          "symbol": {
-            "type": "string",
-            "example": "btc"
-          },
-          "duration": {
-            "type": "string",
-            "example": "5m"
-          },
-          "resolution": {
-            "type": "string",
-            "example": "30s"
-          },
-          "timestamp": {
-            "type": "integer",
-            "format": "int64",
-            "example": "1789551600",
-            "description": " bucket start, unix seconds"
-          },
-          "open": {
-            "type": "string",
-            "example": "115342.123456789012345678",
-            "description": " exact provider prices, decimal strings"
-          },
-          "high": {
-            "type": "string",
-            "example": "115350.5"
-          },
-          "low": {
-            "type": "string",
-            "example": "115300.25"
-          },
-          "close": {
-            "type": "string",
-            "example": "115340.123456789012345678"
-          },
-          "sampleCount": {
-            "type": "integer",
-            "format": "int64",
-            "description": " observations in the candle: orders live updates of the same bucket, not served"
-          },
-          "provider": {
-            "type": "string",
-            "example": "chainlink",
-            "description": " provider feed of the last observation of the candle"
-          },
-          "feed_id": {
-            "type": "string",
-            "example": "0x0002ee6757e8822c00d273bc340fc24c9cafe123a4ff2ea1dbdb31944bc7d95f"
-          }
-        },
-        "title": "UpDownCandle",
-        "required": [
-          "symbol",
-          "duration",
-          "resolution",
-          "timestamp",
-          "open",
-          "high",
-          "low",
-          "close",
-          "sampleCount",
-          "provider",
-          "feed_id"
-        ]
-      },
       "RespGetEvents": {
         "type": "object",
         "properties": {
@@ -12833,11 +12795,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "occurrence_start_at": {
+          "start_at": {
             "type": "integer",
             "format": "int64"
           },
-          "occurrence_end_at": {
+          "end_at": {
             "type": "integer",
             "format": "int64"
           },
@@ -12867,8 +12829,8 @@
           "tag",
           "event_kind",
           "recurrence_period_seconds",
-          "occurrence_start_at",
-          "occurrence_end_at",
+          "start_at",
+          "end_at",
           "metadata",
           "order_books",
           "lifetime_quote_token_volume"
@@ -12913,8 +12875,12 @@
             "type": "string",
             "enum": [
               "inactive",
-              "active"
-            ]
+              "active",
+              "in-settlement",
+              "waiting-for-settlement",
+              "settled"
+            ],
+            "description": " waiting-for-settlement and settled are binary options only"
           },
           "taker_fee": {
             "type": "string",
@@ -13162,9 +13128,11 @@
             "enum": [
               "inactive",
               "active",
-              "in-settlement"
+              "waiting-for-settlement",
+              "in-settlement",
+              "settled"
             ],
-            "description": " inactive once the trading window closes"
+            "description": " inactive before the trading window opens, waiting-for-settlement once it closes"
           },
           "outcome": {
             "type": "integer",
@@ -13310,6 +13278,227 @@
           "settlement_pnl",
           "last_trade_id",
           "total_pnl"
+        ]
+      },
+      "RespGetUpDownCandles": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "candles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpDownCandle"
+            },
+            "description": " ascending by timestamp"
+          },
+          "next_cursor": {
+            "type": "integer",
+            "format": "int64",
+            "example": "0",
+            "description": " start_timestamp of the next page; 0 when the range is exhausted"
+          }
+        },
+        "title": "RespGetUpDownCandles",
+        "required": [
+          "code",
+          "candles"
+        ]
+      },
+      "UpDownCandle": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "example": "btc"
+          },
+          "duration": {
+            "type": "string",
+            "example": "5m"
+          },
+          "resolution": {
+            "type": "string",
+            "example": "30s"
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1789551600",
+            "description": " bucket start, unix seconds"
+          },
+          "open": {
+            "type": "string",
+            "example": "115342.123456789012345678",
+            "description": " exact provider prices, decimal strings"
+          },
+          "high": {
+            "type": "string",
+            "example": "115350.5"
+          },
+          "low": {
+            "type": "string",
+            "example": "115300.25"
+          },
+          "close": {
+            "type": "string",
+            "example": "115340.123456789012345678"
+          },
+          "sampleCount": {
+            "type": "integer",
+            "format": "int64",
+            "description": " observations in the candle: orders live updates of the same bucket, not served"
+          },
+          "provider": {
+            "type": "string",
+            "example": "chainlink",
+            "description": " provider feed of the last observation of the candle"
+          },
+          "feed_id": {
+            "type": "string",
+            "example": "0x0002ee6757e8822c00d273bc340fc24c9cafe123a4ff2ea1dbdb31944bc7d95f"
+          }
+        },
+        "title": "UpDownCandle",
+        "required": [
+          "symbol",
+          "duration",
+          "resolution",
+          "timestamp",
+          "open",
+          "high",
+          "low",
+          "close",
+          "sampleCount",
+          "provider",
+          "feed_id"
+        ]
+      },
+      "FeeTiers": {
+        "type": "object",
+        "properties": {
+          "user_tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserFeeTier"
+            }
+          },
+          "bo_tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BoFeeTier"
+            }
+          },
+          "staking_tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StakingFeeTier"
+            }
+          }
+        },
+        "title": "FeeTiers",
+        "required": [
+          "user_tiers",
+          "bo_tiers",
+          "staking_tiers"
+        ]
+      },
+      "UserFeeTier": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "premium_1"
+          },
+          "level": {
+            "type": "integer",
+            "format": "int32",
+            "example": "2"
+          },
+          "maker_fee_ticks": {
+            "type": "integer",
+            "format": "int32",
+            "example": "0"
+          },
+          "taker_fee_ticks": {
+            "type": "integer",
+            "format": "int32",
+            "example": "0"
+          },
+          "required_lit_stakes": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1000"
+          },
+          "required_volume": {
+            "type": "integer",
+            "format": "int64",
+            "example": "0"
+          }
+        },
+        "title": "UserFeeTier",
+        "required": [
+          "name",
+          "level",
+          "maker_fee_ticks",
+          "taker_fee_ticks",
+          "required_lit_stakes",
+          "required_volume"
+        ]
+      },
+      "BoFeeTier": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "level1"
+          },
+          "required_volume": {
+            "type": "integer",
+            "format": "int64",
+            "example": "5000000"
+          },
+          "fee_rate": {
+            "type": "number",
+            "format": "double",
+            "example": "0.9"
+          }
+        },
+        "title": "BoFeeTier",
+        "required": [
+          "name",
+          "required_volume",
+          "fee_rate"
+        ]
+      },
+      "StakingFeeTier": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "level1"
+          },
+          "required_lit_stakes": {
+            "type": "integer",
+            "format": "int64",
+            "example": "10"
+          },
+          "fee_rate": {
+            "type": "number",
+            "format": "double",
+            "example": "0.95"
+          }
+        },
+        "title": "StakingFeeTier",
+        "required": [
+          "name",
+          "required_lit_stakes",
+          "fee_rate"
         ]
       }
     }

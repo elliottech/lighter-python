@@ -35,13 +35,13 @@ class EventDetail(BaseModel):
     tag: StrictStr
     event_kind: StrictStr
     recurrence_period_seconds: StrictInt
-    occurrence_start_at: StrictInt
-    occurrence_end_at: StrictInt
+    start_at: StrictInt
+    end_at: StrictInt
     metadata: Dict[str, Any]
     order_books: List[EventOrderBookEntry]
     lifetime_quote_token_volume: Union[StrictFloat, StrictInt]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["event_id", "title", "description", "creator_account_index", "created_at", "tag", "event_kind", "recurrence_period_seconds", "occurrence_start_at", "occurrence_end_at", "metadata", "order_books", "lifetime_quote_token_volume"]
+    __properties: ClassVar[List[str]] = ["event_id", "title", "description", "creator_account_index", "created_at", "tag", "event_kind", "recurrence_period_seconds", "start_at", "end_at", "metadata", "order_books", "lifetime_quote_token_volume"]
 
     @field_validator('event_kind')
     def event_kind_validate_enum(cls, value):
@@ -123,8 +123,8 @@ class EventDetail(BaseModel):
             "tag": obj.get("tag"),
             "event_kind": obj.get("event_kind"),
             "recurrence_period_seconds": obj.get("recurrence_period_seconds"),
-            "occurrence_start_at": obj.get("occurrence_start_at"),
-            "occurrence_end_at": obj.get("occurrence_end_at"),
+            "start_at": obj.get("start_at"),
+            "end_at": obj.get("end_at"),
             "metadata": obj.get("metadata"),
             "order_books": [EventOrderBookEntry.from_dict(_item) for _item in obj["order_books"]] if obj.get("order_books") is not None else None,
             "lifetime_quote_token_volume": obj.get("lifetime_quote_token_volume")

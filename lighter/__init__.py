@@ -66,6 +66,7 @@ from lighter.models.binary_option_market_stats import BinaryOptionMarketStats
 from lighter.models.block import Block
 from lighter.models.blocks import Blocks
 from lighter.models.bo_event_pn_l import BoEventPnL
+from lighter.models.bo_fee_tier import BoFeeTier
 from lighter.models.bo_outcome_pn_l import BoOutcomePnL
 from lighter.models.bridge_supported_network import BridgeSupportedNetwork
 from lighter.models.bridge_supported_networks import BridgeSupportedNetworks
@@ -87,6 +88,7 @@ from lighter.models.exchange_metric import ExchangeMetric
 from lighter.models.exchange_stats import ExchangeStats
 from lighter.models.execute_stat import ExecuteStat
 from lighter.models.export_data import ExportData
+from lighter.models.fee_tiers import FeeTiers
 from lighter.models.funding import Funding
 from lighter.models.funding_rate import FundingRate
 from lighter.models.funding_rates import FundingRates
@@ -177,6 +179,7 @@ from lighter.models.share_price import SharePrice
 from lighter.models.simple_order import SimpleOrder
 from lighter.models.slippage_result import SlippageResult
 from lighter.models.spot_order_book_detail import SpotOrderBookDetail
+from lighter.models.staking_fee_tier import StakingFeeTier
 from lighter.models.status import Status
 from lighter.models.strategy import Strategy
 from lighter.models.sub_account_metadata import SubAccountMetadata
@@ -194,6 +197,7 @@ from lighter.models.tx import Tx
 from lighter.models.tx_hash import TxHash
 from lighter.models.txs import Txs
 from lighter.models.up_down_candle import UpDownCandle
+from lighter.models.user_fee_tier import UserFeeTier
 from lighter.models.user_referrals import UserReferrals
 from lighter.models.validator_info import ValidatorInfo
 from lighter.models.withdraw_history import WithdrawHistory

@@ -211,6 +211,7 @@ lighter/models/binary_option_market_stats.py
 lighter/models/block.py
 lighter/models/blocks.py
 lighter/models/bo_event_pn_l.py
+lighter/models/bo_fee_tier.py
 lighter/models/bo_outcome_pn_l.py
 lighter/models/bridge_supported_network.py
 lighter/models/bridge_supported_networks.py
@@ -232,6 +233,7 @@ lighter/models/exchange_metric.py
 lighter/models/exchange_stats.py
 lighter/models/execute_stat.py
 lighter/models/export_data.py
+lighter/models/fee_tiers.py
 lighter/models/funding.py
 lighter/models/funding_rate.py
 lighter/models/funding_rates.py
@@ -322,6 +324,7 @@ lighter/models/share_price.py
 lighter/models/simple_order.py
 lighter/models/slippage_result.py
 lighter/models/spot_order_book_detail.py
+lighter/models/staking_fee_tier.py
 lighter/models/status.py
 lighter/models/strategy.py
 lighter/models/sub_account_metadata.py
@@ -339,6 +342,7 @@ lighter/models/tx.py
 lighter/models/tx_hash.py
 lighter/models/txs.py
 lighter/models/up_down_candle.py
+lighter/models/user_fee_tier.py
 lighter/models/user_referrals.py
 lighter/models/validator_info.py
 lighter/models/withdraw_history.py

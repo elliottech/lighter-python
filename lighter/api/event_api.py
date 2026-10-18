@@ -49,8 +49,8 @@ class EventApi:
         limit: Optional[Annotated[int, Field(le=100, strict=True, ge=1)]] = None,
         tag: Annotated[Optional[StrictStr], Field(description=" series tag; creator filter is optional")] = None,
         event_kind: Optional[StrictStr] = None,
-        start_from: Annotated[Optional[StrictInt], Field(description=" inclusive occurrence start, Unix milliseconds")] = None,
-        start_before: Annotated[Optional[StrictInt], Field(description=" exclusive occurrence start, Unix milliseconds")] = None,
+        start_from: Annotated[Optional[StrictInt], Field(description=" inclusive start_at, Unix milliseconds")] = None,
+        start_before: Annotated[Optional[StrictInt], Field(description=" exclusive start_at, Unix milliseconds")] = None,
         sort: Optional[StrictStr] = None,
         order: Optional[StrictStr] = None,
         _request_timeout: Union[
@@ -68,7 +68,7 @@ class EventApi:
     ) -> RespGetEvents:
         """events
 
-        Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. Occurrence sorting uses (occurrence_start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
+        Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. start_at sorting uses (start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
 
         :param event_ids:  comma-separated positive IDs, max 50
         :type event_ids: str
@@ -86,9 +86,9 @@ class EventApi:
         :type tag: str
         :param event_kind:
         :type event_kind: str
-        :param start_from:  inclusive occurrence start, Unix milliseconds
+        :param start_from:  inclusive start_at, Unix milliseconds
         :type start_from: int
-        :param start_before:  exclusive occurrence start, Unix milliseconds
+        :param start_before:  exclusive start_at, Unix milliseconds
         :type start_before: int
         :param sort:
         :type sort: str
@@ -160,8 +160,8 @@ class EventApi:
         limit: Optional[Annotated[int, Field(le=100, strict=True, ge=1)]] = None,
         tag: Annotated[Optional[StrictStr], Field(description=" series tag; creator filter is optional")] = None,
         event_kind: Optional[StrictStr] = None,
-        start_from: Annotated[Optional[StrictInt], Field(description=" inclusive occurrence start, Unix milliseconds")] = None,
-        start_before: Annotated[Optional[StrictInt], Field(description=" exclusive occurrence start, Unix milliseconds")] = None,
+        start_from: Annotated[Optional[StrictInt], Field(description=" inclusive start_at, Unix milliseconds")] = None,
+        start_before: Annotated[Optional[StrictInt], Field(description=" exclusive start_at, Unix milliseconds")] = None,
         sort: Optional[StrictStr] = None,
         order: Optional[StrictStr] = None,
         _request_timeout: Union[
@@ -179,7 +179,7 @@ class EventApi:
     ) -> ApiResponse[RespGetEvents]:
         """events
 
-        Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. Occurrence sorting uses (occurrence_start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
+        Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. start_at sorting uses (start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
 
         :param event_ids:  comma-separated positive IDs, max 50
         :type event_ids: str
@@ -197,9 +197,9 @@ class EventApi:
         :type tag: str
         :param event_kind:
         :type event_kind: str
-        :param start_from:  inclusive occurrence start, Unix milliseconds
+        :param start_from:  inclusive start_at, Unix milliseconds
         :type start_from: int
-        :param start_before:  exclusive occurrence start, Unix milliseconds
+        :param start_before:  exclusive start_at, Unix milliseconds
         :type start_before: int
         :param sort:
         :type sort: str
@@ -271,8 +271,8 @@ class EventApi:
         limit: Optional[Annotated[int, Field(le=100, strict=True, ge=1)]] = None,
         tag: Annotated[Optional[StrictStr], Field(description=" series tag; creator filter is optional")] = None,
         event_kind: Optional[StrictStr] = None,
-        start_from: Annotated[Optional[StrictInt], Field(description=" inclusive occurrence start, Unix milliseconds")] = None,
-        start_before: Annotated[Optional[StrictInt], Field(description=" exclusive occurrence start, Unix milliseconds")] = None,
+        start_from: Annotated[Optional[StrictInt], Field(description=" inclusive start_at, Unix milliseconds")] = None,
+        start_before: Annotated[Optional[StrictInt], Field(description=" exclusive start_at, Unix milliseconds")] = None,
         sort: Optional[StrictStr] = None,
         order: Optional[StrictStr] = None,
         _request_timeout: Union[
@@ -290,7 +290,7 @@ class EventApi:
     ) -> RESTResponseType:
         """events
 
-        Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. Occurrence sorting uses (occurrence_start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
+        Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. start_at sorting uses (start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
 
         :param event_ids:  comma-separated positive IDs, max 50
         :type event_ids: str
@@ -308,9 +308,9 @@ class EventApi:
         :type tag: str
         :param event_kind:
         :type event_kind: str
-        :param start_from:  inclusive occurrence start, Unix milliseconds
+        :param start_from:  inclusive start_at, Unix milliseconds
         :type start_from: int
-        :param start_before:  exclusive occurrence start, Unix milliseconds
+        :param start_before:  exclusive start_at, Unix milliseconds
         :type start_before: int
         :param sort:
         :type sort: str
