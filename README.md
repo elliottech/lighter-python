@@ -61,6 +61,7 @@ Class | Method | HTTP request | Description
 *AccountApi* | [**accounts_by_l1_address**](docs/AccountApi.md#accounts_by_l1_address) | **GET** /api/v1/accountsByL1Address | accountsByL1Address
 *AccountApi* | [**apikeys**](docs/AccountApi.md#apikeys) | **GET** /api/v1/apikeys | apikeys
 *AccountApi* | [**change_account_tier**](docs/AccountApi.md#change_account_tier) | **POST** /api/v1/changeAccountTier | changeAccountTier
+*AccountApi* | [**fee_tiers**](docs/AccountApi.md#fee_tiers) | **GET** /api/v1/feeTiers | feeTiers
 *AccountApi* | [**get_maker_only_api_keys**](docs/AccountApi.md#get_maker_only_api_keys) | **GET** /api/v1/getMakerOnlyApiKeys | getMakerOnlyApiKeys
 *AccountApi* | [**l1_metadata**](docs/AccountApi.md#l1_metadata) | **GET** /api/v1/l1Metadata | l1Metadata
 *AccountApi* | [**leaderboard**](docs/AccountApi.md#leaderboard) | **GET** /api/v1/leaderboard | leaderboard
@@ -167,6 +168,7 @@ Class | Method | HTTP request | Description
  - [Block](docs/Block.md)
  - [Blocks](docs/Blocks.md)
  - [BoEventPnL](docs/BoEventPnL.md)
+ - [BoFeeTier](docs/BoFeeTier.md)
  - [BoOutcomePnL](docs/BoOutcomePnL.md)
  - [BridgeSupportedNetwork](docs/BridgeSupportedNetwork.md)
  - [BridgeSupportedNetworks](docs/BridgeSupportedNetworks.md)
@@ -188,6 +190,7 @@ Class | Method | HTTP request | Description
  - [ExchangeStats](docs/ExchangeStats.md)
  - [ExecuteStat](docs/ExecuteStat.md)
  - [ExportData](docs/ExportData.md)
+ - [FeeTiers](docs/FeeTiers.md)
  - [Funding](docs/Funding.md)
  - [FundingRate](docs/FundingRate.md)
  - [FundingRates](docs/FundingRates.md)
@@ -278,6 +281,7 @@ Class | Method | HTTP request | Description
  - [SimpleOrder](docs/SimpleOrder.md)
  - [SlippageResult](docs/SlippageResult.md)
  - [SpotOrderBookDetail](docs/SpotOrderBookDetail.md)
+ - [StakingFeeTier](docs/StakingFeeTier.md)
  - [Status](docs/Status.md)
  - [Strategy](docs/Strategy.md)
  - [SubAccountMetadata](docs/SubAccountMetadata.md)
@@ -295,6 +299,7 @@ Class | Method | HTTP request | Description
  - [TxHash](docs/TxHash.md)
  - [Txs](docs/Txs.md)
  - [UpDownCandle](docs/UpDownCandle.md)
+ - [UserFeeTier](docs/UserFeeTier.md)
  - [UserReferrals](docs/UserReferrals.md)
  - [ValidatorInfo](docs/ValidatorInfo.md)
  - [WithdrawHistory](docs/WithdrawHistory.md)

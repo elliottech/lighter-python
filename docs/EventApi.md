@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 events
 
-Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. Occurrence sorting uses (occurrence_start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
+Get events and registered order books, including scheduled events with no books. event_ids and market_ids accept up to 50 comma-separated positive IDs, are mutually exclusive, and use the same filters, sorting and pagination. market_ids returns each related event once with all its order books. Defaults to descending id. start_at sorting uses (start_at, event_id); cursor identifies an existing event and excludes it in the requested direction. tag filters across creators; creator_account_index is an optional additional filter. active=true requires a tradeable outcome; active=false includes scheduled and closed events.
 
 ### Example
 
@@ -42,8 +42,8 @@ async with lighter.ApiClient(configuration) as api_client:
     limit = 56 # int |  (optional)
     tag = 'tag_example' # str |  series tag; creator filter is optional (optional)
     event_kind = 'event_kind_example' # str |  (optional)
-    start_from = 56 # int |  inclusive occurrence start, Unix milliseconds (optional)
-    start_before = 56 # int |  exclusive occurrence start, Unix milliseconds (optional)
+    start_from = 56 # int |  inclusive start_at, Unix milliseconds (optional)
+    start_before = 56 # int |  exclusive start_at, Unix milliseconds (optional)
     sort = id # str |  (optional) (default to id)
     order = desc # str |  (optional) (default to desc)
 
@@ -71,8 +71,8 @@ Name | Type | Description  | Notes
  **limit** | **int**|  | [optional] 
  **tag** | **str**|  series tag; creator filter is optional | [optional] 
  **event_kind** | **str**|  | [optional] 
- **start_from** | **int**|  inclusive occurrence start, Unix milliseconds | [optional] 
- **start_before** | **int**|  exclusive occurrence start, Unix milliseconds | [optional] 
+ **start_from** | **int**|  inclusive start_at, Unix milliseconds | [optional] 
+ **start_before** | **int**|  exclusive start_at, Unix milliseconds | [optional] 
  **sort** | **str**|  | [optional] [default to id]
  **order** | **str**|  | [optional] [default to desc]
 

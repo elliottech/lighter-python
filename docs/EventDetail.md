@@ -13,8 +13,8 @@ Name | Type | Description | Notes
 **tag** | **str** |  | 
 **event_kind** | **str** |  | 
 **recurrence_period_seconds** | **int** |  | 
-**occurrence_start_at** | **int** |  | 
-**occurrence_end_at** | **int** |  | 
+**start_at** | **int** |  | 
+**end_at** | **int** |  | 
 **metadata** | **Dict[str, object]** |  | 
 **order_books** | [**List[EventOrderBookEntry]**](EventOrderBookEntry.md) |  | 
 **lifetime_quote_token_volume** | **float** |  | 

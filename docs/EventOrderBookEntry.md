@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **market_type** | **str** |  | 
 **base_asset_id** | **int** |  | 
 **quote_asset_id** | **int** |  | 
-**status** | **str** |  | 
+**status** | **str** |  waiting-for-settlement and settled are binary options only | 
 **taker_fee** | **str** |  | 
 **is_taker_fee_enabled** | **bool** |  | 
 **maker_fee** | **str** |  | 

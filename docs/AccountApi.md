@@ -10,6 +10,7 @@ Method | HTTP request | Description
 [**accounts_by_l1_address**](AccountApi.md#accounts_by_l1_address) | **GET** /api/v1/accountsByL1Address | accountsByL1Address
 [**apikeys**](AccountApi.md#apikeys) | **GET** /api/v1/apikeys | apikeys
 [**change_account_tier**](AccountApi.md#change_account_tier) | **POST** /api/v1/changeAccountTier | changeAccountTier
+[**fee_tiers**](AccountApi.md#fee_tiers) | **GET** /api/v1/feeTiers | feeTiers
 [**get_maker_only_api_keys**](AccountApi.md#get_maker_only_api_keys) | **GET** /api/v1/getMakerOnlyApiKeys | getMakerOnlyApiKeys
 [**l1_metadata**](AccountApi.md#l1_metadata) | **GET** /api/v1/l1Metadata | l1Metadata
 [**leaderboard**](AccountApi.md#leaderboard) | **GET** /api/v1/leaderboard | leaderboard
@@ -459,6 +460,75 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **fee_tiers**
+> FeeTiers fee_tiers(filter=filter)
+
+feeTiers
+
+Get fee tiers. filter=perps|spot returns the regular user tiers (both market types share them). filter=bo returns BO volume tiers and LIT staking discount tiers; filter=all returns everything. An account's BO multiplier is the BO tier fee_rate times the staking fee_rate, applied to each BO market's maker/taker fee (see /api/v1/events) and then scaled by 1 - trade_price / settlement_cap.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.fee_tiers import FeeTiers
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    filter = all # str |  (optional) (default to all)
+
+    try:
+        # feeTiers
+        api_response = await api_instance.fee_tiers(filter=filter)
+        print("The response of AccountApi->fee_tiers:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->fee_tiers: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **filter** | **str**|  | [optional] [default to all]
+
+### Return type
+
+[**FeeTiers**](FeeTiers.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
  - **Accept**: application/json
 
 ### HTTP response details
