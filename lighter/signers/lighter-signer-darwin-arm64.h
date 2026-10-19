@@ -78,7 +78,7 @@ typedef struct {
 
 typedef struct {
     int16_t MarketSlot;
-    int64_t PublicMarketIndex;
+    int64_t MarketIndex;
     int64_t StartTimestampMs;
     int64_t EndTimestampMs;
     uint32_t TakerFee;
@@ -92,7 +92,7 @@ typedef struct {
 
 typedef struct {
     int16_t MarketSlot;
-    int64_t PublicMarketIndex;
+    int64_t MarketIndex;
     uint32_t SettlementPrice;
     uint8_t IsRefund;
 } BinaryOptionsOperatorSettleMarketTxReq;

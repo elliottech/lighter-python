@@ -48,7 +48,7 @@ async def main():
             executed = await tx_api.tx(by="hash", value=tx_hash.tx_hash)
         except lighter.ApiException:
             continue
-        print(f"public market index: {json.loads(executed.event_info)['m']}")
+        print(f"market index: {json.loads(executed.event_info)['m']}")
         break
 
     await client.close()

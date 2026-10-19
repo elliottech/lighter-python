@@ -746,10 +746,10 @@ class SignerClient:
         )
         return self.__decode_tx_info(self.signer.SignBinaryOptionsOperatorCreateMarket(ctypes.byref(req), skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_binary_options_operator_update_market(self, market_slot: int, public_market_index: int, start_timestamp_ms: int, end_timestamp_ms: int, taker_fee: int, maker_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+    def sign_binary_options_operator_update_market(self, market_slot: int, market_index: int, start_timestamp_ms: int, end_timestamp_ms: int, taker_fee: int, maker_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         req = BinaryOptionsOperatorUpdateMarketTxReq(
             MarketSlot=market_slot,
-            PublicMarketIndex=public_market_index,
+            MarketIndex=market_index,
             StartTimestampMs=start_timestamp_ms,
             EndTimestampMs=end_timestamp_ms,
             TakerFee=taker_fee,
@@ -762,10 +762,10 @@ class SignerClient:
         )
         return self.__decode_tx_info(self.signer.SignBinaryOptionsOperatorUpdateMarket(ctypes.byref(req), skip_nonce, nonce, api_key_index, self.account_index))
 
-    def sign_binary_options_operator_settle_market(self, market_slot: int, public_market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
+    def sign_binary_options_operator_settle_market(self, market_slot: int, market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         req = BinaryOptionsOperatorSettleMarketTxReq(
             MarketSlot=market_slot,
-            PublicMarketIndex=public_market_index,
+            PublicMarketIndex=market_index,
             SettlementPrice=settlement_price,
             IsRefund=is_refund,
         )
@@ -1520,9 +1520,9 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def binary_options_operator_settle_market(self, market_slot: int, public_market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+    async def binary_options_operator_settle_market(self, market_slot: int, market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         tx_type, tx_info, tx_hash, error = self.sign_binary_options_operator_settle_market(
-            market_slot, public_market_index, settlement_price, is_refund, skip_nonce, nonce, api_key_index
+            market_slot, market_index, settlement_price, is_refund, skip_nonce, nonce, api_key_index
         )
         if error is not None:
             return None, None, error

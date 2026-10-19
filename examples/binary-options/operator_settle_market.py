@@ -2,7 +2,7 @@ import asyncio
 from examples.utils import default_example_setup
 
 MARKET_SLOT = 1900
-PUBLIC_MARKET_INDEX = 0  # from operator_create_market.py
+MARKET_INDEX = 0  # from operator_create_market.py
 SETTLEMENT_CAP = 100
 
 
@@ -13,7 +13,7 @@ async def main():
     # To void the market instead: settlement_price=0, is_refund=1 (everyone is paid default_price).
     tx, tx_hash, err = await client.binary_options_operator_settle_market(
         market_slot=MARKET_SLOT,
-        public_market_index=PUBLIC_MARKET_INDEX,
+        market_index=MARKET_INDEX,
         settlement_price=SETTLEMENT_CAP,
         is_refund=0,
     )
