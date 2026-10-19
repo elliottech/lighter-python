@@ -67,7 +67,7 @@ class BinaryOptionsOperatorCreateMarketTxReq(ctypes.Structure):
 class BinaryOptionsOperatorUpdateMarketTxReq(ctypes.Structure):
     _fields_ = [
         ("MarketSlot", ctypes.c_int16),
-        ("PublicMarketIndex", ctypes.c_longlong),
+        ("MarketIndex", ctypes.c_longlong),
         ("StartTimestampMs", ctypes.c_longlong),
         ("EndTimestampMs", ctypes.c_longlong),
         ("TakerFee", ctypes.c_uint32),
@@ -83,7 +83,7 @@ class BinaryOptionsOperatorUpdateMarketTxReq(ctypes.Structure):
 class BinaryOptionsOperatorSettleMarketTxReq(ctypes.Structure):
     _fields_ = [
         ("MarketSlot", ctypes.c_int16),
-        ("PublicMarketIndex", ctypes.c_longlong),
+        ("MarketIndex", ctypes.c_longlong),
         ("SettlementPrice", ctypes.c_uint32),
         ("IsRefund", ctypes.c_uint8),
     ]
@@ -765,7 +765,7 @@ class SignerClient:
     def sign_binary_options_operator_settle_market(self, market_slot: int, market_index: int, settlement_price: int, is_refund: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
         req = BinaryOptionsOperatorSettleMarketTxReq(
             MarketSlot=market_slot,
-            PublicMarketIndex=market_index,
+            MarketIndex=market_index,
             SettlementPrice=settlement_price,
             IsRefund=is_refund,
         )
@@ -1510,9 +1510,9 @@ class SignerClient:
         return tx_info, api_response, None
 
     @process_api_key_and_nonce
-    async def binary_options_operator_update_market(self, market_slot: int, public_market_index: int, start_timestamp_ms: int, end_timestamp_ms: int, taker_fee: int, maker_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
+    async def binary_options_operator_update_market(self, market_slot: int, market_index: int, start_timestamp_ms: int, end_timestamp_ms: int, taker_fee: int, maker_fee: int, min_base_amount: int, min_quote_amount: int, order_quote_limit: int, open_interest_limit: int, is_frozen: int, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         tx_type, tx_info, tx_hash, error = self.sign_binary_options_operator_update_market(
-            market_slot, public_market_index, start_timestamp_ms, end_timestamp_ms, taker_fee, maker_fee, min_base_amount, min_quote_amount, order_quote_limit, open_interest_limit, is_frozen, skip_nonce, nonce, api_key_index
+            market_slot, market_index, start_timestamp_ms, end_timestamp_ms, taker_fee, maker_fee, min_base_amount, min_quote_amount, order_quote_limit, open_interest_limit, is_frozen, skip_nonce, nonce, api_key_index
         )
         if error is not None:
             return None, None, error
