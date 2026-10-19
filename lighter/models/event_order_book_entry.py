@@ -29,7 +29,6 @@ class EventOrderBookEntry(BaseModel):
     """ # noqa: E501
     symbol: StrictStr
     market_id: StrictInt
-    market_slot_id: StrictInt = Field(description=" internal only: the reusable tree slot backing this market; never serialized, users only know market_id (the public market index)", alias="marketSlotId")
     market_type: StrictStr
     base_asset_id: StrictInt
     quote_asset_id: StrictInt
@@ -61,7 +60,7 @@ class EventOrderBookEntry(BaseModel):
     price_decimals: StrictInt
     stats: BinaryOptionMarketStats
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "marketSlotId", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "is_taker_fee_enabled", "maker_fee", "is_maker_fee_enabled", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "created_at", "multiplier", "start_timestamp", "end_timestamp", "open_interest", "outcome", "operator_account_index", "settlement_cap", "settlement_type", "settlement_price", "default_price", "is_frozen", "size_decimals", "price_decimals", "stats"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "is_taker_fee_enabled", "maker_fee", "is_maker_fee_enabled", "liquidation_fee", "min_base_amount", "min_quote_amount", "order_quote_limit", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "created_at", "multiplier", "start_timestamp", "end_timestamp", "open_interest", "outcome", "operator_account_index", "settlement_cap", "settlement_type", "settlement_price", "default_price", "is_frozen", "size_decimals", "price_decimals", "stats"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
@@ -154,7 +153,6 @@ class EventOrderBookEntry(BaseModel):
         _obj = cls.model_construct(**{
             "symbol": obj.get("symbol"),
             "market_id": obj.get("market_id"),
-            "marketSlotId": obj.get("marketSlotId"),
             "market_type": obj.get("market_type"),
             "base_asset_id": obj.get("base_asset_id"),
             "quote_asset_id": obj.get("quote_asset_id"),

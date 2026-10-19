@@ -13,7 +13,6 @@ Name | Type | Description | Notes
 **high** | **str** |  | 
 **low** | **str** |  | 
 **close** | **str** |  | 
-**sample_count** | **int** |  observations in the candle: orders live updates of the same bucket, not served | 
 **provider** | **str** |  provider feed of the last observation of the candle | 
 **feed_id** | **str** |  | 
 

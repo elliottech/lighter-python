@@ -13113,11 +13113,6 @@
             "format": "int64",
             "example": "1"
           },
-          "marketSlotId": {
-            "type": "integer",
-            "format": "int16",
-            "description": " internal only: the reusable tree slot backing this market; never serialized, users only know market_id (the public market index)"
-          },
           "market_type": {
             "type": "string",
             "enum": [
@@ -13287,7 +13282,6 @@
         "required": [
           "symbol",
           "market_id",
-          "marketSlotId",
           "market_type",
           "base_asset_id",
           "quote_asset_id",
@@ -13615,11 +13609,6 @@
             "type": "string",
             "example": "115340.123456789012345678"
           },
-          "sampleCount": {
-            "type": "integer",
-            "format": "int64",
-            "description": " observations in the candle: orders live updates of the same bucket, not served"
-          },
           "provider": {
             "type": "string",
             "example": "chainlink",
@@ -13640,7 +13629,6 @@
           "high",
           "low",
           "close",
-          "sampleCount",
           "provider",
           "feed_id"
         ]

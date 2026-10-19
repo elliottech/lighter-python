@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **symbol** | **str** |  | 
 **market_id** | **int** |  | 
-**market_slot_id** | **int** |  internal only: the reusable tree slot backing this market; never serialized, users only know market_id (the public market index) | 
 **market_type** | **str** |  | 
 **base_asset_id** | **int** |  | 
 **quote_asset_id** | **int** |  | 

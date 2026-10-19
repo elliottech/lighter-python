@@ -34,11 +34,10 @@ class UpDownCandle(BaseModel):
     high: StrictStr
     low: StrictStr
     close: StrictStr
-    sample_count: StrictInt = Field(description=" observations in the candle: orders live updates of the same bucket, not served", alias="sampleCount")
     provider: StrictStr = Field(description=" provider feed of the last observation of the candle")
     feed_id: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "duration", "resolution", "timestamp", "open", "high", "low", "close", "sampleCount", "provider", "feed_id"]
+    __properties: ClassVar[List[str]] = ["symbol", "duration", "resolution", "timestamp", "open", "high", "low", "close", "provider", "feed_id"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -106,7 +105,6 @@ class UpDownCandle(BaseModel):
             "high": obj.get("high"),
             "low": obj.get("low"),
             "close": obj.get("close"),
-            "sampleCount": obj.get("sampleCount"),
             "provider": obj.get("provider"),
             "feed_id": obj.get("feed_id")
         })
