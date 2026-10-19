@@ -3,6 +3,7 @@ docs/Account.md
 docs/AccountApi.md
 docs/AccountApiKeys.md
 docs/AccountAsset.md
+docs/AccountBinaryOptionsPosition.md
 docs/AccountLimits.md
 docs/AccountMetadata.md
 docs/AccountMetadatas.md
@@ -195,6 +196,7 @@ lighter/models/__init__.py
 lighter/models/account.py
 lighter/models/account_api_keys.py
 lighter/models/account_asset.py
+lighter/models/account_binary_options_position.py
 lighter/models/account_limits.py
 lighter/models/account_metadata.py
 lighter/models/account_metadatas.py

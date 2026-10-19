@@ -44,6 +44,8 @@ Name | Type | Description | Notes
 **integrator_taker_fee** | **str** |  | 
 **order_flags** | **int** |  | 
 **order_version** | **int** |  | 
+**market_symbol** | **str** |  | 
+**market_kind** | **str** |  | 
 
 ## Example
 

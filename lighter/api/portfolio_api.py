@@ -324,10 +324,6 @@ class PortfolioApi:
 
         # process the path parameters
         # process the query parameters
-        if authorization is not None:
-            
-            _query_params.append(('authorization', authorization))
-            
         if auth is not None:
             
             _query_params.append(('auth', auth))
@@ -349,6 +345,8 @@ class PortfolioApi:
             _query_params.append(('limit', limit))
             
         # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
         # process the form parameters
         # process the body parameter
 

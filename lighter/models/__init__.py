@@ -15,6 +15,7 @@
 
 # import models into model package
 from lighter.models.account import Account
+from lighter.models.account_binary_options_position import AccountBinaryOptionsPosition
 from lighter.models.account_api_keys import AccountApiKeys
 from lighter.models.account_asset import AccountAsset
 from lighter.models.account_limits import AccountLimits

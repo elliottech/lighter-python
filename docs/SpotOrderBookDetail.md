@@ -34,6 +34,16 @@ Name | Type | Description | Notes
 **is_taker_fee_enabled** | **bool** |  | 
 **created_at** | **str** |  | 
 **multiplier** | **str** |  | 
+**start_timestamp** | **int** |  | 
+**end_timestamp** | **int** |  | 
+**settlement_type** | **int** |  | 
+**settlement_price** | **int** |  | 
+**settlement_cap** | **int** |  | 
+**outcome** | **int** |  | 
+**default_price** | **int** |  | 
+**operator_account_index** | **int** |  | 
+**is_frozen** | **bool** |  | 
+**open_interest** | **str** |  | 
 
 ## Example
 

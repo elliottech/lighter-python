@@ -18,7 +18,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,7 +30,7 @@ class BoOutcomePnL(BaseModel):
     symbol: StrictStr
     outcome: StrictInt
     end_timestamp: StrictInt
-    settlement_pnl: StrictStr
+    settlement_pnl: Optional[StrictStr]
     last_trade_id: StrictInt
     total_pnl: StrictStr
     additional_properties: Dict[str, Any] = {}
@@ -88,6 +88,11 @@ class BoOutcomePnL(BaseModel):
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
                 _dict[_key] = _value
+
+        # set to None if settlement_pnl (nullable) is None
+        # and model_fields_set contains the field
+        if self.settlement_pnl is None and "settlement_pnl" in self.model_fields_set:
+            _dict['settlement_pnl'] = None
 
         return _dict
 

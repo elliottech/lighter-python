@@ -150,6 +150,7 @@ Class | Method | HTTP request | Description
 
 <!-- AUTOGEN:MODELS -->
  - [Account](docs/Account.md)
+ - [AccountBinaryOptionsPosition](docs/AccountBinaryOptionsPosition.md)
  - [AccountApiKeys](docs/AccountApiKeys.md)
  - [AccountAsset](docs/AccountAsset.md)
  - [AccountLimits](docs/AccountLimits.md)

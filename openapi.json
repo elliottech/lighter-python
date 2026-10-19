@@ -155,7 +155,8 @@
               "enum": [
                 "all",
                 "spot",
-                "perp"
+                "perp",
+                "bo"
               ],
               "default": "all"
             }
@@ -267,7 +268,8 @@
               "enum": [
                 "all",
                 "spot",
-                "perp"
+                "perp",
+                "bo"
               ],
               "default": "all"
             }
@@ -5144,7 +5146,7 @@
         "parameters": [
           {
             "name": "authorization",
-            "in": "query",
+            "in": "header",
             "description": " make required after integ is done",
             "required": false,
             "schema": {
@@ -5522,7 +5524,7 @@
         "parameters": [
           {
             "name": "authorization",
-            "in": "query",
+            "in": "header",
             "description": " make required after integ is done",
             "required": false,
             "schema": {
@@ -6971,6 +6973,12 @@
           "agent_enabled": {
             "type": "boolean",
             "format": "boolean"
+          },
+          "bo_positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountBinaryOptionsPosition"
+            }
           }
         },
         "title": "DetailedAccount",
@@ -7849,6 +7857,18 @@
             "type": "integer",
             "format": "int64",
             "example": "1"
+          },
+          "market_symbol": {
+            "type": "string",
+            "example": "ETH"
+          },
+          "market_kind": {
+            "type": "string",
+            "enum": [
+              "spot",
+              "bo",
+              "perps"
+            ]
           }
         },
         "title": "Order",
@@ -7891,7 +7911,9 @@
           "created_at",
           "updated_at",
           "transaction_time",
-          "order_version"
+          "order_version",
+          "market_symbol",
+          "market_kind"
         ]
       },
       "OrderBook": {
@@ -7911,7 +7933,8 @@
             "example": "perp",
             "enum": [
               "perp",
-              "spot"
+              "spot",
+              "binary_options"
             ]
           },
           "base_asset_id": {
@@ -7929,7 +7952,10 @@
             "example": "active",
             "enum": [
               "inactive",
-              "active"
+              "active",
+              "in-settlement",
+              "waiting-for-settlement",
+              "settled"
             ]
           },
           "taker_fee": {
@@ -7986,6 +8012,70 @@
           "multiplier": {
             "type": "string",
             "example": "1.000000000000000000"
+          },
+          "start_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1640995200000
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1640995200000
+          },
+          "settlement_type": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1
+            ],
+            "x-enum-varnames": [
+              "Discrete",
+              "Continuous"
+            ]
+          },
+          "settlement_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10000
+          },
+          "settlement_cap": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10000
+          },
+          "outcome": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "x-enum-varnames": [
+              "None",
+              "No",
+              "Yes"
+            ]
+          },
+          "default_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5000
+          },
+          "operator_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "is_frozen": {
+            "type": "boolean",
+            "example": false
+          },
+          "open_interest": {
+            "type": "string",
+            "example": "93.0"
           }
         },
         "title": "OrderBook",
@@ -8008,7 +8098,17 @@
           "supported_price_decimals",
           "supported_quote_decimals",
           "created_at",
-          "multiplier"
+          "multiplier",
+          "start_timestamp",
+          "end_timestamp",
+          "settlement_type",
+          "settlement_price",
+          "settlement_cap",
+          "outcome",
+          "default_price",
+          "operator_account_index",
+          "is_frozen",
+          "open_interest"
         ]
       },
       "PerpsOrderBookDetail": {
@@ -8028,7 +8128,8 @@
             "example": "perp",
             "enum": [
               "perp",
-              "spot"
+              "spot",
+              "binary_options"
             ]
           },
           "base_asset_id": {
@@ -8046,7 +8147,10 @@
             "example": "active",
             "enum": [
               "inactive",
-              "active"
+              "active",
+              "in-settlement",
+              "waiting-for-settlement",
+              "settled"
             ]
           },
           "taker_fee": {
@@ -8222,6 +8326,66 @@
             "type": "integer",
             "format": "uin16",
             "example": "100"
+          },
+          "start_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1640995200000
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1640995200000
+          },
+          "settlement_type": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1
+            ],
+            "x-enum-varnames": [
+              "Discrete",
+              "Continuous"
+            ]
+          },
+          "settlement_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10000
+          },
+          "settlement_cap": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10000
+          },
+          "outcome": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "x-enum-varnames": [
+              "None",
+              "No",
+              "Yes"
+            ]
+          },
+          "default_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5000
+          },
+          "operator_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "is_frozen": {
+            "type": "boolean",
+            "example": false
           }
         },
         "title": "PerpsOrderBookDetail",
@@ -8269,7 +8433,16 @@
           "funding_premium_multiplier",
           "funding_clamp_small",
           "funding_clamp_big",
-          "base_interest_rate"
+          "base_interest_rate",
+          "start_timestamp",
+          "end_timestamp",
+          "settlement_type",
+          "settlement_price",
+          "settlement_cap",
+          "outcome",
+          "default_price",
+          "operator_account_index",
+          "is_frozen"
         ]
       },
       "OrderBookDetails": {
@@ -8320,7 +8493,8 @@
             "example": "spot",
             "enum": [
               "perp",
-              "spot"
+              "spot",
+              "binary_options"
             ]
           },
           "base_asset_id": {
@@ -8338,7 +8512,10 @@
             "example": "active",
             "enum": [
               "inactive",
-              "active"
+              "active",
+              "in-settlement",
+              "waiting-for-settlement",
+              "settled"
             ]
           },
           "taker_fee": {
@@ -8448,6 +8625,70 @@
           "multiplier": {
             "type": "string",
             "example": "1.000000000000000000"
+          },
+          "start_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1640995200000
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1640995200000
+          },
+          "settlement_type": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1
+            ],
+            "x-enum-varnames": [
+              "Discrete",
+              "Continuous"
+            ]
+          },
+          "settlement_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10000
+          },
+          "settlement_cap": {
+            "type": "integer",
+            "format": "int32",
+            "example": 10000
+          },
+          "outcome": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "x-enum-varnames": [
+              "None",
+              "No",
+              "Yes"
+            ]
+          },
+          "default_price": {
+            "type": "integer",
+            "format": "int32",
+            "example": 5000
+          },
+          "operator_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "is_frozen": {
+            "type": "boolean",
+            "example": false
+          },
+          "open_interest": {
+            "type": "string",
+            "example": "93.0"
           }
         },
         "title": "SpotOrderBookDetail",
@@ -8480,7 +8721,17 @@
           "daily_price_low",
           "daily_price_high",
           "daily_price_change",
-          "daily_chart"
+          "daily_chart",
+          "start_timestamp",
+          "end_timestamp",
+          "settlement_type",
+          "settlement_price",
+          "settlement_cap",
+          "outcome",
+          "default_price",
+          "operator_account_index",
+          "is_frozen",
+          "open_interest"
         ]
       },
       "OrderBookOrders": {
@@ -9811,6 +10062,18 @@
             "type": "integer",
             "format": "int64",
             "example": "1"
+          },
+          "market_symbol": {
+            "type": "string",
+            "example": "ETH"
+          },
+          "market_kind": {
+            "type": "string",
+            "enum": [
+              "spot",
+              "bo",
+              "perps"
+            ]
           }
         },
         "title": "Trade",
@@ -9854,7 +10117,9 @@
           "maker_allocated_margin_usdc_before",
           "maker_allocated_margin_usdc_after",
           "ask_order_version",
-          "bid_order_version"
+          "bid_order_version",
+          "market_symbol",
+          "market_kind"
         ]
       },
       "Trades": {
@@ -13259,7 +13524,8 @@
             "format": "int64"
           },
           "settlement_pnl": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "last_trade_id": {
             "type": "integer",
@@ -13499,6 +13765,51 @@
           "name",
           "required_lit_stakes",
           "fee_rate"
+        ]
+      },
+      "AccountBinaryOptionsPosition": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1000
+          },
+          "entry_quote": {
+            "type": "string",
+            "example": "588.00"
+          },
+          "avg_entry_price": {
+            "type": "string",
+            "example": "0.49",
+            "description": " average price paid for the held outcome (YES price for sign 1, NO price for sign -1)"
+          },
+          "sign": {
+            "type": "integer",
+            "format": "int32",
+            "enum": [
+              -1,
+              1
+            ],
+            "description": " 1 holds the YES outcome, -1 holds the NO outcome",
+            "x-enum-varnames": [
+              "No",
+              "Yes"
+            ]
+          },
+          "size": {
+            "type": "string",
+            "example": "1200",
+            "description": " magnitude only; combine with sign"
+          }
+        },
+        "title": "AccountBinaryOptionsPosition",
+        "required": [
+          "market_id",
+          "entry_quote",
+          "avg_entry_price",
+          "sign",
+          "size"
         ]
       }
     }

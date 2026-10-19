@@ -49,6 +49,8 @@ Name | Type | Description | Notes
 **maker_allocated_margin_usdc_after** | **int** |  | 
 **bid_order_version** | **int** |  | 
 **ask_order_version** | **int** |  | 
+**market_symbol** | **str** |  | 
+**market_kind** | **str** |  | 
 
 ## Example
 

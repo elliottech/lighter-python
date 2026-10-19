@@ -70,14 +70,23 @@ class Trade(BaseModel):
     maker_allocated_margin_usdc_after: StrictInt
     bid_order_version: StrictInt
     ask_order_version: StrictInt
+    market_symbol: StrictStr
+    market_kind: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed", "transaction_time", "bid_account_pnl", "ask_account_pnl", "ask_client_id", "bid_client_id", "ask_client_id_str", "bid_client_id_str", "ask_id_str", "bid_id_str", "trade_id_str", "integrator_maker_fee", "integrator_maker_fee_collector_index", "integrator_taker_fee", "integrator_taker_fee_collector_index", "taker_allocated_margin_usdc_before", "taker_allocated_margin_usdc_after", "maker_allocated_margin_usdc_before", "maker_allocated_margin_usdc_after", "bid_order_version", "ask_order_version"]
+    __properties: ClassVar[List[str]] = ["trade_id", "tx_hash", "type", "market_id", "size", "price", "usd_amount", "ask_id", "bid_id", "ask_account_id", "bid_account_id", "is_maker_ask", "block_height", "timestamp", "taker_fee", "taker_position_size_before", "taker_entry_quote_before", "taker_initial_margin_fraction_before", "taker_position_sign_changed", "maker_fee", "maker_position_size_before", "maker_entry_quote_before", "maker_initial_margin_fraction_before", "maker_position_sign_changed", "transaction_time", "bid_account_pnl", "ask_account_pnl", "ask_client_id", "bid_client_id", "ask_client_id_str", "bid_client_id_str", "ask_id_str", "bid_id_str", "trade_id_str", "integrator_maker_fee", "integrator_maker_fee_collector_index", "integrator_taker_fee", "integrator_taker_fee_collector_index", "taker_allocated_margin_usdc_before", "taker_allocated_margin_usdc_after", "maker_allocated_margin_usdc_before", "maker_allocated_margin_usdc_after", "bid_order_version", "ask_order_version", "market_symbol", "market_kind"]
 
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
         if value not in set(['trade', 'liquidation', 'deleverage', 'market-settlement']):
             raise ValueError("must be one of enum values ('trade', 'liquidation', 'deleverage', 'market-settlement')")
+        return value
+
+    @field_validator('market_kind')
+    def market_kind_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['spot', 'bo', 'perps']):
+            raise ValueError("must be one of enum values ('spot', 'bo', 'perps')")
         return value
 
     model_config = ConfigDict(
@@ -181,7 +190,9 @@ class Trade(BaseModel):
             "maker_allocated_margin_usdc_before": obj.get("maker_allocated_margin_usdc_before"),
             "maker_allocated_margin_usdc_after": obj.get("maker_allocated_margin_usdc_after"),
             "bid_order_version": obj.get("bid_order_version"),
-            "ask_order_version": obj.get("ask_order_version")
+            "ask_order_version": obj.get("ask_order_version"),
+            "market_symbol": obj.get("market_symbol"),
+            "market_kind": obj.get("market_kind")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

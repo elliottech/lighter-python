@@ -71,21 +71,44 @@ class PerpsOrderBookDetail(BaseModel):
     multiplier: StrictStr
     market_flags: StrictInt
     funding_premium_multiplier: StrictInt
+    start_timestamp: StrictInt
+    end_timestamp: StrictInt
+    settlement_type: StrictInt
+    settlement_price: StrictInt
+    settlement_cap: StrictInt
+    outcome: StrictInt
+    default_price: StrictInt
+    operator_account_index: StrictInt
+    is_frozen: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "size_decimals", "price_decimals", "quote_multiplier", "default_initial_margin_fraction", "min_initial_margin_fraction", "maintenance_margin_fraction", "closeout_margin_fraction", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "open_interest", "daily_chart", "market_config", "strategy_index", "is_maker_fee_enabled", "is_taker_fee_enabled", "funding_clamp_small", "funding_clamp_big", "base_interest_rate", "created_at", "mark_price", "index_price", "multiplier", "market_flags", "funding_premium_multiplier"]
+    __properties: ClassVar[List[str]] = ["symbol", "market_id", "market_type", "base_asset_id", "quote_asset_id", "status", "taker_fee", "maker_fee", "liquidation_fee", "min_base_amount", "min_quote_amount", "supported_size_decimals", "supported_price_decimals", "supported_quote_decimals", "order_quote_limit", "size_decimals", "price_decimals", "quote_multiplier", "default_initial_margin_fraction", "min_initial_margin_fraction", "maintenance_margin_fraction", "closeout_margin_fraction", "last_trade_price", "daily_trades_count", "daily_base_token_volume", "daily_quote_token_volume", "daily_price_low", "daily_price_high", "daily_price_change", "open_interest", "daily_chart", "market_config", "strategy_index", "is_maker_fee_enabled", "is_taker_fee_enabled", "funding_clamp_small", "funding_clamp_big", "base_interest_rate", "created_at", "mark_price", "index_price", "multiplier", "market_flags", "funding_premium_multiplier", "start_timestamp", "end_timestamp", "settlement_type", "settlement_price", "settlement_cap", "outcome", "default_price", "operator_account_index", "is_frozen"]
 
     @field_validator('market_type')
     def market_type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['perp', 'spot']):
-            raise ValueError("must be one of enum values ('perp', 'spot')")
+        if value not in set(['perp', 'spot', 'binary_options']):
+            raise ValueError("must be one of enum values ('perp', 'spot', 'binary_options')")
         return value
 
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['inactive', 'active']):
-            raise ValueError("must be one of enum values ('inactive', 'active')")
+        if value not in set(['inactive', 'active', 'in-settlement', 'waiting-for-settlement', 'settled']):
+            raise ValueError("must be one of enum values ('inactive', 'active', 'in-settlement', 'waiting-for-settlement', 'settled')")
+        return value
+
+    @field_validator('settlement_type')
+    def settlement_type_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1]):
+            raise ValueError("must be one of enum values (0, 1)")
+        return value
+
+    @field_validator('outcome')
+    def outcome_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set([0, 1, 2]):
+            raise ValueError("must be one of enum values (0, 1, 2)")
         return value
 
     model_config = ConfigDict(
@@ -192,7 +215,16 @@ class PerpsOrderBookDetail(BaseModel):
             "index_price": obj.get("index_price"),
             "multiplier": obj.get("multiplier"),
             "market_flags": obj.get("market_flags"),
-            "funding_premium_multiplier": obj.get("funding_premium_multiplier")
+            "funding_premium_multiplier": obj.get("funding_premium_multiplier"),
+            "start_timestamp": obj.get("start_timestamp"),
+            "end_timestamp": obj.get("end_timestamp"),
+            "settlement_type": obj.get("settlement_type"),
+            "settlement_price": obj.get("settlement_price"),
+            "settlement_cap": obj.get("settlement_cap"),
+            "outcome": obj.get("outcome"),
+            "default_price": obj.get("default_price"),
+            "operator_account_index": obj.get("operator_account_index"),
+            "is_frozen": obj.get("is_frozen")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

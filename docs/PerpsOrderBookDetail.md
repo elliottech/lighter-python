@@ -49,6 +49,15 @@ Name | Type | Description | Notes
 **multiplier** | **str** |  | 
 **market_flags** | **int** |  | 
 **funding_premium_multiplier** | **int** |  | 
+**start_timestamp** | **int** |  | 
+**end_timestamp** | **int** |  | 
+**settlement_type** | **int** |  | 
+**settlement_price** | **int** |  | 
+**settlement_cap** | **int** |  | 
+**outcome** | **int** |  | 
+**default_price** | **int** |  | 
+**operator_account_index** | **int** |  | 
+**is_frozen** | **bool** |  | 
 
 ## Example
 
