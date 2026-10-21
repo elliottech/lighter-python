@@ -91,6 +91,7 @@ conf = lighter.Configuration(
                  ignore_operation_servers=False,
                  ssl_ca_cert=None,
                  retries=None,
+                 proxy=None,
                  *,
                  debug: Optional[bool] = None
                  ) -> None:
@@ -187,7 +188,7 @@ conf = lighter.Configuration(
            Default values is 100, None means no-limit.
         """
 
-        self.proxy: Optional[str] = None
+        self.proxy = proxy
         """Proxy URL
         """
         self.proxy_headers = None
