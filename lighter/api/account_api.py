@@ -397,7 +397,7 @@ class AccountApi:
     ) -> AccountLimits:
         """accountLimits
 
-        Get account limits. For more details on account types, see this page: https://apidocs.lighter.xyz/docs/account-types
+        Get account limits. For more details on account types, see this page: https://docs.lighter.xyz/developers/reference/account-types
 
         :param account_index: (required)
         :type account_index: int
@@ -468,7 +468,7 @@ class AccountApi:
     ) -> ApiResponse[AccountLimits]:
         """accountLimits
 
-        Get account limits. For more details on account types, see this page: https://apidocs.lighter.xyz/docs/account-types
+        Get account limits. For more details on account types, see this page: https://docs.lighter.xyz/developers/reference/account-types
 
         :param account_index: (required)
         :type account_index: int
@@ -539,7 +539,7 @@ class AccountApi:
     ) -> RESTResponseType:
         """accountLimits
 
-        Get account limits. For more details on account types, see this page: https://apidocs.lighter.xyz/docs/account-types
+        Get account limits. For more details on account types, see this page: https://docs.lighter.xyz/developers/reference/account-types
 
         :param account_index: (required)
         :type account_index: int

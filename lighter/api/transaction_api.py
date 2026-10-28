@@ -1292,7 +1292,7 @@ class TransactionApi:
     ) -> RespSendTx:
         """sendTx
 
-        You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+        You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
         :param tx_type: (required)
         :type tx_type: int
@@ -1367,7 +1367,7 @@ class TransactionApi:
     ) -> ApiResponse[RespSendTx]:
         """sendTx
 
-        You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+        You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
         :param tx_type: (required)
         :type tx_type: int
@@ -1442,7 +1442,7 @@ class TransactionApi:
     ) -> RESTResponseType:
         """sendTx
 
-        You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+        You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
         :param tx_type: (required)
         :type tx_type: int
@@ -1592,7 +1592,7 @@ class TransactionApi:
     ) -> RespSendTxBatch:
         """sendTxBatch
 
-        You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+        You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
         :param tx_types: (required)
         :type tx_types: str
@@ -1663,7 +1663,7 @@ class TransactionApi:
     ) -> ApiResponse[RespSendTxBatch]:
         """sendTxBatch
 
-        You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+        You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
         :param tx_types: (required)
         :type tx_types: str
@@ -1734,7 +1734,7 @@ class TransactionApi:
     ) -> RESTResponseType:
         """sendTxBatch
 
-        You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+        You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
         :param tx_types: (required)
         :type tx_types: str

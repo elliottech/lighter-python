@@ -321,7 +321,7 @@ No authorization required
 
 sendTx
 
-You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
 ### Example
 
@@ -394,7 +394,7 @@ No authorization required
 
 sendTxBatch
 
-You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started
+You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions
 
 ### Example
 

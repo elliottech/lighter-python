@@ -306,7 +306,7 @@
         "tags": [
           "account"
         ],
-        "description": "Get account limits. For more details on account types, see this page: https://apidocs.lighter.xyz/docs/account-types",
+        "description": "Get account limits. For more details on account types, see this page: https://docs.lighter.xyz/developers/reference/account-types",
         "parameters": [
           {
             "name": "account_index",
@@ -2310,7 +2310,7 @@
         "tags": [
           "transaction"
         ],
-        "description": "You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started",
+        "description": "You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -2353,7 +2353,7 @@
         "tags": [
           "transaction"
         ],
-        "description": "You need to sign the transaction body before sending it to the server. More details can be found here: https://apidocs.lighter.xyz/docs/get-started",
+        "description": "You need to sign the transaction body before sending it to the server. More details can be found here: https://docs.lighter.xyz/developers/integration-guides/signing-transactions",
         "parameters": [],
         "requestBody": {
           "required": true,
