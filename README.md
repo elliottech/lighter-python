@@ -98,6 +98,9 @@ Class | Method | HTTP request | Description
 *CandlestickApi* | [**fundings**](docs/CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
 *CandlestickApi* | [**mark_price_candles**](docs/CandlestickApi.md#mark_price_candles) | **GET** /api/v1/markPriceCandles | markPriceCandles
 *CandlestickApi* | [**market_price_charts**](docs/CandlestickApi.md#market_price_charts) | **GET** /api/v1/marketPriceCharts | marketPriceCharts
+*EventApi* | [**event_create**](docs/EventApi.md#event_create) | **POST** /api/v1/event/create | event_create
+*EventApi* | [**event_register_order_book**](docs/EventApi.md#event_register_order_book) | **POST** /api/v1/event/registerOrderBook | event_registerOrderBook
+*EventApi* | [**event_update**](docs/EventApi.md#event_update) | **POST** /api/v1/event/update | event_update
 *EventApi* | [**events**](docs/EventApi.md#events) | **GET** /api/v1/events | events
 *FundingApi* | [**funding_rates**](docs/FundingApi.md#funding_rates) | **GET** /api/v1/funding-rates | funding-rates
 *InfoApi* | [**layer1_basic_info**](docs/InfoApi.md#layer1_basic_info) | **GET** /api/v1/layer1BasicInfo | layer1BasicInfo
@@ -248,6 +251,7 @@ Class | Method | HTTP request | Description
  - [ReferralTotals](docs/ReferralTotals.md)
  - [ReqSetAccountMetadata](docs/ReqSetAccountMetadata.md)
  - [RespChangeAccountTier](docs/RespChangeAccountTier.md)
+ - [RespCreateEvent](docs/RespCreateEvent.md)
  - [RespCreateRFQ](docs/RespCreateRFQ.md)
  - [RespGetApiTokens](docs/RespGetApiTokens.md)
  - [RespGetBoPnL](docs/RespGetBoPnL.md)
@@ -265,6 +269,7 @@ Class | Method | HTTP request | Description
  - [RespPostApiToken](docs/RespPostApiToken.md)
  - [RespPriceOracleInfo](docs/RespPriceOracleInfo.md)
  - [RespPublicPoolsMetadata](docs/RespPublicPoolsMetadata.md)
+ - [RespRegisterEventOrderBook](docs/RespRegisterEventOrderBook.md)
  - [RespRespondToRFQ](docs/RespRespondToRFQ.md)
  - [RespRevokeApiToken](docs/RespRevokeApiToken.md)
  - [RespSendTx](docs/RespSendTx.md)

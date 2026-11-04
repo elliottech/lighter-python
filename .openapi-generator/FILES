@@ -109,6 +109,7 @@ docs/ReferralStats.md
 docs/ReferralTotals.md
 docs/ReqSetAccountMetadata.md
 docs/RespChangeAccountTier.md
+docs/RespCreateEvent.md
 docs/RespCreateRFQ.md
 docs/RespGetApiTokens.md
 docs/RespGetBoPnL.md
@@ -126,6 +127,7 @@ docs/RespListRFQs.md
 docs/RespPostApiToken.md
 docs/RespPriceOracleInfo.md
 docs/RespPublicPoolsMetadata.md
+docs/RespRegisterEventOrderBook.md
 docs/RespRespondToRFQ.md
 docs/RespRevokeApiToken.md
 docs/RespSendTx.md
@@ -289,6 +291,7 @@ lighter/models/referral_stats.py
 lighter/models/referral_totals.py
 lighter/models/req_set_account_metadata.py
 lighter/models/resp_change_account_tier.py
+lighter/models/resp_create_event.py
 lighter/models/resp_create_rfq.py
 lighter/models/resp_get_api_tokens.py
 lighter/models/resp_get_bo_pn_l.py
@@ -306,6 +309,7 @@ lighter/models/resp_list_rfqs.py
 lighter/models/resp_post_api_token.py
 lighter/models/resp_price_oracle_info.py
 lighter/models/resp_public_pools_metadata.py
+lighter/models/resp_register_event_order_book.py
 lighter/models/resp_respond_to_rfq.py
 lighter/models/resp_revoke_api_token.py
 lighter/models/resp_send_tx.py
