@@ -150,6 +150,7 @@ from lighter.models.referral_program_kickback import ReferralProgramKickback
 from lighter.models.referral_totals import ReferralTotals
 from lighter.models.req_set_account_metadata import ReqSetAccountMetadata
 from lighter.models.resp_change_account_tier import RespChangeAccountTier
+from lighter.models.resp_create_event import RespCreateEvent
 from lighter.models.resp_create_rfq import RespCreateRFQ
 from lighter.models.resp_get_api_tokens import RespGetApiTokens
 from lighter.models.resp_get_exchange_metrics import RespGetExchangeMetrics
@@ -163,6 +164,7 @@ from lighter.models.resp_get_rfq import RespGetRFQ
 from lighter.models.resp_list_rfqs import RespListRFQs
 from lighter.models.resp_post_api_token import RespPostApiToken
 from lighter.models.resp_public_pools_metadata import RespPublicPoolsMetadata
+from lighter.models.resp_register_event_order_book import RespRegisterEventOrderBook
 from lighter.models.resp_respond_to_rfq import RespRespondToRFQ
 from lighter.models.resp_revoke_api_token import RespRevokeApiToken
 from lighter.models.resp_send_tx import RespSendTx

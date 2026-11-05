@@ -17,6 +17,8 @@ Name | Type | Description | Notes
 **leased_lit** | **str** | Total actively leased LIT. | 
 **user_tier_name** | **str** |  | 
 **user_tier_last_update** | **int** |  | [optional] 
+**bo_user_tier_name** | **str** |  | 
+**bo_fee_rate** | **float** |  Product of the staking and BO volume multipliers; 0.72 means a 28% discount. | 
 
 ## Example
 
