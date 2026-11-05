@@ -42,10 +42,10 @@ if __name__ == "__main__":
 The [`examples/`](examples) directory contains end-to-end scripts for the
 common flows. A few starting points:
 
-- [Read public REST endpoints](examples/get_info.py)
-- [Stream order books and account state over websocket](examples/ws.py)
-- [Create / modify / cancel an order over HTTP](examples/create_modify_cancel_order_http.py)
-- [Create / modify / cancel an order over websocket](examples/create_modify_cancel_order_ws.py)
+- [Read public REST endpoints](examples/market-data/get_info.py)
+- [Stream order books and account state over websocket](examples/websocket/ws.py)
+- [Create / modify / cancel an order over HTTP](examples/orders/create_modify_cancel_order_http.py)
+- [Create / modify / cancel an order over websocket](examples/orders/create_modify_cancel_order_ws.py)
 - [System setup (API key, signer)](examples/system_setup.py)
 
 See [`examples/README.md`](examples/README.md) for the full annotated list.
@@ -98,6 +98,9 @@ Class | Method | HTTP request | Description
 *CandlestickApi* | [**fundings**](docs/CandlestickApi.md#fundings) | **GET** /api/v1/fundings | fundings
 *CandlestickApi* | [**mark_price_candles**](docs/CandlestickApi.md#mark_price_candles) | **GET** /api/v1/markPriceCandles | markPriceCandles
 *CandlestickApi* | [**market_price_charts**](docs/CandlestickApi.md#market_price_charts) | **GET** /api/v1/marketPriceCharts | marketPriceCharts
+*EventApi* | [**event_create**](docs/EventApi.md#event_create) | **POST** /api/v1/event/create | event_create
+*EventApi* | [**event_register_order_book**](docs/EventApi.md#event_register_order_book) | **POST** /api/v1/event/registerOrderBook | event_registerOrderBook
+*EventApi* | [**event_update**](docs/EventApi.md#event_update) | **POST** /api/v1/event/update | event_update
 *EventApi* | [**events**](docs/EventApi.md#events) | **GET** /api/v1/events | events
 *FundingApi* | [**funding_rates**](docs/FundingApi.md#funding_rates) | **GET** /api/v1/funding-rates | funding-rates
 *InfoApi* | [**layer1_basic_info**](docs/InfoApi.md#layer1_basic_info) | **GET** /api/v1/layer1BasicInfo | layer1BasicInfo
@@ -248,6 +251,7 @@ Class | Method | HTTP request | Description
  - [ReferralTotals](docs/ReferralTotals.md)
  - [ReqSetAccountMetadata](docs/ReqSetAccountMetadata.md)
  - [RespChangeAccountTier](docs/RespChangeAccountTier.md)
+ - [RespCreateEvent](docs/RespCreateEvent.md)
  - [RespCreateRFQ](docs/RespCreateRFQ.md)
  - [RespGetApiTokens](docs/RespGetApiTokens.md)
  - [RespGetBoPnL](docs/RespGetBoPnL.md)
@@ -265,6 +269,7 @@ Class | Method | HTTP request | Description
  - [RespPostApiToken](docs/RespPostApiToken.md)
  - [RespPriceOracleInfo](docs/RespPriceOracleInfo.md)
  - [RespPublicPoolsMetadata](docs/RespPublicPoolsMetadata.md)
+ - [RespRegisterEventOrderBook](docs/RespRegisterEventOrderBook.md)
  - [RespRespondToRFQ](docs/RespRespondToRFQ.md)
  - [RespRevokeApiToken](docs/RespRevokeApiToken.md)
  - [RespSendTx](docs/RespSendTx.md)
