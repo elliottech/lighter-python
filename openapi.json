@@ -1793,7 +1793,7 @@
               "type": "integer",
               "format": "int64",
               "minimum": 1,
-              "maximum": 250
+              "maximum": 500
             }
           }
         ],

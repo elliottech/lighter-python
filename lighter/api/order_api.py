@@ -3101,7 +3101,7 @@ class OrderApi:
     async def order_book_orders(
         self,
         market_id: StrictInt,
-        limit: Annotated[int, Field(le=250, strict=True, ge=1)],
+        limit: Annotated[int, Field(le=500, strict=True, ge=1)],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3172,7 +3172,7 @@ class OrderApi:
     async def order_book_orders_with_http_info(
         self,
         market_id: StrictInt,
-        limit: Annotated[int, Field(le=250, strict=True, ge=1)],
+        limit: Annotated[int, Field(le=500, strict=True, ge=1)],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -3243,7 +3243,7 @@ class OrderApi:
     async def order_book_orders_without_preload_content(
         self,
         market_id: StrictInt,
-        limit: Annotated[int, Field(le=250, strict=True, ge=1)],
+        limit: Annotated[int, Field(le=500, strict=True, ge=1)],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
