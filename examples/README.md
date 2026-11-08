@@ -122,6 +122,17 @@ More details can be found in the following example:
 - `sub_account_transfer_eth.py`
 - `sub_account_transfer_usdc.py`
 
+## Local order books over websocket
+`WsClient` keeps a local copy of every subscribed order book (`client.order_book_states[market_id]`):
+- `asks` are sorted by ascending price and `bids` by descending price, so `asks[0]` and `bids[0]` are the best levels.
+- `nonce`, `begin_nonce`, `offset` and `last_updated_at` reflect the last applied update.
+- Each update is checked for continuity: its `begin_nonce` must equal the `nonce` of the previous update.
+  If it doesn't, an update was missed, so the client drops the book, resubscribes to get a fresh snapshot and
+  calls `on_order_book_gap(market_id, expected_begin_nonce, received_begin_nonce)` if you pass one.
+  Pass `verify_order_book_continuity=False` to turn the check off.
+
+Example: `websocket/ws.py`
+
 ## Public Pools
 Public pools behave just like subaccounts, except that anyone can join them.  
 You can create / modify a public pool using the SDK. Check out the following example:
