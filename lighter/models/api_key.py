@@ -31,10 +31,11 @@ class ApiKey(BaseModel):
     api_key_index: StrictInt
     nonce: StrictInt
     public_key: StrictStr
+    key_type: Optional[StrictInt] = None
     transaction_time: StrictInt
     restrictions: Optional[ApiKeyRestrictions] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "api_key_index", "nonce", "public_key", "transaction_time", "restrictions"]
+    __properties: ClassVar[List[str]] = ["account_index", "api_key_index", "nonce", "public_key", "key_type", "transaction_time", "restrictions"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -101,6 +102,7 @@ class ApiKey(BaseModel):
             "api_key_index": obj.get("api_key_index"),
             "nonce": obj.get("nonce"),
             "public_key": obj.get("public_key"),
+            "key_type": obj.get("key_type"),
             "transaction_time": obj.get("transaction_time"),
             "restrictions": ApiKeyRestrictions.from_dict(obj["restrictions"]) if obj.get("restrictions") is not None else None
         })
