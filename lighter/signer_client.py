@@ -154,8 +154,8 @@ def __populate_shared_library_functions(signer):
     signer.GenerateAPIKey.argtypes = []
     signer.GenerateAPIKey.restype = ApiKeyResponse
 
-    signer.GenerateECDSAAPIKey.argtypes = []
-    signer.GenerateECDSAAPIKey.restype = ApiKeyResponse
+    signer.GenerateSchnorrAPIKey.argtypes = []
+    signer.GenerateSchnorrAPIKey.restype = ApiKeyResponse
 
     signer.CreateClient.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_longlong]
     signer.CreateClient.restype = ctypes.c_void_p
@@ -259,6 +259,8 @@ def get_signer():
     return __signer
 
 
+# secp256k1 ECDSA api key: 32-byte private key, 33-byte compressed public key. Register it with
+# change_api_key; the signer picks the scheme from the key length.
 def create_api_key():
     result = lighter.signer_client.get_signer().GenerateAPIKey()
     private_key_str = decode_and_free(result.privateKey)
@@ -267,10 +269,9 @@ def create_api_key():
     return private_key_str, public_key_str, error
 
 
-# secp256k1 api key: 32-byte private key, 33-byte compressed public key. Pass the private key to
-# SignerClient like a Schnorr one; the signer picks the scheme from the key length.
-def create_ecdsa_api_key():
-    result = lighter.signer_client.get_signer().GenerateECDSAAPIKey()
+# Legacy Schnorr api key: 40-byte private and public keys.
+def create_schnorr_api_key():
+    result = lighter.signer_client.get_signer().GenerateSchnorrAPIKey()
     private_key_str = decode_and_free(result.privateKey)
     public_key_str = decode_and_free(result.publicKey)
     error = decode_and_free(result.err)
@@ -566,8 +567,8 @@ class SignerClient:
         return create_api_key()
 
     @staticmethod
-    def create_ecdsa_api_key(self):
-        return create_ecdsa_api_key()
+    def create_schnorr_api_key(self):
+        return create_schnorr_api_key()
 
     def create_auth_token_with_expiry(self, deadline: int = DEFAULT_10_MIN_AUTH_EXPIRY, *, timestamp: int = None, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if deadline == SignerClient.DEFAULT_10_MIN_AUTH_EXPIRY:
@@ -581,8 +582,11 @@ class SignerClient:
         error = decode_and_free(result.err)
         return auth, error
 
+    # 33-byte (66 hex) public keys are ECDSA and register via SignChangeECDSAPubKey (tx type 54); 40-byte ones are Schnorr
     def sign_change_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignChangePubKey(
+        is_ecdsa = len(new_pubkey[2:] if new_pubkey.startswith("0x") else new_pubkey) == 66
+        sign = self.signer.SignChangeECDSAPubKey if is_ecdsa else self.signer.SignChangePubKey
+        return self.__decode_and_sign_tx_info(eth_private_key, sign(
             ctypes.c_char_p(new_pubkey.encode("utf-8")),
             skip_nonce,
             nonce,
@@ -651,25 +655,6 @@ class SignerClient:
             )
         except Exception as e:
             return None, trim_exc(str(e))
-        return api_response, None
-
-    def sign_change_ecdsa_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        return self.__decode_and_sign_tx_info(eth_private_key, self.signer.SignChangeECDSAPubKey(
-            ctypes.c_char_p(new_pubkey.encode("utf-8")),
-            skip_nonce,
-            nonce,
-            api_key_index,
-            self.account_index
-        ))
-
-    async def change_ecdsa_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        tx_type, tx_info, tx_hash, error = self.sign_change_ecdsa_api_key(eth_private_key, new_pubkey, skip_nonce, nonce, api_key_index)
-        if error is not None:
-            return None, error
-
-        logging.debug(f"Change ECDSA Pub Key TxHash: {tx_hash} TxInfo: {tx_info}")
-        api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
-        logging.debug(f"Change ECDSA Pub Key Send. TxResponse: {api_response}")
         return api_response, None
 
     def sign_create_order(
