@@ -18,6 +18,7 @@ class WsClient:
         ws_url=None,
         on_shutdown=None,
         on_unhandled_message=None,
+        auth_token=None,
     ):
         if ws_url is not None:
             self.base_url = ws_url.rstrip("/")
@@ -41,6 +42,7 @@ class WsClient:
         self.on_account_update = on_account_update
         self.on_shutdown = on_shutdown
         self.on_unhandled_message = on_unhandled_message
+        self.auth_token = auth_token
 
         self.ws = None
 
@@ -175,15 +177,18 @@ class WsClient:
     def on_close(self, ws, close_status_code, close_msg):
         raise Exception(f"Closed: {close_status_code} {close_msg}")
 
+    def _auth_headers(self):
+        return {"Authorization": self.auth_token} if self.auth_token else None
+
     def run(self):
-        ws = connect(self.base_url)
+        ws = connect(self.base_url, additional_headers=self._auth_headers())
         self.ws = ws
 
         for message in ws:
             self.on_message(ws, message)
 
     async def run_async(self):
-        ws = await connect_async(self.base_url)
+        ws = await connect_async(self.base_url, extra_headers=self._auth_headers())
         self.ws = ws
 
         async for message in ws:
