@@ -1,10 +1,13 @@
+
 import json
 from websockets.sync.client import connect
 from websockets.client import connect as connect_async
 from lighter.configuration import Configuration
 from lighter.endpoint_profiles import join_url
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 class WsClient:
     def __init__(
@@ -48,6 +51,9 @@ class WsClient:
         if isinstance(message, str):
             message = json.loads(message)
 
+        if not isinstance(message, dict):
+            return
+
         message_type = message.get("type")
 
         if message_type == "connected":
@@ -69,7 +75,12 @@ class WsClient:
             self.handle_unhandled_message(message)
 
     async def on_message_async(self, ws, message):
-        message = json.loads(message)
+        if isinstance(message, str):
+            message = json.loads(message)
+
+        if not isinstance(message, dict):
+            return
+
         message_type = message.get("type")
 
         if message_type == "connected":
@@ -108,66 +119,95 @@ class WsClient:
         market_id = message["channel"].split(":")[1]
         self.order_book_states[market_id] = message["order_book"]
         if self.on_order_book_update:
-            self.on_order_book_update(market_id, self.order_book_states[market_id])
+            self.on_order_book_update(
+                market_id,
+                self.order_book_states[market_id],
+            )
 
     def handle_update_order_book(self, message):
         market_id = message["channel"].split(":")[1]
         self.update_order_book_state(market_id, message["order_book"])
         if self.on_order_book_update:
-            self.on_order_book_update(market_id, self.order_book_states[market_id])
+            self.on_order_book_update(
+                market_id,
+                self.order_book_states[market_id],
+            )
 
     def update_order_book_state(self, market_id, order_book):
         self.update_orders(
-            order_book["asks"], self.order_book_states[market_id]["asks"]
+            order_book["asks"],
+            self.order_book_states[market_id]["asks"],
         )
         self.update_orders(
-            order_book["bids"], self.order_book_states[market_id]["bids"]
+            order_book["bids"],
+            self.order_book_states[market_id]["bids"],
         )
 
     def update_orders(self, new_orders, existing_orders):
         for new_order in new_orders:
             is_new_order = True
-            # iterate over a copy so removal is safe
+
+            # Iterate over a copy so removal is safe
             existing_order_copy = existing_orders[:]
+
             for existing_order in existing_order_copy:
                 if new_order["price"] == existing_order["price"]:
                     is_new_order = False
                     existing_order["size"] = new_order["size"]
+
                     if float(new_order["size"]) == 0:
                         existing_orders.remove(existing_order)
 
             if is_new_order:
                 existing_orders.append(new_order)
 
-        # final cleanup (in-place)
+        # Final cleanup (in-place)
         existing_orders[:] = [
-            order for order in existing_orders if float(order["size"]) > 0
+            order
+            for order in existing_orders
+            if float(order["size"]) > 0
         ]
 
     def handle_subscribed_account(self, message):
         account_id = message["channel"].split(":")[1]
         self.account_states[account_id] = message
+
         if self.on_account_update:
-            self.on_account_update(account_id, self.account_states[account_id])
+            self.on_account_update(
+                account_id,
+                self.account_states[account_id],
+            )
 
     def handle_update_account(self, message):
         account_id = message["channel"].split(":")[1]
         self.account_states[account_id] = message
+
         if self.on_account_update:
-            self.on_account_update(account_id, self.account_states[account_id])
+            self.on_account_update(
+                account_id,
+                self.account_states[account_id],
+            )
 
     def handle_unhandled_message(self, message):
         if self.on_unhandled_message:
             self.on_unhandled_message(message)
         else:
-            logger.warning("Unhandled message type %r: %s", message.get("type"), message)
+            logger.warning(
+                "Unhandled message type %r: %s",
+                message.get("type"),
+                message,
+            )
 
     def handle_shutdown(self, message):
         close_in_ms = message.get("close_in_ms", 0)
+
         if self.on_shutdown:
             self.on_shutdown(close_in_ms)
         else:
-            print(f"Server shutting down, connection closes in {close_in_ms}ms")
+            print(
+                f"Server shutting down, "
+                f"connection closes in {close_in_ms}ms"
+            )
 
     def on_error(self, ws, error):
         raise Exception(f"Error: {error}")
