@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 **lifetime_quote_token_volume** | **float** |  | 
 **lifetime_base_token_volume** | **float** |  outcome shares traded over the market&#39;s life | 
 **open_interest** | **str** |  | 
-**status** | **str** |  inactive once the trading window closes | 
+**status** | **str** |  inactive before the trading window opens, waiting-for-settlement once it closes | 
 **outcome** | **int** |  | 
 
 ## Example
