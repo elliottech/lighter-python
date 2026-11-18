@@ -1,4 +1,5 @@
 import ctypes
+from decimal import Decimal
 from fractions import Fraction
 from functools import wraps
 import inspect
@@ -262,6 +263,13 @@ def create_api_key():
 
 def trim_exc(exception_body: str):
     return exception_body.strip().split("\n")[-1]
+
+
+def to_ticks(amount, scale) -> int:
+    # Scale through the amount's decimal representation: int(2.01 * 1e6) is 2009999,
+    # because 2.01 * 1e6 == 2009999.9999999998 in binary floating point.
+    # Precision finer than one tick is still truncated, as before.
+    return int(Decimal(str(amount)) * Decimal(scale))
 
 
 def process_api_key_and_nonce(func):
@@ -938,7 +946,7 @@ class SignerClient:
             nonce: int = DEFAULT_NONCE,
             api_key_index: int = DEFAULT_API_KEY_INDEX,
     ):
-        quote_amount = int(quote_amount * 1e6)
+        quote_amount = to_ticks(quote_amount, self.USDC_TICKER_SCALE)
         ob_orders = await self.order_api.order_book_orders(market_index, 100)
         if ideal_price is None:
             logging.debug(
@@ -1235,7 +1243,7 @@ class SignerClient:
     @process_api_key_and_nonce
     async def withdraw(self, asset_id: int, route_type: int, amount: float, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
         if asset_id in self.ASSET_TO_TICKER_SCALE:
-            amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
+            amount = to_ticks(amount, self.ASSET_TO_TICKER_SCALE[asset_id])
         else:
             raise ValueError(f"Unsupported asset id: {asset_id}")
 
@@ -1350,7 +1358,7 @@ class SignerClient:
     @process_api_key_and_nonce
     async def transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if asset_id in self.ASSET_TO_TICKER_SCALE:
-            amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
+            amount = to_ticks(amount, self.ASSET_TO_TICKER_SCALE[asset_id])
         else:
             raise ValueError(f"Unsupported asset id: {asset_id}")
 
@@ -1366,7 +1374,7 @@ class SignerClient:
     @process_api_key_and_nonce
     async def transfer_same_master_account(self, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
         if asset_id in self.ASSET_TO_TICKER_SCALE:
-            amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
+            amount = to_ticks(amount, self.ASSET_TO_TICKER_SCALE[asset_id])
         else:
             raise ValueError(f"Unsupported asset id: {asset_id}")
 
@@ -1468,7 +1476,7 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def update_margin(self, market_index: int, usdc_amount: float, direction: int, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        usdc_amount = int(usdc_amount * self.USDC_TICKER_SCALE)
+        usdc_amount = to_ticks(usdc_amount, self.USDC_TICKER_SCALE)
         tx_type, tx_info, tx_hash, error = self.sign_update_margin(market_index, usdc_amount, direction, skip_nonce, nonce, api_key_index)
 
         if error is not None:
