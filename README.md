@@ -42,10 +42,10 @@ if __name__ == "__main__":
 The [`examples/`](examples) directory contains end-to-end scripts for the
 common flows. A few starting points:
 
-- [Read public REST endpoints](examples/get_info.py)
-- [Stream order books and account state over websocket](examples/ws.py)
-- [Create / modify / cancel an order over HTTP](examples/create_modify_cancel_order_http.py)
-- [Create / modify / cancel an order over websocket](examples/create_modify_cancel_order_ws.py)
+- [Read public REST endpoints](examples/market-data/get_info.py)
+- [Stream order books and account state over websocket](examples/websocket/ws.py)
+- [Create / modify / cancel an order over HTTP](examples/orders/create_modify_cancel_order_http.py)
+- [Create / modify / cancel an order over websocket](examples/orders/create_modify_cancel_order_ws.py)
 - [System setup (API key, signer)](examples/system_setup.py)
 
 See [`examples/README.md`](examples/README.md) for the full annotated list.
