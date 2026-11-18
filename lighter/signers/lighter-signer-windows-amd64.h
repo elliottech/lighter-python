@@ -160,9 +160,11 @@ extern "C" {
 #endif
 
 extern ApiKeyResponse GenerateAPIKey(void);
+extern ApiKeyResponse GenerateSchnorrAPIKey(void);
 extern char* CreateClient(char* cUrl, char* cPrivateKey, int cChainId, int cApiKeyIndex, long long int cAccountIndex);
 extern char* CheckClient(int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignChangePubKey(char* cPubKey, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
+extern SignedTxResponse SignChangeECDSAPubKey(char* cPubKey, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCreateOrder(long long int cMarketIndex, long long int cClientOrderIndex, long long int cBaseAmount, int cPrice, int cIsAsk, int cOrderType, int cTimeInForce, int cReduceOnly, int cTriggerPrice, long long int cOrderExpiry, long long int cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCreateGroupedOrders(uint8_t cGroupingType, CreateOrderTxReq* cOrders, int cLen, long long int cIntegratorAccountIndex, int cIntegratorTakerFee, int cIntegratorMakerFee, uint8_t cSelfTradeBehaviorMode, uint8_t cSelfTradeEqualityMode, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
 extern SignedTxResponse SignCancelOrder(long long int cMarketIndex, long long int cOrderIndex, uint8_t cSkipNonce, long long int cNonce, int cApiKeyIndex, long long int cAccountIndex);
