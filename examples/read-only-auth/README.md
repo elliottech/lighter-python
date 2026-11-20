@@ -34,7 +34,7 @@ This will:
 Edit the constants in `setup.py`:
 
 ```python
-BASE_URL = "https://testnet.zklighter.elliot.ai"
+BASE_URL = "https://api.testnet.lighter.xyz"
 ETH_PRIVATE_KEY = "your_ethereum_private_key_here"
 API_KEY_INDEX = 253  # Using 253 as it's typically unused
 ```
@@ -43,7 +43,7 @@ API_KEY_INDEX = 253  # Using 253 as it's typically unused
 
 ```json
 {
-  "BASE_URL": "https://testnet.zklighter.elliot.ai",
+  "BASE_URL": "https://api.testnet.lighter.xyz",
   "ACCOUNTS": [
     {
       "api_key_private_key": "...",
