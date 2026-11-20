@@ -9,7 +9,7 @@ import lighter
 logging.basicConfig(level=logging.INFO, force=True)
 
 # use https://mainnet.zklighter.elliot.ai for mainnet
-BASE_URL = "https://testnet.zklighter.elliot.ai"
+BASE_URL = "https://api.testnet.lighter.xyz"
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
 API_KEY_INDEX = 253
 

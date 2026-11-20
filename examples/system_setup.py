@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG)
 # this is a dummy private key registered on Testnet.
 # It serves as a good example
 ENDPOINT_PROFILE = TESTNET
-BASE_URL = "https://testnet.zklighter.elliot.ai"
+BASE_URL = "https://api.testnet.lighter.xyz"
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
 API_KEY_INDEX = 3
 NUM_API_KEYS = 5
