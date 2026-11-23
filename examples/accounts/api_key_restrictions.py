@@ -29,6 +29,8 @@ async def main():
     )
     print(resp, err)
 
+    await asyncio.sleep(2)
+
     # Restrictions are returned only with auth for the account.
     auth, err = client.create_auth_token_with_expiry(api_key_index=api_key_index)
     keys = await lighter.AccountApi(client.api_client).apikeys(
