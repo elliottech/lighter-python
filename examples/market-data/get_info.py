@@ -66,7 +66,7 @@ async def funding_apis(client: lighter.ApiClient):
     await print_api(account_instance.funding_rates)
 
 async def main():
-    client = lighter.ApiClient(configuration=lighter.Configuration(host="https://testnet.zklighter.elliot.ai"))
+    client = lighter.ApiClient(configuration=lighter.Configuration(host="https://api.testnet.lighter.xyz"))
     await account_apis(client)
     await candlestick_apis(client)
     await order_apis(client)

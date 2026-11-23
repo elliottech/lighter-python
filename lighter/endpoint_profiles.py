@@ -32,8 +32,8 @@ MAINNET = EndpointProfile(
 
 TESTNET = EndpointProfile(
     name="testnet",
-    api_url="https://testnet.zklighter.elliot.ai",
-    ws_url="wss://testnet.zklighter.elliot.ai/stream",
+    api_url="https://api.testnet.lighter.xyz",
+    ws_url="wss://api.testnet.lighter.xyz/stream",
     chain_id=300,
 )
 

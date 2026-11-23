@@ -409,6 +409,7 @@ class SignerClient:
         self.chain_id = chain_id if chain_id is not None else (
             304 if ("mainnet.zklighter" in self.url) else
             300 if ("testnet.zklighter" in self.url) else
+            300 if ("api.testnet.lighter" in self.url) else
             466324 if ("api.rh.lighter" in self.url) else
             300 if ("api.rh-testnet.lighter" in self.url) else
             304
