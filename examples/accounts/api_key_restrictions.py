@@ -36,7 +36,8 @@ async def main():
     )
     print(keys.api_keys[0].restrictions)
 
-    # Clear all restrictions.
+    # Clear all restrictions. Each update needs a strictly newer timestamp (unix seconds).
+    await asyncio.sleep(1)
     resp, err = await client.set_api_key_restrictions(ETH_PRIVATE_KEY, api_key_index)
     print(resp, err)
 
