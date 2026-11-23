@@ -329,7 +329,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **apikeys**
-> AccountApiKeys apikeys(account_index, authorization=authorization, api_key_index=api_key_index)
+> AccountApiKeys apikeys(account_index, api_key_index=api_key_index, authorization=authorization)
 
 apikeys
 
@@ -356,12 +356,12 @@ async with lighter.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
-    authorization = 'authorization_example' # str | Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`. (optional)
     api_key_index = 56 # int |  (optional)
+    authorization = 'authorization_example' # str | Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`. (optional)
 
     try:
         # apikeys
-        api_response = await api_instance.apikeys(account_index, authorization=authorization, api_key_index=api_key_index)
+        api_response = await api_instance.apikeys(account_index, api_key_index=api_key_index, authorization=authorization)
         print("The response of AccountApi->apikeys:\n")
         pprint(api_response)
     except Exception as e:
@@ -376,8 +376,8 @@ async with lighter.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
- **authorization** | **str**| Auth token for &#x60;account_index&#x60; in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes &#x60;restrictions&#x60;. Without it, or with auth that does not verify for &#x60;account_index&#x60;, the response omits &#x60;restrictions&#x60;. | [optional] 
  **api_key_index** | **int**|  | [optional] 
+ **authorization** | **str**| Auth token for &#x60;account_index&#x60; in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes &#x60;restrictions&#x60;. Without it, or with auth that does not verify for &#x60;account_index&#x60;, the response omits &#x60;restrictions&#x60;. | [optional] 
 
 ### Return type
 

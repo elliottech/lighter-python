@@ -648,15 +648,6 @@
         "description": "Get account api key. Set `api_key_index` to 255 to retrieve all api keys associated with the account.",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`."
-          },
-          {
             "name": "account_index",
             "in": "query",
             "required": true,
@@ -674,6 +665,15 @@
               "format": "uint8",
               "default": "255"
             }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`."
           }
         ],
         "responses": {

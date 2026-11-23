@@ -1243,8 +1243,8 @@ class AccountApi:
     async def apikeys(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         api_key_index: Optional[StrictInt] = None,
+        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1264,10 +1264,10 @@ class AccountApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
-        :type authorization: str
         :param api_key_index:
         :type api_key_index: int
+        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
+        :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1292,8 +1292,8 @@ class AccountApi:
 
         _param = self._apikeys_serialize(
             account_index=account_index,
-            authorization=authorization,
             api_key_index=api_key_index,
+            authorization=authorization,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1318,8 +1318,8 @@ class AccountApi:
     async def apikeys_with_http_info(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         api_key_index: Optional[StrictInt] = None,
+        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1339,10 +1339,10 @@ class AccountApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
-        :type authorization: str
         :param api_key_index:
         :type api_key_index: int
+        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
+        :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1367,8 +1367,8 @@ class AccountApi:
 
         _param = self._apikeys_serialize(
             account_index=account_index,
-            authorization=authorization,
             api_key_index=api_key_index,
+            authorization=authorization,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1393,8 +1393,8 @@ class AccountApi:
     async def apikeys_without_preload_content(
         self,
         account_index: StrictInt,
-        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         api_key_index: Optional[StrictInt] = None,
+        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1414,10 +1414,10 @@ class AccountApi:
 
         :param account_index: (required)
         :type account_index: int
-        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
-        :type authorization: str
         :param api_key_index:
         :type api_key_index: int
+        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
+        :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1442,8 +1442,8 @@ class AccountApi:
 
         _param = self._apikeys_serialize(
             account_index=account_index,
-            authorization=authorization,
             api_key_index=api_key_index,
+            authorization=authorization,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1464,8 +1464,8 @@ class AccountApi:
     def _apikeys_serialize(
         self,
         account_index,
-        authorization,
         api_key_index,
+        authorization,
         _request_auth,
         _content_type,
         _headers,
