@@ -2,7 +2,7 @@ import asyncio
 import time
 
 import lighter
-from utils import get_api_key_config
+from examples.utils import get_api_key_config
 
 # The account's L1 private key: only the L1 wallet can set or loosen API key restrictions.
 ETH_PRIVATE_KEY = "1234567812345678123456781234567812345678123456781234567812345678"
