@@ -5355,6 +5355,162 @@
         }
       }
     },
+    "/api/v1/event/create": {
+      "post": {
+        "summary": "event_create",
+        "operationId": "event_create",
+        "tags": [
+          "event"
+        ],
+        "description": "Create a binary options event",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ReqCreateEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespCreateEvent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/event/update": {
+      "post": {
+        "summary": "event_update",
+        "operationId": "event_update",
+        "tags": [
+          "event"
+        ],
+        "description": "Replace event details as its creator; rejected while any attached unsettled market is within its trading window. Market bindings are unchanged.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ReqUpdateEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/event/registerOrderBook": {
+      "post": {
+        "summary": "event_registerOrderBook",
+        "operationId": "event_registerOrderBook",
+        "tags": [
+          "event"
+        ],
+        "description": "Register an already deployed order book to an event",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ReqRegisterEventOrderBook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespRegisterEventOrderBook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/events": {
       "get": {
         "summary": "events",
@@ -12991,6 +13147,186 @@
           "median_sources",
           "price_cap_bps",
           "price_cap_reference_price"
+        ]
+      },
+      "ReqCreateEvent": {
+        "type": "object",
+        "properties": {
+          "account_index": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string",
+            "description": " series tag; may be shared by different creators"
+          },
+          "event_kind": {
+            "type": "string",
+            "enum": [
+              "one_off",
+              "recurrent"
+            ],
+            "default": "one_off"
+          },
+          "recurrence_period_seconds": {
+            "type": "integer",
+            "format": "int32",
+            "description": " 0 for one-off events"
+          },
+          "start_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": " Unix milliseconds; observation time, not trading time"
+          },
+          "end_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": " Unix milliseconds; must be after start_at"
+          },
+          "metadata": {
+            "type": "string",
+            "description": " JSON object, max 16 KiB; presentation only"
+          }
+        },
+        "title": "ReqCreateEvent",
+        "required": [
+          "account_index",
+          "title",
+          "start_at",
+          "end_at"
+        ]
+      },
+      "ReqUpdateEvent": {
+        "type": "object",
+        "properties": {
+          "account_index": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string",
+            "description": " series tag; may be shared by different creators"
+          },
+          "event_kind": {
+            "type": "string",
+            "enum": [
+              "one_off",
+              "recurrent"
+            ],
+            "default": "one_off"
+          },
+          "recurrence_period_seconds": {
+            "type": "integer",
+            "format": "int32",
+            "description": " 0 for one-off events"
+          },
+          "start_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": " Unix milliseconds; observation time, not trading time"
+          },
+          "end_at": {
+            "type": "integer",
+            "format": "int64",
+            "description": " Unix milliseconds; must be after start_at"
+          },
+          "metadata": {
+            "type": "string",
+            "description": " JSON object, max 16 KiB; presentation only"
+          },
+          "event_id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "title": "ReqUpdateEvent",
+        "required": [
+          "account_index",
+          "title",
+          "start_at",
+          "end_at",
+          "event_id"
+        ]
+      },
+      "RespCreateEvent": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": "1"
+          }
+        },
+        "title": "RespCreateEvent",
+        "required": [
+          "code",
+          "event_id"
+        ]
+      },
+      "ReqRegisterEventOrderBook": {
+        "type": "object",
+        "properties": {
+          "account_index": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "event_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "market_index": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "title": "ReqRegisterEventOrderBook",
+        "required": [
+          "account_index",
+          "event_id",
+          "market_index"
+        ]
+      },
+      "RespRegisterEventOrderBook": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "example": "200"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean",
+            "format": "boolean",
+            "example": "true"
+          }
+        },
+        "title": "RespRegisterEventOrderBook",
+        "required": [
+          "code",
+          "success"
         ]
       },
       "RespGetEvents": {
