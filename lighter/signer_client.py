@@ -19,6 +19,7 @@ from lighter.models import TxHash
 from lighter import nonce_manager
 from lighter.models.resp_send_tx import RespSendTx
 from lighter.models.resp_send_tx_batch import RespSendTxBatch
+from lighter.models.result_code import ResultCode
 from lighter.transactions import CreateOrder, CancelOrder, Withdraw, CreateGroupedOrders
 
 CODE_OK = 200
@@ -262,6 +263,48 @@ def create_api_key():
 
 def trim_exc(exception_body: str):
     return exception_body.strip().split("\n")[-1]
+
+
+def _strip_0x(value: str) -> str:
+    return value[2:] if value[:2].lower() == "0x" else value
+
+
+def _restriction_hex(value: int) -> str:
+    return f"0x{value:016x}"
+
+
+def api_key_restrictions_json(values) -> str:
+    return json.dumps(list(values), separators=(",", ":"))
+
+
+def build_api_key_restrictions_message(
+        account_index: int,
+        api_key_index: int,
+        public_key: str,
+        market_ids: str,
+        series: str,
+        allowed_ips: str,
+        valid_until: int,
+        timestamp: int,
+        chain_id: int,
+) -> str:
+    """The message the account's L1 wallet personal_signs for setApiKeyRestrictions.
+
+    market_ids, series and allowed_ips must be the exact JSON strings sent in the request.
+    """
+    return (
+        "Set API Key Restrictions\n\n"
+        f"account index: {_restriction_hex(account_index)}\n"
+        f"api key index: {_restriction_hex(api_key_index)}\n"
+        f"pubkey: 0x{_strip_0x(public_key).lower()}\n"
+        f"market ids: {market_ids}\n"
+        f"series: {series}\n"
+        f"allowed ips: {allowed_ips}\n"
+        f"valid until: {_restriction_hex(valid_until)}\n"
+        f"timestamp: {_restriction_hex(timestamp)}\n"
+        f"chainId: {_restriction_hex(chain_id)}\n"
+        "Only sign this message for a trusted client!"
+    )
 
 
 def process_api_key_and_nonce(func):
@@ -534,6 +577,59 @@ class SignerClient:
         logging.debug(f"Change Pub Key TxHash: {tx_hash} TxInfo: {tx_info}")
         api_response = await self.send_tx(tx_type=tx_type, tx_info=tx_info)
         logging.debug(f"Change Pub Key Send. TxResponse: {api_response}")
+        return api_response, None
+
+    async def set_api_key_restrictions(
+            self,
+            eth_private_key: str,
+            api_key_index: int,
+            market_ids: Optional[List[int]] = None,
+            series: Optional[List[Dict[str, Any]]] = None,
+            allowed_ips: Optional[List[str]] = None,
+            valid_until: int = 0,
+            public_key: Optional[str] = None,
+            timestamp: Optional[int] = None,
+    ) -> Union[Tuple[ResultCode, None], Tuple[None, str]]:
+        """Replace all restrictions on an API key, signed by the account's L1 wallet.
+
+        market_ids and series form the market whitelist (empty allows all markets). series entries are
+        {"creator_account_index": int, "tag": str}. allowed_ips lists individual IPv4/IPv6 addresses (empty
+        allows any IP). valid_until is unix seconds, at most 180 days ahead; 0 means no expiry.
+        Call with only eth_private_key and api_key_index to clear all restrictions.
+        public_key defaults to the key's current public key, fetched from the API.
+        """
+        account_api = lighter.AccountApi(self.api_client)
+        try:
+            if public_key is None:
+                keys = await account_api.apikeys(account_index=self.account_index, api_key_index=api_key_index)
+                if not keys.api_keys:
+                    return None, f"api key {api_key_index} not found for account {self.account_index}"
+                public_key = keys.api_keys[0].public_key
+            public_key = _strip_0x(public_key).lower()
+            timestamp = int(time.time()) if timestamp is None else timestamp
+            market_ids_str = api_key_restrictions_json(market_ids or [])
+            series_str = api_key_restrictions_json(series or [])
+            allowed_ips_str = api_key_restrictions_json(allowed_ips or [])
+
+            message = build_api_key_restrictions_message(
+                self.account_index, api_key_index, public_key, market_ids_str, series_str, allowed_ips_str,
+                valid_until, timestamp, self.chain_id,
+            )
+            signature = Account.from_key(eth_private_key).sign_message(encode_defunct(text=message))
+
+            api_response = await account_api.set_api_key_restrictions(
+                account_index=self.account_index,
+                api_key_index=api_key_index,
+                public_key=public_key,
+                market_ids=market_ids_str,
+                series=series_str,
+                allowed_ips=allowed_ips_str,
+                valid_until=valid_until,
+                timestamp=timestamp,
+                signature=signature.signature.to_0x_hex(),
+            )
+        except Exception as e:
+            return None, trim_exc(str(e))
         return api_response, None
 
     def sign_create_order(

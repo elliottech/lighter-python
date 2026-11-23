@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **nonce** | **int** |  | 
 **public_key** | **str** |  | 
 **transaction_time** | **int** |  | 
+**restrictions** | [**ApiKeyRestrictions**](ApiKeyRestrictions.md) |  | [optional] 
 
 ## Example
 

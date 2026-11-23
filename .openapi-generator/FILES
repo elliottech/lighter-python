@@ -13,6 +13,8 @@ docs/Announcement.md
 docs/AnnouncementApi.md
 docs/Announcements.md
 docs/ApiKey.md
+docs/ApiKeyRestrictions.md
+docs/ApiKeySeries.md
 docs/ApiToken.md
 docs/ApprovedIntegrator.md
 docs/Asset.md
@@ -205,6 +207,8 @@ lighter/models/account_position.py
 lighter/models/announcement.py
 lighter/models/announcements.py
 lighter/models/api_key.py
+lighter/models/api_key_restrictions.py
+lighter/models/api_key_series.py
 lighter/models/api_token.py
 lighter/models/approved_integrator.py
 lighter/models/asset.py
