@@ -584,7 +584,7 @@ class SignerClient:
 
     # 33-byte (66 hex) public keys are ECDSA and register via SignChangeECDSAPubKey (tx type 54); 40-byte ones are Schnorr
     def sign_change_api_key(self, eth_private_key: str, new_pubkey: str, skip_nonce: int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[str, str, str, None], Tuple[None, None, None, str]]:
-        is_ecdsa = len(new_pubkey[2:] if new_pubkey.startswith("0x") else new_pubkey) == 66
+        is_ecdsa = len(new_pubkey[2:] if new_pubkey.lower().startswith("0x") else new_pubkey) == 66
         sign = self.signer.SignChangeECDSAPubKey if is_ecdsa else self.signer.SignChangePubKey
         return self.__decode_and_sign_tx_info(eth_private_key, sign(
             ctypes.c_char_p(new_pubkey.encode("utf-8")),
