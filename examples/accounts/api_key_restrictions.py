@@ -18,12 +18,13 @@ async def main():
         chain_id=endpoint_profile.chain_id,
     )
 
-    # Restrict the key to markets 0 and 1, one IP address, and a 30-day expiry.
+    # Restrict the key to markets 0 and 1 and a 30-day expiry.
+    # allowed_ips=["203.0.113.7"] would also limit the key's auth tokens to that IP,
+    # so the lookup below would then only return restrictions when run from it.
     resp, err = await client.set_api_key_restrictions(
         ETH_PRIVATE_KEY,
         api_key_index,
         market_ids=[0, 1],
-        allowed_ips=["203.0.113.7"],
         valid_until=int(time.time()) + 30 * 24 * 3600,
     )
     print(resp, err)
