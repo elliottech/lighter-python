@@ -59,6 +59,8 @@ from lighter.models.account_position import AccountPosition
 from lighter.models.announcement import Announcement
 from lighter.models.announcements import Announcements
 from lighter.models.api_key import ApiKey
+from lighter.models.api_key_restrictions import ApiKeyRestrictions
+from lighter.models.api_key_series import ApiKeySeries
 from lighter.models.api_token import ApiToken
 from lighter.models.approved_integrator import ApprovedIntegrator
 from lighter.models.asset import Asset

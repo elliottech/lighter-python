@@ -665,6 +665,15 @@
               "format": "uint8",
               "default": "255"
             }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`."
           }
         ],
         "responses": {
@@ -5754,6 +5763,53 @@
           }
         }
       }
+    },
+    "/api/v1/setApiKeyRestrictions": {
+      "post": {
+        "summary": "Set API key restrictions",
+        "operationId": "setApiKeyRestrictions",
+        "tags": [
+          "account"
+        ],
+        "description": "Replace all restrictions on one API key: market whitelist, IP whitelist and expiry. The account's L1 wallet signs the request with personal_sign, so someone who holds only the API private key cannot loosen the restrictions. They apply to every transaction the key signs except ChangePubKey. The IP whitelist and expiry also apply to every request authenticated with an auth token signed by the key. See [API key restrictions](https://docs.lighter.xyz/developers/integration-guides/api-keys#api-key-restrictions) for the signing message, timestamp rules and errors.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ReqSetApiKeyRestrictions"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ReqSetApiKeyRestrictions"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultCode"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
@@ -6433,6 +6489,9 @@
           "transaction_time": {
             "type": "integer",
             "format": "int64"
+          },
+          "restrictions": {
+            "$ref": "#/components/schemas/ApiKeyRestrictions"
           }
         },
         "title": "ApiKey",
@@ -13798,6 +13857,123 @@
           "avg_entry_price",
           "sign",
           "size"
+        ]
+      },
+      "ApiKeyRestrictions": {
+        "type": "object",
+        "title": "ApiKeyRestrictions",
+        "description": "Returned only when the request carries auth for the account. A key without restrictions returns empty lists and valid_until 0.",
+        "properties": {
+          "market_ids": {
+            "type": "array",
+            "description": "Public market ids the key may trade. Empty, with series also empty, means no market whitelist.",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "series": {
+            "type": "array",
+            "description": "Market series the key may trade, in addition to market_ids.",
+            "items": {
+              "$ref": "#/components/schemas/ApiKeySeries"
+            }
+          },
+          "allowed_ips": {
+            "type": "array",
+            "description": "IP addresses the key may be used from. Empty allows any IP.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "valid_until": {
+            "type": "integer",
+            "format": "int64",
+            "example": 0,
+            "description": "Unix seconds when the key expires. 0 means no expiry."
+          }
+        },
+        "required": [
+          "market_ids",
+          "series",
+          "allowed_ips",
+          "valid_until"
+        ]
+      },
+      "ApiKeySeries": {
+        "type": "object",
+        "title": "ApiKeySeries",
+        "description": "A market series, such as binary options, identified by its creator and tag.",
+        "properties": {
+          "creator_account_index": {
+            "type": "integer",
+            "format": "int64",
+            "example": 3
+          },
+          "tag": {
+            "type": "string",
+            "example": "btc-updown-5m"
+          }
+        },
+        "required": [
+          "creator_account_index",
+          "tag"
+        ]
+      },
+      "ReqSetApiKeyRestrictions": {
+        "type": "object",
+        "title": "ReqSetApiKeyRestrictions",
+        "description": "Send as form data, not JSON. The values replace all restrictions on the key. List fields are JSON array strings and are signed exactly as sent.",
+        "properties": {
+          "account_index": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Account that owns the key."
+          },
+          "api_key_index": {
+            "type": "integer",
+            "format": "uint8",
+            "description": "0 to 254."
+          },
+          "public_key": {
+            "type": "string",
+            "description": "The key's current public key in hex, as returned by apikeys. The 0x prefix is optional."
+          },
+          "market_ids": {
+            "type": "string",
+            "description": "JSON array string of up to 16 public market ids, e.g. \"[0,1]\". Every id must be a current market. Use [] with no series for no market whitelist."
+          },
+          "series": {
+            "type": "string",
+            "description": "JSON array string of up to 16 market series, e.g. [{\"creator_account_index\":3,\"tag\":\"btc-updown-5m\"}]. tag is 1 to 100 characters. Defaults to []."
+          },
+          "allowed_ips": {
+            "type": "string",
+            "description": "JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\"203.0.113.7\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP."
+          },
+          "valid_until": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry."
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index."
+          },
+          "signature": {
+            "type": "string",
+            "description": "0x-prefixed personal_sign signature of the signing message by the account's L1 address."
+          }
+        },
+        "required": [
+          "account_index",
+          "api_key_index",
+          "public_key",
+          "market_ids",
+          "valid_until",
+          "timestamp",
+          "signature"
         ]
       }
     }

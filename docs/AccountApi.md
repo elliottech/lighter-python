@@ -29,6 +29,7 @@ Method | HTTP request | Description
 [**rfq_list**](AccountApi.md#rfq_list) | **GET** /api/v1/rfq/list | rfq_list
 [**rfq_respond**](AccountApi.md#rfq_respond) | **POST** /api/v1/rfq/respond | rfq_respond
 [**rfq_update**](AccountApi.md#rfq_update) | **POST** /api/v1/rfq/update | rfq_update
+[**set_api_key_restrictions**](AccountApi.md#set_api_key_restrictions) | **POST** /api/v1/setApiKeyRestrictions | Set API key restrictions
 [**set_maker_only_api_keys**](AccountApi.md#set_maker_only_api_keys) | **POST** /api/v1/setMakerOnlyApiKeys | setMakerOnlyApiKeys
 [**tokens**](AccountApi.md#tokens) | **GET** /api/v1/tokens | tokens
 [**tokens_create**](AccountApi.md#tokens_create) | **POST** /api/v1/tokens/create | tokens_create
@@ -328,7 +329,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **apikeys**
-> AccountApiKeys apikeys(account_index, api_key_index=api_key_index)
+> AccountApiKeys apikeys(account_index, api_key_index=api_key_index, authorization=authorization)
 
 apikeys
 
@@ -356,10 +357,11 @@ async with lighter.ApiClient(configuration) as api_client:
     api_instance = lighter.AccountApi(api_client)
     account_index = 56 # int | 
     api_key_index = 56 # int |  (optional)
+    authorization = 'authorization_example' # str | Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`. (optional)
 
     try:
         # apikeys
-        api_response = await api_instance.apikeys(account_index, api_key_index=api_key_index)
+        api_response = await api_instance.apikeys(account_index, api_key_index=api_key_index, authorization=authorization)
         print("The response of AccountApi->apikeys:\n")
         pprint(api_response)
     except Exception as e:
@@ -375,6 +377,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **account_index** | **int**|  | 
  **api_key_index** | **int**|  | [optional] 
+ **authorization** | **str**| Auth token for &#x60;account_index&#x60; in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes &#x60;restrictions&#x60;. Without it, or with auth that does not verify for &#x60;account_index&#x60;, the response omits &#x60;restrictions&#x60;. | [optional] 
 
 ### Return type
 
@@ -1891,6 +1894,91 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/x-www-form-urlencoded
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | A successful response. |  -  |
+**400** | Bad request |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **set_api_key_restrictions**
+> ResultCode set_api_key_restrictions(account_index, api_key_index, public_key, market_ids, valid_until, timestamp, signature, series=series, allowed_ips=allowed_ips)
+
+Set API key restrictions
+
+Replace all restrictions on one API key: market whitelist, IP whitelist and expiry. The account's L1 wallet signs the request with personal_sign, so someone who holds only the API private key cannot loosen the restrictions. They apply to every transaction the key signs except ChangePubKey. The IP whitelist and expiry also apply to every request authenticated with an auth token signed by the key. See [API key restrictions](https://docs.lighter.xyz/developers/integration-guides/api-keys#api-key-restrictions) for the signing message, timestamp rules and errors.
+
+### Example
+
+
+```python
+import lighter
+from lighter.models.result_code import ResultCode
+from lighter.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://mainnet.zklighter.elliot.ai
+# See configuration.py for a list of all supported configuration parameters.
+configuration = lighter.Configuration(
+    host = "https://mainnet.zklighter.elliot.ai"
+)
+
+
+# Enter a context with an instance of the API client
+async with lighter.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = lighter.AccountApi(api_client)
+    account_index = 56 # int | Account that owns the key.
+    api_key_index = 56 # int | 0 to 254.
+    public_key = 'public_key_example' # str | The key's current public key in hex, as returned by apikeys. The 0x prefix is optional.
+    market_ids = 'market_ids_example' # str | JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist.
+    valid_until = 56 # int | Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry.
+    timestamp = 56 # int | Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index.
+    signature = 'signature_example' # str | 0x-prefixed personal_sign signature of the signing message by the account's L1 address.
+    series = 'series_example' # str | JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to []. (optional)
+    allowed_ips = 'allowed_ips_example' # str | JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP. (optional)
+
+    try:
+        # Set API key restrictions
+        api_response = await api_instance.set_api_key_restrictions(account_index, api_key_index, public_key, market_ids, valid_until, timestamp, signature, series=series, allowed_ips=allowed_ips)
+        print("The response of AccountApi->set_api_key_restrictions:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling AccountApi->set_api_key_restrictions: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **account_index** | **int**| Account that owns the key. | 
+ **api_key_index** | **int**| 0 to 254. | 
+ **public_key** | **str**| The key&#39;s current public key in hex, as returned by apikeys. The 0x prefix is optional. | 
+ **market_ids** | **str**| JSON array string of up to 16 public market ids, e.g. \\\&quot;[0,1]\\\&quot;. Every id must be a current market. Use [] with no series for no market whitelist. | 
+ **valid_until** | **int**| Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry. | 
+ **timestamp** | **int**| Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index. | 
+ **signature** | **str**| 0x-prefixed personal_sign signature of the signing message by the account&#39;s L1 address. | 
+ **series** | **str**| JSON array string of up to 16 market series, e.g. [{\\\&quot;creator_account_index\\\&quot;:3,\\\&quot;tag\\\&quot;:\\\&quot;btc-updown-5m\\\&quot;}]. tag is 1 to 100 characters. Defaults to []. | [optional] 
+ **allowed_ips** | **str**| JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\&quot;203.0.113.7\\\&quot;]. CIDR ranges are not accepted. Defaults to [], which allows any IP. | [optional] 
+
+### Return type
+
+[**ResultCode**](ResultCode.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/x-www-form-urlencoded, multipart/form-data
  - **Accept**: application/json
 
 ### HTTP response details

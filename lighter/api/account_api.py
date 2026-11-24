@@ -45,6 +45,7 @@ from lighter.models.resp_respond_to_rfq import RespRespondToRFQ
 from lighter.models.resp_revoke_api_token import RespRevokeApiToken
 from lighter.models.resp_set_maker_only_api_keys import RespSetMakerOnlyApiKeys
 from lighter.models.resp_update_rfq import RespUpdateRFQ
+from lighter.models.result_code import ResultCode
 from lighter.models.sub_accounts import SubAccounts
 from lighter.models.tx_hash import TxHash
 from lighter.models.user_referrals import UserReferrals
@@ -1243,6 +1244,7 @@ class AccountApi:
         self,
         account_index: StrictInt,
         api_key_index: Optional[StrictInt] = None,
+        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1264,6 +1266,8 @@ class AccountApi:
         :type account_index: int
         :param api_key_index:
         :type api_key_index: int
+        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
+        :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1289,6 +1293,7 @@ class AccountApi:
         _param = self._apikeys_serialize(
             account_index=account_index,
             api_key_index=api_key_index,
+            authorization=authorization,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1314,6 +1319,7 @@ class AccountApi:
         self,
         account_index: StrictInt,
         api_key_index: Optional[StrictInt] = None,
+        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1335,6 +1341,8 @@ class AccountApi:
         :type account_index: int
         :param api_key_index:
         :type api_key_index: int
+        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
+        :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1360,6 +1368,7 @@ class AccountApi:
         _param = self._apikeys_serialize(
             account_index=account_index,
             api_key_index=api_key_index,
+            authorization=authorization,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1385,6 +1394,7 @@ class AccountApi:
         self,
         account_index: StrictInt,
         api_key_index: Optional[StrictInt] = None,
+        authorization: Annotated[Optional[StrictStr], Field(description="Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1406,6 +1416,8 @@ class AccountApi:
         :type account_index: int
         :param api_key_index:
         :type api_key_index: int
+        :param authorization: Auth token for `account_index` in the Authorization header (or pass auth as a query parameter). A read-only token with access to the account also works. With it, each key includes `restrictions`. Without it, or with auth that does not verify for `account_index`, the response omits `restrictions`.
+        :type authorization: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1431,6 +1443,7 @@ class AccountApi:
         _param = self._apikeys_serialize(
             account_index=account_index,
             api_key_index=api_key_index,
+            authorization=authorization,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1452,6 +1465,7 @@ class AccountApi:
         self,
         account_index,
         api_key_index,
+        authorization,
         _request_auth,
         _content_type,
         _headers,
@@ -1481,6 +1495,8 @@ class AccountApi:
             _query_params.append(('api_key_index', api_key_index))
             
         # process the header parameters
+        if authorization is not None:
+            _header_params['authorization'] = authorization
         # process the form parameters
         # process the body parameter
 
@@ -7778,6 +7794,398 @@ class AccountApi:
         return self.api_client.param_serialize(
             method='POST',
             resource_path='/api/v1/rfq/update',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    async def set_api_key_restrictions(
+        self,
+        account_index: Annotated[StrictInt, Field(description="Account that owns the key.")],
+        api_key_index: Annotated[StrictInt, Field(description="0 to 254.")],
+        public_key: Annotated[StrictStr, Field(description="The key's current public key in hex, as returned by apikeys. The 0x prefix is optional.")],
+        market_ids: Annotated[StrictStr, Field(description="JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist.")],
+        valid_until: Annotated[StrictInt, Field(description="Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry.")],
+        timestamp: Annotated[StrictInt, Field(description="Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index.")],
+        signature: Annotated[StrictStr, Field(description="0x-prefixed personal_sign signature of the signing message by the account's L1 address.")],
+        series: Annotated[Optional[StrictStr], Field(description="JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to [].")] = None,
+        allowed_ips: Annotated[Optional[StrictStr], Field(description="JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ResultCode:
+        """Set API key restrictions
+
+        Replace all restrictions on one API key: market whitelist, IP whitelist and expiry. The account's L1 wallet signs the request with personal_sign, so someone who holds only the API private key cannot loosen the restrictions. They apply to every transaction the key signs except ChangePubKey. The IP whitelist and expiry also apply to every request authenticated with an auth token signed by the key. See [API key restrictions](https://docs.lighter.xyz/developers/integration-guides/api-keys#api-key-restrictions) for the signing message, timestamp rules and errors.
+
+        :param account_index: Account that owns the key. (required)
+        :type account_index: int
+        :param api_key_index: 0 to 254. (required)
+        :type api_key_index: int
+        :param public_key: The key's current public key in hex, as returned by apikeys. The 0x prefix is optional. (required)
+        :type public_key: str
+        :param market_ids: JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist. (required)
+        :type market_ids: str
+        :param valid_until: Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry. (required)
+        :type valid_until: int
+        :param timestamp: Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index. (required)
+        :type timestamp: int
+        :param signature: 0x-prefixed personal_sign signature of the signing message by the account's L1 address. (required)
+        :type signature: str
+        :param series: JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to [].
+        :type series: str
+        :param allowed_ips: JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP.
+        :type allowed_ips: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._set_api_key_restrictions_serialize(
+            account_index=account_index,
+            api_key_index=api_key_index,
+            public_key=public_key,
+            market_ids=market_ids,
+            valid_until=valid_until,
+            timestamp=timestamp,
+            signature=signature,
+            series=series,
+            allowed_ips=allowed_ips,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResultCode",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    async def set_api_key_restrictions_with_http_info(
+        self,
+        account_index: Annotated[StrictInt, Field(description="Account that owns the key.")],
+        api_key_index: Annotated[StrictInt, Field(description="0 to 254.")],
+        public_key: Annotated[StrictStr, Field(description="The key's current public key in hex, as returned by apikeys. The 0x prefix is optional.")],
+        market_ids: Annotated[StrictStr, Field(description="JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist.")],
+        valid_until: Annotated[StrictInt, Field(description="Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry.")],
+        timestamp: Annotated[StrictInt, Field(description="Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index.")],
+        signature: Annotated[StrictStr, Field(description="0x-prefixed personal_sign signature of the signing message by the account's L1 address.")],
+        series: Annotated[Optional[StrictStr], Field(description="JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to [].")] = None,
+        allowed_ips: Annotated[Optional[StrictStr], Field(description="JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[ResultCode]:
+        """Set API key restrictions
+
+        Replace all restrictions on one API key: market whitelist, IP whitelist and expiry. The account's L1 wallet signs the request with personal_sign, so someone who holds only the API private key cannot loosen the restrictions. They apply to every transaction the key signs except ChangePubKey. The IP whitelist and expiry also apply to every request authenticated with an auth token signed by the key. See [API key restrictions](https://docs.lighter.xyz/developers/integration-guides/api-keys#api-key-restrictions) for the signing message, timestamp rules and errors.
+
+        :param account_index: Account that owns the key. (required)
+        :type account_index: int
+        :param api_key_index: 0 to 254. (required)
+        :type api_key_index: int
+        :param public_key: The key's current public key in hex, as returned by apikeys. The 0x prefix is optional. (required)
+        :type public_key: str
+        :param market_ids: JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist. (required)
+        :type market_ids: str
+        :param valid_until: Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry. (required)
+        :type valid_until: int
+        :param timestamp: Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index. (required)
+        :type timestamp: int
+        :param signature: 0x-prefixed personal_sign signature of the signing message by the account's L1 address. (required)
+        :type signature: str
+        :param series: JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to [].
+        :type series: str
+        :param allowed_ips: JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP.
+        :type allowed_ips: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._set_api_key_restrictions_serialize(
+            account_index=account_index,
+            api_key_index=api_key_index,
+            public_key=public_key,
+            market_ids=market_ids,
+            valid_until=valid_until,
+            timestamp=timestamp,
+            signature=signature,
+            series=series,
+            allowed_ips=allowed_ips,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResultCode",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        await response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    async def set_api_key_restrictions_without_preload_content(
+        self,
+        account_index: Annotated[StrictInt, Field(description="Account that owns the key.")],
+        api_key_index: Annotated[StrictInt, Field(description="0 to 254.")],
+        public_key: Annotated[StrictStr, Field(description="The key's current public key in hex, as returned by apikeys. The 0x prefix is optional.")],
+        market_ids: Annotated[StrictStr, Field(description="JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist.")],
+        valid_until: Annotated[StrictInt, Field(description="Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry.")],
+        timestamp: Annotated[StrictInt, Field(description="Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index.")],
+        signature: Annotated[StrictStr, Field(description="0x-prefixed personal_sign signature of the signing message by the account's L1 address.")],
+        series: Annotated[Optional[StrictStr], Field(description="JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to [].")] = None,
+        allowed_ips: Annotated[Optional[StrictStr], Field(description="JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Set API key restrictions
+
+        Replace all restrictions on one API key: market whitelist, IP whitelist and expiry. The account's L1 wallet signs the request with personal_sign, so someone who holds only the API private key cannot loosen the restrictions. They apply to every transaction the key signs except ChangePubKey. The IP whitelist and expiry also apply to every request authenticated with an auth token signed by the key. See [API key restrictions](https://docs.lighter.xyz/developers/integration-guides/api-keys#api-key-restrictions) for the signing message, timestamp rules and errors.
+
+        :param account_index: Account that owns the key. (required)
+        :type account_index: int
+        :param api_key_index: 0 to 254. (required)
+        :type api_key_index: int
+        :param public_key: The key's current public key in hex, as returned by apikeys. The 0x prefix is optional. (required)
+        :type public_key: str
+        :param market_ids: JSON array string of up to 16 public market ids, e.g. \\\"[0,1]\\\". Every id must be a current market. Use [] with no series for no market whitelist. (required)
+        :type market_ids: str
+        :param valid_until: Unix seconds when the key expires, in the future and at most 180 days ahead. 0 means no expiry. (required)
+        :type valid_until: int
+        :param timestamp: Unix seconds when signed. Must be within 10 minutes of server time and greater than the timestamp of the restrictions stored for this key index. (required)
+        :type timestamp: int
+        :param signature: 0x-prefixed personal_sign signature of the signing message by the account's L1 address. (required)
+        :type signature: str
+        :param series: JSON array string of up to 16 market series, e.g. [{\\\"creator_account_index\\\":3,\\\"tag\\\":\\\"btc-updown-5m\\\"}]. tag is 1 to 100 characters. Defaults to [].
+        :type series: str
+        :param allowed_ips: JSON array string of up to 16 IPv4 or IPv6 addresses, e.g. [\\\"203.0.113.7\\\"]. CIDR ranges are not accepted. Defaults to [], which allows any IP.
+        :type allowed_ips: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._set_api_key_restrictions_serialize(
+            account_index=account_index,
+            api_key_index=api_key_index,
+            public_key=public_key,
+            market_ids=market_ids,
+            valid_until=valid_until,
+            timestamp=timestamp,
+            signature=signature,
+            series=series,
+            allowed_ips=allowed_ips,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "ResultCode",
+            '400': "ResultCode",
+        }
+        response_data = await self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _set_api_key_restrictions_serialize(
+        self,
+        account_index,
+        api_key_index,
+        public_key,
+        market_ids,
+        valid_until,
+        timestamp,
+        signature,
+        series,
+        allowed_ips,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[str, Union[str, bytes]] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        if account_index is not None:
+            _form_params.append(('account_index', account_index))
+        if api_key_index is not None:
+            _form_params.append(('api_key_index', api_key_index))
+        if public_key is not None:
+            _form_params.append(('public_key', public_key))
+        if market_ids is not None:
+            _form_params.append(('market_ids', market_ids))
+        if series is not None:
+            _form_params.append(('series', series))
+        if allowed_ips is not None:
+            _form_params.append(('allowed_ips', allowed_ips))
+        if valid_until is not None:
+            _form_params.append(('valid_until', valid_until))
+        if timestamp is not None:
+            _form_params.append(('timestamp', timestamp))
+        if signature is not None:
+            _form_params.append(('signature', signature))
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+        # set the HTTP header `Content-Type`
+        if _content_type:
+            _header_params['Content-Type'] = _content_type
+        else:
+            _default_content_type = (
+                self.api_client.select_header_content_type(
+                    [
+                        'application/x-www-form-urlencoded', 
+                        'multipart/form-data'
+                    ]
+                )
+            )
+            if _default_content_type is not None:
+                _header_params['Content-Type'] = _default_content_type
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='POST',
+            resource_path='/api/v1/setApiKeyRestrictions',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,

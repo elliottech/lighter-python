@@ -18,7 +18,8 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
+from lighter.models.api_key_restrictions import ApiKeyRestrictions
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -31,8 +32,9 @@ class ApiKey(BaseModel):
     nonce: StrictInt
     public_key: StrictStr
     transaction_time: StrictInt
+    restrictions: Optional[ApiKeyRestrictions] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "api_key_index", "nonce", "public_key", "transaction_time"]
+    __properties: ClassVar[List[str]] = ["account_index", "api_key_index", "nonce", "public_key", "transaction_time", "restrictions"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -75,6 +77,9 @@ class ApiKey(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of restrictions
+        if self.restrictions:
+            _dict['restrictions'] = self.restrictions.to_dict()
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -96,7 +101,8 @@ class ApiKey(BaseModel):
             "api_key_index": obj.get("api_key_index"),
             "nonce": obj.get("nonce"),
             "public_key": obj.get("public_key"),
-            "transaction_time": obj.get("transaction_time")
+            "transaction_time": obj.get("transaction_time"),
+            "restrictions": ApiKeyRestrictions.from_dict(obj["restrictions"]) if obj.get("restrictions") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

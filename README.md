@@ -80,6 +80,7 @@ Class | Method | HTTP request | Description
 *AccountApi* | [**rfq_list**](docs/AccountApi.md#rfq_list) | **GET** /api/v1/rfq/list | rfq_list
 *AccountApi* | [**rfq_respond**](docs/AccountApi.md#rfq_respond) | **POST** /api/v1/rfq/respond | rfq_respond
 *AccountApi* | [**rfq_update**](docs/AccountApi.md#rfq_update) | **POST** /api/v1/rfq/update | rfq_update
+*AccountApi* | [**set_api_key_restrictions**](docs/AccountApi.md#set_api_key_restrictions) | **POST** /api/v1/setApiKeyRestrictions | Set API key restrictions
 *AccountApi* | [**set_maker_only_api_keys**](docs/AccountApi.md#set_maker_only_api_keys) | **POST** /api/v1/setMakerOnlyApiKeys | setMakerOnlyApiKeys
 *AccountApi* | [**tokens**](docs/AccountApi.md#tokens) | **GET** /api/v1/tokens | tokens
 *AccountApi* | [**tokens_create**](docs/AccountApi.md#tokens_create) | **POST** /api/v1/tokens/create | tokens_create
@@ -161,6 +162,8 @@ Class | Method | HTTP request | Description
  - [Announcement](docs/Announcement.md)
  - [Announcements](docs/Announcements.md)
  - [ApiKey](docs/ApiKey.md)
+ - [ApiKeyRestrictions](docs/ApiKeyRestrictions.md)
+ - [ApiKeySeries](docs/ApiKeySeries.md)
  - [ApiToken](docs/ApiToken.md)
  - [ApprovedIntegrator](docs/ApprovedIntegrator.md)
  - [Asset](docs/Asset.md)
