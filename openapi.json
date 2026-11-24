@@ -6483,6 +6483,11 @@
             "format": "int64",
             "example": "722"
           },
+          "key_type": {
+            "type": "integer",
+            "format": "uint8",
+            "example": "0"
+          },
           "public_key": {
             "type": "string"
           },
