@@ -1014,7 +1014,8 @@ class SignerClient:
             matched_usd_amount += curr_order_price * to_be_used_order_size
             matched_size += to_be_used_order_size
 
-        potential_execution_price = matched_usd_amount / matched_size
+        # None when that side of the book is empty: no price can be estimated.
+        potential_execution_price = matched_usd_amount / matched_size if matched_size else None
 
         return potential_execution_price, (matched_size if is_amount_base else matched_usd_amount)
 
@@ -1051,10 +1052,10 @@ class SignerClient:
             ob_orders=ob_orders
         )
 
-        if (is_ask and potential_execution_price < acceptable_execution_price) or (not is_ask and potential_execution_price > acceptable_execution_price):
-            return None, None, "Excessive slippage"
         if matched_usd_amount < quote_amount:
             return None, None, "Cannot be sure slippage will be acceptable due to the high size"
+        if (is_ask and potential_execution_price < acceptable_execution_price) or (not is_ask and potential_execution_price > acceptable_execution_price):
+            return None, None, "Excessive slippage"
 
         # one can choose between int or round depending on purpose, doesn't really much
         base_amount = int(quote_amount / potential_execution_price)
@@ -1148,11 +1149,11 @@ class SignerClient:
         )
 
         acceptable_execution_price = ideal_price * (1 + max_slippage * (-1 if is_ask else 1))
-        if (is_ask and potential_execution_price < acceptable_execution_price) or (not is_ask and potential_execution_price > acceptable_execution_price):
-            return None, None, "Excessive slippage"
-
         if matched_size < base_amount:
             return None, None, "Cannot be sure slippage will be acceptable due to the high size"
+
+        if (is_ask and potential_execution_price < acceptable_execution_price) or (not is_ask and potential_execution_price > acceptable_execution_price):
+            return None, None, "Excessive slippage"
 
         return await self.create_order(
             market_index,
