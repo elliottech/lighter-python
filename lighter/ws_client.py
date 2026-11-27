@@ -125,6 +125,11 @@ class WsClient:
         self.update_orders(
             order_book["bids"], self.order_book_states[market_id]["bids"]
         )
+        # new levels get appended, so put the book back in price order
+        self.order_book_states[market_id]["asks"].sort(key=lambda o: float(o["price"]))
+        self.order_book_states[market_id]["bids"].sort(
+            key=lambda o: float(o["price"]), reverse=True
+        )
 
     def update_orders(self, new_orders, existing_orders):
         for new_order in new_orders:
