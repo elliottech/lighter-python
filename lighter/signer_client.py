@@ -440,6 +440,9 @@ class SignerClient:
         ASSET_ID_LDO: LDO_TICKER_SCALE,
     }
 
+    # asset id -> ticker scale of the connected deployment, filled on first use
+    _asset_ticker_scales: Optional[Dict[int, int]] = None
+
     def __init__(
             self,
             url,
@@ -473,6 +476,16 @@ class SignerClient:
         )
         for api_key_index in api_private_keys.keys():
             self.create_client(api_key_index)
+
+    async def get_asset_ticker_scale(self, asset_id: int) -> int:
+        # Asset ids and decimals differ between deployments (asset 5 is LINK with 8 decimals on mainnet
+        # and AMZN with 6 decimals on Robinhood), so the scale comes from assetDetails, not from a fixed table.
+        if self._asset_ticker_scales is None:
+            resp = await self.order_api.asset_details()
+            self._asset_ticker_scales = {asset.asset_id: 10 ** asset.decimals for asset in resp.asset_details}
+        if asset_id not in self._asset_ticker_scales:
+            raise ValueError(f"Unsupported asset id: {asset_id}")
+        return self._asset_ticker_scales[asset_id]
 
     # === signer helpers ===
     @staticmethod
@@ -1331,10 +1344,7 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def withdraw(self, asset_id: int, route_type: int, amount: float, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX) -> Union[Tuple[Withdraw, RespSendTx, None], Tuple[None, None, str]]:
-        if asset_id in self.ASSET_TO_TICKER_SCALE:
-            amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
-        else:
-            raise ValueError(f"Unsupported asset id: {asset_id}")
+        amount = int(amount * await self.get_asset_ticker_scale(asset_id))
 
         tx_type, tx_info, tx_hash, error = self.sign_withdraw(asset_id, route_type, amount, skip_nonce, nonce, api_key_index)
         if error is not None:
@@ -1446,10 +1456,7 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def transfer(self, eth_private_key: str, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        if asset_id in self.ASSET_TO_TICKER_SCALE:
-            amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
-        else:
-            raise ValueError(f"Unsupported asset id: {asset_id}")
+        amount = int(amount * await self.get_asset_ticker_scale(asset_id))
 
         tx_type, tx_info, tx_hash, error = self.sign_transfer(eth_private_key, to_account_index, asset_id, route_from, route_to, amount, fee, memo, skip_nonce, nonce, api_key_index)
         if error is not None:
@@ -1462,10 +1469,7 @@ class SignerClient:
 
     @process_api_key_and_nonce
     async def transfer_same_master_account(self, to_account_index: int, asset_id: int, route_from: int, route_to: int, amount: float, fee: int, memo: str, skip_nonce : int = SKIP_NONCE_OFF, nonce: int = DEFAULT_NONCE, api_key_index: int = DEFAULT_API_KEY_INDEX):
-        if asset_id in self.ASSET_TO_TICKER_SCALE:
-            amount = int(amount * self.ASSET_TO_TICKER_SCALE[asset_id])
-        else:
-            raise ValueError(f"Unsupported asset id: {asset_id}")
+        amount = int(amount * await self.get_asset_ticker_scale(asset_id))
 
         tx_type, tx_info, tx_hash, error = self.sign_transfer_same_master_account(to_account_index, asset_id, route_from, route_to, amount, fee, memo, skip_nonce, nonce, api_key_index)
         if error is not None:
